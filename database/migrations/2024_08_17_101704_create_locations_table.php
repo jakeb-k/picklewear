@@ -26,7 +26,7 @@ return new class extends Migration
 
             $table->morphs('locationable');
 
-            $table->unique(['location_id', 'locationable_id', 'locationable_type']);
+            $table->unique(['location_id', 'locationable_id', 'locationable_type'], 'loc_idx');
         });
     }
 
@@ -36,5 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('locations');
+        Schema::dropIfExists('locationables');
     }
 };

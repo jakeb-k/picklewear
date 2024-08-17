@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('sku')->nullable();
             $table->string('description')->nullable();
             $table->boolean('available'); 
+            $table->softDeletes(); 
             $table->timestamps();
         });
     }

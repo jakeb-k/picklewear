@@ -23,6 +23,14 @@ return new class extends Migration
             $table->text('caption')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('imageables', function (Blueprint $table) {
+            $table->foreignId('image_id')->constrained()->cascadeOnDelete();
+
+            $table->morphs('imageable');
+
+            $table->unique(['image_id', 'imageable_id', 'imageable_type']);
+        });
     }
 
     /**
@@ -31,5 +39,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('images');
+        Schema::dropIfExists('imageables');
     }
 };
