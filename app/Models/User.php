@@ -44,4 +44,30 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * The relationship for a users orders
+     * 
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+
+    /**
+     * The relationship for a users location
+     */
+    public function location()
+    {
+        return $this->morphOne(Location::class, 'locationable');
+    }
+
+    /**
+     * The relationship for the favourites of a user
+     */
+    public function favourites()
+    {
+        return $this->hasMany(Favourite::class, 'user_id');
+    }
+    
 }
