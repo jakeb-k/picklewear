@@ -18,7 +18,7 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
      $faker = Faker::create(); 
-        for($i=0; $i>= 5; $i++){
+        for($i=0; $i <= 5; $i++){
             $order = Order::factory()->create(); 
 
             $randomCount = $faker->numberBetween(1, 5);
