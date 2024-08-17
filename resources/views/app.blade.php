@@ -9,7 +9,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+        <script src="https://kit.fontawesome.com/0abaa836ef.js" crossorigin="anonymous"></script>
         <!-- Scripts -->
         @routes
         @viteReactRefresh

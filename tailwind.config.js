@@ -14,7 +14,15 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                bevan: ['Bevan', ...defaultTheme.fontFamily.sans],
+                oswald: ['Oswald', ...defaultTheme.fontFamily.sans], 
             },
+            colors: {
+                main: '#FFD100',
+                secondary: 'rgb(54, 54, 54)',
+                tertiary: '#4CAF50',
+
+            }
         },
     },
 

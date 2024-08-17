@@ -1,9 +1,9 @@
 import { Link, Head } from "@inertiajs/react";
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Home({ auth, laravelVersion, phpVersion }) {
 
     return (
-        <div className="min-h-dvh bg-gray-200">
+        <div className="w-full flex flex-col flex-grow bg-gray-200">
             <Head title="Welcome" />
             
             <div>
