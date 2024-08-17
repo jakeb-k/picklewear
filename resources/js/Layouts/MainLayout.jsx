@@ -11,7 +11,7 @@ export default function MainLayout({ children }) {
         <div className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
             <div className='fixed w-full'>
                 <div className="w-full bg-main text-secondary flex flex-row justify-around py-2">
-                    <div>FREE SHIPPING STOREWIDE</div>
+                    <div className='font-bold'>FREE SHIPPING STOREWIDE</div>
                     <div className="flex flex-row space-x-8 justify-end w-1/2">
                         <div>
                             <i className="fa-solid fa-magnifying-glass"></i>
@@ -41,7 +41,7 @@ export default function MainLayout({ children }) {
                     <div className="flex flex-row w-2/5 justify-start space-x-8 items-center">
                         <img src={Logo} className="w-24 h-auto" />
                         <div>
-                            <p className="text-4xl">Picklewear</p>
+                            <p className="text-4xl font-bevan tracking-wider">Picklewear</p>
                         </div>
                     </div>
                     <div className="flex flex-row w-full space-x-28 justify-center items-center text-3xl">
