@@ -22,11 +22,11 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'Jakey',
-            'email' => 'jakey@pickles.test',
+            'email' => 'j@j.com',
             'is_admin'=>true,
             'password'=>'123456'
         ]);
-        
+
         $this->call(ProductSeeder::class);
         $this->call(ProductOptionSeeder::class);
         $this->call(OrderSeeder::class); 
