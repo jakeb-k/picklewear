@@ -98,7 +98,7 @@ export default function MainLayout({ children }) {
                         <div>Children</div>
                         <div>Accessories</div>
                     </div>
-                    <div className="flex flex-row space-x-8 justify-end pr-32 w-1/2 items-center">
+                    <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
                             <i
                                 onClick={handleQueryState}
