@@ -3,15 +3,37 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'Bevan';
-    src: url('../assets/fonts/Bevan-Regular.ttf') format('truetype');
+    font-family: "Bevan";
+    src: url("../assets/fonts/Bevan-Regular.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'Oswald';
-    src: url('../assets/fonts/Oswald-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: "Oswald";
+    src: url("../assets/fonts/Oswald-Regular.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
-  }
+}
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
