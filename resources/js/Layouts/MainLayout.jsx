@@ -83,7 +83,7 @@ export default function MainLayout({ children }) {
                         </Link>
                     </div>
                 </div>
-                <div className=" p-1 flex flex-row border-4 border-t-0 border-main justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
+                <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
                     <div className="flex flex-row w-fit justify-end space-x-2 pl-12 items-center">
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
@@ -129,7 +129,7 @@ export default function MainLayout({ children }) {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col flex-grow">{children}</div>
+            <div>{children}</div>
             <footer className="w-full bg-gray-800 text-white absolute bottom-0">
                 {auth?.user ? (
                     <Link href={route("logout")} method="post" as="button">
