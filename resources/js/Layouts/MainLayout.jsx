@@ -2,22 +2,55 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import { Link, usePage } from "@inertiajs/react";
 import axios from "axios";
 import Dropdown from "@/Components/Dropdown";
+import Cart from "@/../assets/images/icons/Cart";
+import User from "@/../assets/images/icons/User";
+import QuestionMark from "@/../assets/images/icons/QuestionMark";
+import Mail from "@/../assets/images/icons/Mail";
+import Instagram from "@/../assets/images/icons/Instagram";
 
 import Logo from "@/../assets/images/pickleLogo.png";
+
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
 
     return (
         <div className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
-            <div className='fixed w-full'>
-                <div className="w-full bg-main text-secondary flex flex-row justify-around py-2">
-                    <div className='font-bold'>FREE SHIPPING STOREWIDE</div>
-                    <div className="flex flex-row space-x-8 justify-end w-1/2">
+            <div className="fixed w-full">
+                <div className="w-full bg-main text-secondary flex py-1">
+                    <div className="font-bold  justify-center w-full text-center ml-12">
+                        FREE SHIPPING STOREWIDE
+                    </div>
+                    <div className="flex absolute w-fit right-0 space-x-6 mr-12">
+                        <Link href={route("dashboard")}>
+                            <QuestionMark className="w-6 h-6" stroke="#fff" />
+                        </Link>
+                        <Link href={route("dashboard")}>
+                            <Mail className="w-6 h-6" stroke="#fff" />
+                        </Link>
+                        <Link href={route("dashboard")}>
+                            <Instagram className="w-6 h-6" stroke="#fff" />
+                        </Link>
+                    </div>
+                </div>
+                <div className=" p-1 flex flex-row border-4 border-t-0 border-main justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
+                    <div className="flex flex-row w-fit justify-end space-x-2 pl-12 items-center">
+                        <img src={Logo} className="w-12 h-auto" />
+                        <div>
+                            <p className="text-xl font-bevan tracking-wider">
+                                Picklewear
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex flex-row w-fit space-x-16 items-center text-lg">
+                        <div>Mens</div>
+                        <div>Womens</div>
+                        <div>Children</div>
+                        <div>Accessories</div>
+                    </div>
+                    <div className="flex flex-row space-x-8 justify-end pr-32 w-1/2">
                         <div>
                             <i className="fa-solid fa-magnifying-glass"></i>
                         </div>
-                        <Link href={route("dashboard")}> About </Link>
-                        <Link href={route("dashboard")}> Contact </Link>
                         {auth?.user ? (
                             <>
                                 <Link
@@ -31,24 +64,14 @@ export default function MainLayout({ children }) {
                             </>
                         ) : (
                             <>
-                                <Link href={route("login")}>Log in</Link>
-                                <Link href={route("register")}>Register</Link>
+                                <Link href={route("login")}>
+                                    <User className="w-6 h-6" stroke="#fff" />
+                                </Link>
+                                <Link href={route("register")}>
+                                    <Cart className="w-6 h-6" stroke="#fff" />
+                                </Link>
                             </>
                         )}
-                    </div>
-                </div>
-                <div className=" p-2 flex flex-row rounded-b-xl border-4 border-t-0 border-main justify-between w-10/12 mx-auto bg-secondary text-main font-oswald">
-                    <div className="flex flex-row w-2/5 justify-start space-x-8 items-center">
-                        <img src={Logo} className="w-24 h-auto" />
-                        <div>
-                            <p className="text-4xl font-bevan tracking-wider">Picklewear</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full space-x-28 justify-center items-center text-3xl">
-                        <div>Mens</div>
-                        <div>Womens</div>
-                        <div>Children</div>
-                        <div>Accessories</div>
                     </div>
                 </div>
             </div>
