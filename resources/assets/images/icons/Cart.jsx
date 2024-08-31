@@ -1,4 +1,4 @@
-export default function Cart({ className, stroke }) {
+export default function Cart({ className, stroke, fill }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

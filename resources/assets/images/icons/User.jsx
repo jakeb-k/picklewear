@@ -1,4 +1,4 @@
-export default function User({className, stroke}) {
+export default function User({className, stroke, fill}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,17 +1,21 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
-import { Link, usePage } from "@inertiajs/react";
-import axios from "axios";
-import Dropdown from "@/Components/Dropdown";
-import Cart from "@/../assets/images/icons/Cart";
-import User from "@/../assets/images/icons/User";
-import QuestionMark from "@/../assets/images/icons/QuestionMark";
-import Mail from "@/../assets/images/icons/Mail";
-import Instagram from "@/../assets/images/icons/Instagram";
-
+import { Link, useForm, usePage } from "@inertiajs/react";
 import Logo from "@/../assets/images/pickleLogo.png";
+import { useState } from "react";
+
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
+    const { data, setData, post, processing, errors, reset } = useForm({
+        query: ''
+    });
+
+    const [isQuerying, setIsQuerying] = useState(true); 
+
+    const handleQueryState = () => {
+        setIsQuerying(!isQuerying); 
+    }
+    //add carusel for query input when doing the top carusel
+
 
     return (
         <div className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
@@ -22,13 +26,13 @@ export default function MainLayout({ children }) {
                     </div>
                     <div className="flex absolute w-fit right-0 space-x-6 mr-12">
                         <Link href={route("dashboard")}>
-                            <QuestionMark className="w-6 h-6" stroke="#fff" />
+                            <i class="fa-regular fa-circle-question text-white text-lg hover:text-black "></i>
                         </Link>
                         <Link href={route("dashboard")}>
-                            <Mail className="w-6 h-6" stroke="#fff" />
+                            <i class="fa-regular fa-envelope text-white text-lg hover:text-black"></i>
                         </Link>
                         <Link href={route("dashboard")}>
-                            <Instagram className="w-6 h-6" stroke="#fff" />
+                            <i class="fa-brands fa-instagram text-white text-lg hover:text-black"></i>
                         </Link>
                     </div>
                 </div>
@@ -47,9 +51,22 @@ export default function MainLayout({ children }) {
                         <div>Children</div>
                         <div>Accessories</div>
                     </div>
-                    <div className="flex flex-row space-x-8 justify-end pr-32 w-1/2">
-                        <div>
-                            <i className="fa-solid fa-magnifying-glass"></i>
+                    <div className="flex flex-row space-x-8 justify-end pr-32 w-1/2 items-center">
+                        <div className='relative flex flex-row items-center'>
+                            <input 
+
+                             type="text"
+                             value={data.query}
+                             onChange={(e)=> setData('query', e.target.value)}
+                             placeholder={'Search Products'}
+                             style={{
+                                width: isQuerying ? '300px' : '0px',
+                                backgroundColor: isQuerying ? 'white' : 'transparent',
+                                transition: 'width 0.3s ease, background-color 0.3s ease',
+                              }}
+                             className="w-0 rounded bg-transparent border-none focus:ring-0" /> 
+                            <i onMouseEnter={handleQueryState}
+                                className="fa-solid fa-magnifying-glass text-2xl cursor-pointer absolute right-2"></i>
                         </div>
                         {auth?.user ? (
                             <>
@@ -65,10 +82,10 @@ export default function MainLayout({ children }) {
                         ) : (
                             <>
                                 <Link href={route("login")}>
-                                    <User className="w-6 h-6" stroke="#fff" />
+                                    <i class="fa-regular fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
                                 <Link href={route("register")}>
-                                    <Cart className="w-6 h-6" stroke="#fff" />
+                                    <i class="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
                                 </Link>
                             </>
                         )}
