@@ -4,7 +4,7 @@ import MainProductCard from "@/Components/home/MainProductCard"
 import MainConveyor from "@/Components/home/MainConveyor";
 import HomeBackground from "@/../assets/images/splash_bg.webp";
 
-export default function Home({ auth, laravelVersion, phpVersion }) {
+export default function Home() {
 
     return (
         <div className="w-full flex flex-col flex-grow justify-end overflow-x-hidden pb-20"
