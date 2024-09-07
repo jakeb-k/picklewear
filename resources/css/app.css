@@ -54,3 +54,11 @@
 ::-webkit-scrollbar-track {
   background-color: #FFD100; /* Background of the track */
 }
+
+.clip-triangle-bottom-left {
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+
+.clip-triangle-top-right {
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}

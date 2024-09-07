@@ -3,9 +3,9 @@ import { Link, Head } from "@inertiajs/react";
 import MainProductCard from "@/Components/home/MainProductCard"
 import MainConveyor from "@/Components/home/MainConveyor";
 import HomeBackground from "@/../assets/images/splash_bg.webp";
+import Slideshow from "@/Components/home/Slideshow";
 
 export default function Home() {
-
     return (
         <>
         <div className="w-full flex flex-col  h-fit pt-[225px] pb-[150px] justify-center overflow-x-hidden"
@@ -24,12 +24,13 @@ export default function Home() {
                 </div>
             </div>
         </div>
+        {/* FIRST PRODUCT SECTION  */}
         <div className='mx-12 font-oswald pt-10 pb-20'>
             <h2 className='text-3xl text-secondary italic text-center'> Fresh Dills!</h2>
             <div className='flex justify-evenly space-x-4 mt-8'>
                 <div>
                     <MainProductCard />
-                    <p className='ml-4 mt-2 text-lg'>Hoodies</p>
+                    <p className='ml-4 mt-2 text-lg'>Gear</p>
                     <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
                 </div>
                 <div>
@@ -48,6 +49,9 @@ export default function Home() {
                     <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
                 </div>
             </div>
+        </div>
+        <div className='w-9/12 mx-auto'>
+            <Slideshow /> 
         </div>
         </>
     );

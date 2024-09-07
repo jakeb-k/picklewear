@@ -66,7 +66,7 @@ export default function MainLayout({ children }) {
                 >
                     <SearchBar />
                 </CSSTransition>
-            <div className="fixed w-full">
+            <div className="fixed w-full z-50">
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
                         FREE SHIPPING STOREWIDE
@@ -96,7 +96,7 @@ export default function MainLayout({ children }) {
                         <div>Mens</div>
                         <div>Womens</div>
                         <div>Children</div>
-                        <div>Accessories</div>
+                        <div>Gear</div>
                     </div>
                     <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
