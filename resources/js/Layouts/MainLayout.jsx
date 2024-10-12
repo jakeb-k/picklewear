@@ -66,7 +66,7 @@ export default function MainLayout({ children }) {
                 >
                     <SearchBar />
                 </CSSTransition>
-            <div className="fixed w-full z-50">
+            <div className="fixed w-full z-30">
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
                         FREE SHIPPING STOREWIDE

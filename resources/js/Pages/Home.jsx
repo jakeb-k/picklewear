@@ -1,7 +1,7 @@
 import { Link, Head } from "@inertiajs/react";
 
 import MainProductCard from "@/Components/home/MainProductCard"
-import MainConveyor from "@/Components/home/MainConveyor";
+import BestSellers from "@/Components/home/BestSellers";
 import HomeBackground from "@/../assets/images/splash_bg.webp";
 import Slideshow from "@/Components/home/Slideshow";
 
@@ -26,7 +26,7 @@ export default function Home() {
         </div>
         {/* FIRST PRODUCT SECTION  */}
         <div className='mx-12 font-oswald pt-10 pb-20'>
-            <h2 className='text-3xl text-secondary italic text-center'> Fresh Dills!</h2>
+            <h2 className='text-3xl text-secondary italic text-center'>Shop by Category</h2>
             <div className='flex justify-evenly space-x-4 mt-8'>
                 <div>
                     <MainProductCard />
@@ -50,8 +50,13 @@ export default function Home() {
                 </div>
             </div>
         </div>
-        <div className='w-9/12 mx-auto'>
+        <div className='w-9/12 mx-auto pb-12'>
             <Slideshow /> 
+        </div>
+        {/* BESTSELLERS */}
+        <div className='mx-[5%] font-oswald pt-10 pb-20'>
+            <h2 className='text-3xl text-secondary italic text-center'>Fresh Dills</h2>
+            <BestSellers />
         </div>
         </>
     );

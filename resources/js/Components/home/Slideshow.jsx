@@ -35,11 +35,11 @@ const Slideshow = () => {
 
 
   return (
-    <div
+    <div className='relative'
       ref={containerRef}
       style={{ display: 'flex', overflow: 'hidden', width: '100%' }}
     >
-      <div
+      <div 
         style={{
           display: 'flex',
           transform: `translateX(-${currentIndex * getHalfContainerWidth()}px)`,
@@ -55,6 +55,9 @@ const Slideshow = () => {
           />
         ))}
       </div>
+      <p className='italic text-3xl font-bold absolute top-4 left-4 px-4 py-2 text-main rounded-lg'>Play like a Pro</p>
+      <button className='hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic text-3xl font-bold absolute bottom-4 right-4 px-4 py-2 bg-main rounded-lg '>Browse our Summer Collection</button>
+      
     </div>
   );
 };
