@@ -14,8 +14,8 @@ class Image extends Model
     /**
      * Define the polymorphic relationship of an image
      */
-    public function imageable()
+    public function products()
     {
-        return $this->morphTo();
+        return $this->morphedByMany(Product::class, 'imageable');
     }
 }

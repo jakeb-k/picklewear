@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Image;
+use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,17 @@ class ImageSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $bestsellers = [36,37,34,38,39,40,41,42,35,32];
+
+        foreach($bestsellers as $product){
+            $product = Product::find($product); 
+            $image = Image::create([
+                'file_name'=> $product->name.'_image_1',
+                'file_path' => 'https://aussiepicklepro.com.au/storage/images/'.$product->id.'_1.webp',
+                'file_size'=> 100,
+                'mime_type'=> '.webp',
+            ]);
+            $product->images()->save($image); 
+        }
     }
 }

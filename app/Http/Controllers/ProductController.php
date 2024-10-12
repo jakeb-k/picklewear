@@ -38,6 +38,19 @@ class ProductController extends Controller
         
     }
 
+    public function getBestsellers() {
+        $bestsellers = Product::where('type', 'Clothing')->orderBy('price', 'DESC')->limit(10)->get();
+        $bestsellers->each(function($product) {
+            if ($product->images()->exists()) {
+                $product->load('images');
+            }
+        });
+        return response()->json([
+            'bestsellers' => $bestsellers  
+        ]);
+
+    }
+
     public function search(String $query)
     {
 

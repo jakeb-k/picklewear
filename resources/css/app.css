@@ -37,3 +37,32 @@
     transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+/* Style the scrollbar track */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: rgb(54, 54, 54); /* Colour of the scrollbar */
+  border-radius: 10px; /* Roundness of the scrollbar */
+  border: 3px solid #FFD100; /* Creates padding around thumb */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #FFD100; /* Background of the track */
+}
+
+.clip-triangle-bottom-left {
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+
+.clip-triangle-top-right {
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.bestseller-img img {
+  mix-blend-mode: multiply;
+}

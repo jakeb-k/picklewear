@@ -1,7 +1,8 @@
 import { Link, useForm, usePage } from "@inertiajs/react";
 import Logo from "@/../assets/images/pickleLogo.png";
 import { useState, useRef, useEffect } from "react";
-import { CSSTransition } from 'react-transition-group';
+import { CSSTransition } from "react-transition-group";
+import Footer from "@/Components/Footer";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
@@ -57,16 +58,15 @@ export default function MainLayout({ children }) {
     };
     return (
         <div className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
-            
             <CSSTransition
-                    in={isQuerying}
-                    timeout={300}
-                    classNames="fade"
-                    unmountOnExit
-                >
-                    <SearchBar />
-                </CSSTransition>
-            <div className="fixed w-full">
+                in={isQuerying}
+                timeout={300}
+                classNames="fade"
+                unmountOnExit
+            >
+                <SearchBar />
+            </CSSTransition>
+            <div className="fixed w-full z-30">
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
                         FREE SHIPPING STOREWIDE
@@ -81,9 +81,21 @@ export default function MainLayout({ children }) {
                         <Link href={route("dashboard")}>
                             <i className="fa-brands fa-instagram text-white text-lg hover:text-black"></i>
                         </Link>
+
+                        <Link href={route("dashboard")}>
+                            <i class="fa-brands fa-x-twitter text-white text-lg hover:text-black"></i>
+                        </Link>
+
+                        <Link href={route("dashboard")}>
+                            <i class="fa-brands fa-facebook-f text-white text-lg hover:text-black"></i>
+                        </Link>
+
+                        <Link href={route("dashboard")}>
+                            <i class="fa-brands fa-tiktok text-white text-lg hover:text-black"></i>
+                        </Link>
                     </div>
                 </div>
-                <div className=" p-1 flex flex-row border-4 border-t-0 border-main justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
+                <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
                     <div className="flex flex-row w-fit justify-end space-x-2 pl-12 items-center">
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
@@ -96,7 +108,7 @@ export default function MainLayout({ children }) {
                         <div>Mens</div>
                         <div>Womens</div>
                         <div>Children</div>
-                        <div>Accessories</div>
+                        <div>Gear</div>
                     </div>
                     <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
@@ -129,19 +141,8 @@ export default function MainLayout({ children }) {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col flex-grow">{children}</div>
-            <footer className="w-full bg-gray-800 text-white absolute bottom-0">
-                {auth?.user ? (
-                    <Link href={route("logout")} method="post" as="button">
-                        Logout
-                    </Link>
-                ) : (
-                    <div className="w-1/3 flex flex-row justify-center space-x-8">
-                        <Link href={route("login")}>Log in</Link>
-                        <Link href={route("register")}>Register</Link>
-                    </div>
-                )}
-            </footer>
+            <div>{children}</div>
+            <Footer />
         </div>
     );
 }

@@ -22,6 +22,9 @@ export default {
                 secondary: 'rgb(54, 54, 54)',
                 tertiary: '#4CAF50',
 
+            },
+            boxShadow: {
+                summer: 'inset 5px 5px 0 2px #000000'
             }
         },
     },
