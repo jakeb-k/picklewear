@@ -8,6 +8,8 @@ export default function ProductShowLayout(props) {
         .find((option) => option.type == "color")
         .values.split(".");
     const { images } = props.product;
+    const sizes = ["XS", "S", "M", "L", "XL"];
+    const [selectedSize, setSelectedSize] = useState(null);
     const [displayImage, setDisplayImage] = useState(images[0]);
     const [selectedColor, setSelectedColor] = useState(null);
 
@@ -62,11 +64,38 @@ export default function ProductShowLayout(props) {
                                     style={{
                                         backgroundColor: hex.toHexString(),
                                     }}
-                                    className={`rounded-full mt-4 mr-4 p-2 w-12 h-12 border transition-all border-black duration-150 ease-in-out cursor-pointer ${selectedColor == color ? 'border-2' : 'opacity-50 hover:opacity-100 '}`}
+                                    className={`rounded-full mt-4 mr-4 p-2 w-12 h-12 border transition-all border-black duration-150 ease-in-out cursor-pointer ${
+                                        selectedColor == color
+                                            ? "border-2"
+                                            : "opacity-50 hover:opacity-100 "
+                                    }`}
                                 ></div>
                             );
                         })}
                     </div>
+                    <p className="font-bold mt-6 mb-4">Size </p>
+                    <div className="flex flex-wrap w-full">
+                        <div className="flex">
+                            {sizes.map((size, index) => {
+                                return (
+                                    <div
+                                        onClick={() => setSelectedSize(size)}
+                                        key={index}
+                                        className={`font-bold min-w-8 text-center text-2xl mr-10 cursor-pointer transition-all duration-150 ease-in-out ${
+                                            size == selectedSize
+                                                ? "border-b-2 border-black pb-1 text-black"
+                                                : "border-b-2 border-transparent pb-1 text-gray-500 hover:text-black"
+                                        }`}
+                                    >
+                                        {size}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div className="w-full my-4 border border-gray-400 mx-auto"></div>
+                    <p className="text-xl text-black mb-2"> Description</p>
+                    <p>{product.description}</p>
                 </div>
             </div>
         </div>
