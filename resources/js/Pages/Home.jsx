@@ -25,7 +25,7 @@ export default function Home() {
             </div>
         </div>
         {/* FIRST PRODUCT SECTION  */}
-        <div className='mx-12 font-oswald pt-10 pb-20'>
+        <div className='mx-12 font-oswald pt-20 pb-40'>
             <h2 className='text-3xl text-secondary italic text-center'>Shop by Category</h2>
             <div className='flex justify-evenly space-x-4 mt-8'>
                 <div>
@@ -54,7 +54,7 @@ export default function Home() {
             <Slideshow /> 
         </div>
         {/* BESTSELLERS */}
-        <div className='mx-[5%] font-oswald pt-10 pb-20'>
+        <div className='mx-[5%] font-oswald pt-20 pb-40'>
             <h2 className='text-3xl text-secondary italic text-center mb-8'>Fresh Dills</h2>
             <BestSellers />
         </div>

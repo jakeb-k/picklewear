@@ -33,7 +33,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return Inertia::render('Products/ProductShowLayout', [
-            'product' => $product->load(['options'])
+            'product' => $product->load(['options', 'images']),
         ]); 
         
     }

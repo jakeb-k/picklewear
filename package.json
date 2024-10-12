@@ -20,6 +20,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "react-transition-group": "^4.4.5"
+        "react-transition-group": "^4.4.5",
+        "tinycolor2": "^1.6.0"
     }
 }

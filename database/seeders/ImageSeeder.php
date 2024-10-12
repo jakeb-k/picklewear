@@ -18,13 +18,15 @@ class ImageSeeder extends Seeder
 
         foreach($bestsellers as $product){
             $product = Product::find($product); 
-            $image = Image::create([
-                'file_name'=> $product->name.'_image_1',
-                'file_path' => 'https://aussiepicklepro.com.au/storage/images/'.$product->id.'_1.webp',
-                'file_size'=> 100,
-                'mime_type'=> '.webp',
-            ]);
-            $product->images()->save($image); 
+                for($i = 1; $i < 4; $i++){
+                    $image = Image::create([
+                        'file_name'=> $product->name.'_image_1',
+                        'file_path' => 'https://aussiepicklepro.com.au/storage/images/'.$product->id.'_'.$i.'.webp',
+                        'file_size'=> 100,
+                        'mime_type'=> '.webp',
+                    ]);
+                    $product->images()->save($image); 
+                }
         }
     }
 }

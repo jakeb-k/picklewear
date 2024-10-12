@@ -41,9 +41,9 @@ export default function Footer() {
                         </p>
 
                         <div className="flex flex-col space-y-2">
-                            {clothing.map((cat) => {
+                            {clothing.map((cat, index) => {
                                 return (
-                                    <p className="">
+                                    <p key={index} className="">
                                         <a className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
                                             {cat}
                                         </a>
@@ -57,9 +57,9 @@ export default function Footer() {
                             Help
                         </p>
                         <div className="flex flex-col space-y-2">
-                            {help.map((cat) => {
+                            {help.map((cat, index) => {
                                 return (
-                                    <p className="">
+                                    <p key={index} className="">
                                         <a className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
                                             {cat}
                                         </a>
@@ -73,9 +73,9 @@ export default function Footer() {
                             Account
                         </p>
                         <div className="flex flex-col space-y-2">
-                            {account.map((cat) => {
+                            {account.map((cat, index) => {
                                 return (
-                                    <p className="">
+                                    <p key={index} className="">
                                         <a className="hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
                                             {cat}
                                         </a>
@@ -103,7 +103,7 @@ export default function Footer() {
                             placeholder="Enter Email"
                         />
                         <button className="absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300">
-                            <i class="fa-solid fa-arrow-right"></i>
+                            <i className="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                     <div className="flex space-x-8 text-3xl p-3 pt-8">
@@ -111,32 +111,32 @@ export default function Footer() {
 
                         <i className="fa-brands fa-instagram hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
 
-                        <i class="fa-brands fa-x-twitter hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
+                        <i className="fa-brands fa-x-twitter hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
 
-                        <i class="fa-brands fa-facebook-f hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
+                        <i className="fa-brands fa-facebook-f hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
 
-                        <i class="fa-brands fa-tiktok hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
+                        <i className="fa-brands fa-tiktok hover:text-white transition-all duration-150 ease-in-out cursor-pointer"></i>
                     </div>
                 </div>
             </div>
             <div className="flex flex-row-reverse justify-between px-12 items-center mt-8 -mb-2">
                 <div className="flex space-x-4 text-3xl border-[3px] border-main p-3 pt-4 relative">
-                    <i class="fa-brands fa-cc-visa"></i>
+                    <i className="fa-brands fa-cc-visa"></i>
 
-                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i className="fa-brands fa-cc-mastercard"></i>
 
-                    <i class="fa-brands fa-cc-amex"></i>
+                    <i className="fa-brands fa-cc-amex"></i>
 
-                    <i class="fa-brands fa-cc-discover"></i>
+                    <i className="fa-brands fa-cc-discover"></i>
 
-                    <i class="fa-brands fa-cc-paypal"></i>
+                    <i className="fa-brands fa-cc-paypal"></i>
 
-                    <i class="fa-brands fa-apple-pay"></i>
+                    <i className="fa-brands fa-apple-pay"></i>
 
-                    <i class="fa-brands fa-google"></i>
+                    <i className="fa-brands fa-google"></i>
                     <p className="text-sm px-2 absolute flex items-center -top-6 left-0 bg-secondary">
                         Secure Checkout By{" "}
-                        <i class="fa-brands fa-stripe text-4xl mx-2 mt-0.5"></i>{" "}
+                        <i className="fa-brands fa-stripe text-4xl mx-2 mt-0.5"></i>{" "}
                         With
                     </p>
                 </div>
