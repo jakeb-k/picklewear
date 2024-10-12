@@ -20,7 +20,7 @@ const BestSellers = () => {
             .then((response) => {
                 console.log(response.data);
                 setProducts(response.data.bestsellers);
-                setLoading(false); 
+                setLoading(false);
             })
             .catch((error) => {
                 console.error("El Problemo: " + error);
@@ -28,57 +28,60 @@ const BestSellers = () => {
     }
 
     useEffect(() => {
-
-      if(!loading){
-        const intervalId = setInterval(() => {
-            setCurrentIndex((prevIndex) => {
-              console.log(prevIndex, products.length); 
-
-                // If we're at the second last image (as we display two at a time), reset to 0
-                if (prevIndex >= products.length - 4) {
-                    return 0;
-                } else {
-                    return prevIndex + 1;
-                }
-            });
-        }, 4000);
-        return () => clearInterval(intervalId); // Clear interval on component unmount
-
-      }
-
+        if (!loading) {
+            const intervalId = setInterval(() => {
+                setCurrentIndex((prevIndex) => {
+                    // If we're at the second last image (as we display two at a time), reset to 0
+                    if (prevIndex >= products.length - 4) {
+                        return 0;
+                    } else {
+                        return prevIndex + 1;
+                    }
+                });
+            }, 4000);
+            return () => clearInterval(intervalId); // Clear interval on component unmount
+        }
     }, [products?.length, loading]);
 
-
-
     if (!loading) {
-      return (
-        <div
-          className="relative ml-[1%] border"
-          ref={containerRef}
-          style={{ display: "flex", overflow: "hidden", width: "100%" }}
-        >
-          <div
-            className="w-full"
-            style={{
-              display: "flex justify-center",
-              transform: `translateX(-${currentIndex * 24.95}%)`, // Slide by 25% for one image
-              transition: "transform 0.5s ease-in-out",
-            }}
-          >
-            {products.map((product, index) => (
-              <div
-                key={index}
-                className=" mr-[2%] h-[400px] rounded-md bg-gray-500"
-                style={{ minWidth: '23%' }} // Ensure the minimum width stays at 25%
-              >
-                <p>{product.name}</p>
-                <p>{product.price}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }else {
+        return (
+            <div
+                className="relative ml-[1%] border"
+                ref={containerRef}
+                style={{ display: "flex", overflow: "hidden", width: "100%" }}
+            >
+                <div
+                    className="w-full flex"
+                    style={{
+                        display: "flex justify-center",
+                        transform: `translateX(-${currentIndex * 24.95}%)`, // Slide by 25% for one image
+                        transition: "transform 0.5s ease-in-out",
+                    }}
+                >
+                    {products.map((product, index) => {
+                        let productImg = product.images[0];
+                        return (
+                            <div
+                                key={index}
+                                className="relative mr-[2%] h-[400px] rounded-md bg-white hover:bg-gray-50/5 z-20 cursor-pointer overflow-hidden transition-all duration-300"
+                                style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
+                            >
+                                <div className="absolute inset-0 bg-gray-500/50 opacity-0 hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                                <img
+                                    src={productImg.file_path}
+                                    className="rounded-md rounded-b-none w-full object-cover"
+                                />
+                                <div className="relative z-20">
+                                    <p>{product.name}</p>
+                                    <p>{product.price}</p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    } else {
         return <p>loading</p>;
     }
 };

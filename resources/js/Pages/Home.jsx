@@ -55,7 +55,7 @@ export default function Home() {
         </div>
         {/* BESTSELLERS */}
         <div className='mx-[5%] font-oswald pt-10 pb-20'>
-            <h2 className='text-3xl text-secondary italic text-center'>Fresh Dills</h2>
+            <h2 className='text-3xl text-secondary italic text-center mb-8'>Fresh Dills</h2>
             <BestSellers />
         </div>
         </>
