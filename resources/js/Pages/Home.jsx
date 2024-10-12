@@ -8,7 +8,7 @@ import Slideshow from "@/Components/home/Slideshow";
 export default function Home() {
     return (
         <>
-        <div className="w-full flex flex-col  h-fit pt-[225px] pb-[150px] justify-center overflow-x-hidden"
+        <div className="w-full flex flex-col mt-20 h-fit pt-[225px] pb-[150px] justify-center overflow-x-hidden"
         style={{backgroundImage: `url(${HomeBackground})` }}>
             <Head title="Home" />
             <div className="ml-12 font-oswald">
