@@ -1,8 +1,9 @@
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
 import Logo from "@/../assets/images/pickleLogo.png";
 import { useState, useRef, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 import Footer from "@/Components/Footer";
+import ShoppingCart from "@/Components/ShoppingCart";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
@@ -10,12 +11,15 @@ export default function MainLayout({ children }) {
         query: "",
     });
     const inputRef = useRef(null);
+    const cartRef = useRef(null);
 
     const [isQuerying, setIsQuerying] = useState(false);
 
     const handleQueryState = () => {
         setIsQuerying(!isQuerying);
     };
+
+    const [cartOpen, setCartOpen] = useState(false)  
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -26,6 +30,10 @@ export default function MainLayout({ children }) {
             inputRef.current.focus();
         }
     }, [data.query]);
+
+    const routeToHome = () => {
+        router.visit(route('index'))
+    }
 
     //add carusel for query input when doing the top carusel
 
@@ -96,7 +104,7 @@ export default function MainLayout({ children }) {
                     </div>
                 </div>
                 <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
-                    <div className="flex flex-row w-fit justify-end space-x-2 pl-12 items-center">
+                    <div onClick={() => routeToHome()} className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center">
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
                             <p className="text-xl font-bevan tracking-wider">
@@ -133,9 +141,9 @@ export default function MainLayout({ children }) {
                                 <Link href={route("login")}>
                                     <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
-                                <Link href={route("register")}>
+                                <button onClick={() => setCartOpen(true)}>
                                     <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
-                                </Link>
+                                </button>
                             </>
                         )}
                     </div>
@@ -143,6 +151,15 @@ export default function MainLayout({ children }) {
             </div>
             <div>{children}</div>
             <Footer />
+            <CSSTransition
+                in={cartOpen}
+                timeout={300}
+                classNames="fade"
+                unmountOnExit
+            >
+            <ShoppingCart handleCartClose={() => setCartOpen(false)} /> 
+
+            </CSSTransition>
         </div>
     );
 }

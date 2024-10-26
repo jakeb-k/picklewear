@@ -2,6 +2,8 @@ import { Head } from "@inertiajs/react";
 import moment from "moment";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
+import useCartStore from "@/Stores/useCartStore";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ProductShowLayout(props) {
     const product = props.product;
@@ -15,32 +17,49 @@ export default function ProductShowLayout(props) {
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
 
+    const { addProduct, products } = useCartStore();
+
+    const addToCart = (product) => {
+        let productData = {
+            ...product,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: quantity,
+            image: images[0],
+            cartItemId:  uuidv4(),
+        };
+        addProduct(productData);
+    };
+
     return (
         <div className="min-h-screen py-24 mx-24">
-            <Head title="" />
+            <Head title={product.name} />
             <div className="flex mt-20">
-                <div className="w-[10%] space-y-8 ">
-                    {images.map((image) => {
-                        return (
-                            <img
-                                onClick={() => setDisplayImage(image)}
-                                key={image.id}
-                                src={image.file_path}
-                                className={`w-full max-h-[250px] rounded-md cursor-pointer ${
-                                    displayImage.id != image.id
-                                        ? "opacity-70 hover:opacity-100"
-                                        : "border border-main"
-                                }`}
-                            />
-                        );
-                    })}
+                <div className="flex justify-between items-center w-[47.5%] ">
+                    <div className="w-[20%] space-y-8">
+                        {images.map((image) => {
+                            return (
+                                <img
+                                    onClick={() => setDisplayImage(image)}
+                                    key={image.id}
+                                    src={image.file_path}
+                                    className={`w-full max-h-[250px] rounded-md cursor-pointer ${
+                                        displayImage.id != image.id
+                                            ? "opacity-70 hover:opacity-100"
+                                            : "border border-main"
+                                    }`}
+                                />
+                            );
+                        })}
+                    </div>
+                    <div className="w-[75%]">
+                        <img
+                            src={displayImage.file_path}
+                            className="w-full min-h-[450px] rounded-md object-contain"
+                        />
+                    </div>
                 </div>
-                <div className="w-[37.5%] ml-12">
-                    <img
-                        src={displayImage.file_path}
-                        className="w-full min-h-[450px] rounded-md object-contain"
-                    />
-                </div>
+
                 <div className="w-[45%] ml-auto flex flex-col justify-start">
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
@@ -56,7 +75,6 @@ export default function ProductShowLayout(props) {
                     <div className="flex flex-wrap w-full mb-4">
                         {colors.map((color, index) => {
                             let hex = tinycolor(color);
-                            console.log(hex.toHexString());
                             return (
                                 <div
                                     onClick={() => setSelectedColor(color)}
@@ -94,7 +112,15 @@ export default function ProductShowLayout(props) {
                     </div>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
                     <p>{product.description}</p>
-                    <p className='italic my-4'> Will arrive between the {moment().add(7 , 'days').format('Do MMM YY') + ' to the ' + moment().add(product.delivery_date , 'days').format('Do MMM YY')} </p>
+                    <p className="italic my-4">
+                        {" "}
+                        Will arrive between the{" "}
+                        {moment().add(7, "days").format("Do MMM YY") +
+                            " to the " +
+                            moment()
+                                .add(product.delivery_date, "days")
+                                .format("Do MMM YY")}{" "}
+                    </p>
                     <div className="mt-auto flex space-x-32 mx-auto">
                         <div className="flex">
                             <button
@@ -120,7 +146,10 @@ export default function ProductShowLayout(props) {
                                 +
                             </button>
                         </div>
-                        <button className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg ">
+                        <button
+                            onClick={() => addToCart(product)}
+                            className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap"
+                        >
                             Add To Cart
                         </button>
                     </div>
