@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { router } from "@inertiajs/react";
 
 const BestSellers = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,6 +26,10 @@ const BestSellers = () => {
             .catch((error) => {
                 console.error("El Problemo: " + error);
             });
+    }
+
+    const navigateToProduct = (id) => {
+      router.visit(route('products.show', id))
     }
 
     useEffect(() => {
@@ -62,7 +67,7 @@ const BestSellers = () => {
                         let productImg = product.images[0];
                         return (
                             <div
-                                key={index}
+                                onClick={() => navigateToProduct(product.id)}
                                 className="relative mr-[2%] min-h-[450px] rounded-md bg-white hover:bg-gray-500/50 group z-20 cursor-pointer overflow-hidden transition-all duration-300"
                                 style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
                             >

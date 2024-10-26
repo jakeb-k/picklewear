@@ -83,15 +83,15 @@ export default function MainLayout({ children }) {
                         </Link>
 
                         <Link href={route("dashboard")}>
-                            <i class="fa-brands fa-x-twitter text-white text-lg hover:text-black"></i>
+                            <i className="fa-brands fa-x-twitter text-white text-lg hover:text-black"></i>
                         </Link>
 
                         <Link href={route("dashboard")}>
-                            <i class="fa-brands fa-facebook-f text-white text-lg hover:text-black"></i>
+                            <i className="fa-brands fa-facebook-f text-white text-lg hover:text-black"></i>
                         </Link>
 
                         <Link href={route("dashboard")}>
-                            <i class="fa-brands fa-tiktok text-white text-lg hover:text-black"></i>
+                            <i className="fa-brands fa-tiktok text-white text-lg hover:text-black"></i>
                         </Link>
                     </div>
                 </div>
