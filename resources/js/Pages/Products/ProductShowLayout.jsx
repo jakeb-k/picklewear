@@ -2,6 +2,7 @@ import { Head } from "@inertiajs/react";
 import moment from "moment";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
+import useCartStore from "@/Stores/useCartStore";
 
 export default function ProductShowLayout(props) {
     const product = props.product;
@@ -14,6 +15,20 @@ export default function ProductShowLayout(props) {
     const [displayImage, setDisplayImage] = useState(images[0]);
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
+
+    const {addProduct, products} = useCartStore(); 
+
+    const addToCart = (product) => {
+        let productData = 
+            {...product,
+                color: selectedColor,
+                size: selectedSize, 
+                quantity: quantity, 
+                image: images[0], 
+                index: products.length
+            }
+        addProduct(productData)
+    }
 
     return (
         <div className="min-h-screen py-24 mx-24">
@@ -56,7 +71,6 @@ export default function ProductShowLayout(props) {
                     <div className="flex flex-wrap w-full mb-4">
                         {colors.map((color, index) => {
                             let hex = tinycolor(color);
-                            console.log(hex.toHexString());
                             return (
                                 <div
                                     onClick={() => setSelectedColor(color)}
@@ -120,7 +134,7 @@ export default function ProductShowLayout(props) {
                                 +
                             </button>
                         </div>
-                        <button className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg ">
+                        <button onClick={() => addToCart(product)}  className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap">
                             Add To Cart
                         </button>
                     </div>

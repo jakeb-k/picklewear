@@ -11,6 +11,7 @@ export default function MainLayout({ children }) {
         query: "",
     });
     const inputRef = useRef(null);
+    const cartRef = useRef(null);
 
     const [isQuerying, setIsQuerying] = useState(false);
 

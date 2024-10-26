@@ -1,31 +1,23 @@
 import { create } from "zustand";
+import { persist } from 'zustand/middleware';
 
-const useCartStore = create((set) => ({
-    products: [],
-  
-    addProduct: (product) =>
-      set((state) => ({
-        products: [...state.products, { ...product, quantity: 1 }],
-      })),
-  
-    removeProduct: (productId) =>
-      set((state) => ({
-        products: state.products.filter((product) => product.id !== productId),
-      })),
-  
-    clearProducts: () =>
-      set(() => ({
-        products: [],
-      })),
-  
-    updateQuantity: (productId, quantity) =>
-      set((state) => ({
-        products: state.products.map((product) =>
-          product.id === productId
-            ? { ...product, quantity: quantity }
-            : product
-        ),
-      })),
-  }));
-  
-  export default useCartStore;
+const useCartStore = create(
+    persist(
+        (set) => ({
+            products: [],
+      
+            setProducts: (products) => set({ products }),
+            addProduct: (product) =>
+                set((state) => ({
+                    products: [...state.products, { ...product }],
+                })),
+        }),
+        {
+            name: 'cart-storage', // Unique name for localStorage key
+            // Optionally configure storage location (default is localStorage)
+            // storage: sessionStorage, // Uncomment to use sessionStorage instead
+        }
+    )
+);
+
+export default useCartStore;

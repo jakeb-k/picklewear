@@ -19,7 +19,6 @@ const BestSellers = () => {
         return axios
             .get(route("home.bestsellers"))
             .then((response) => {
-                console.log(response.data);
                 setProducts(response.data.bestsellers);
                 setLoading(false);
             })
@@ -67,8 +66,9 @@ const BestSellers = () => {
                         let productImg = product.images[0];
                         return (
                             <div
+                                key={index}
                                 onClick={() => navigateToProduct(product.id)}
-                                className="relative mr-[2%] min-h-[450px] rounded-md bg-white hover:bg-gray-500/50 group z-20 cursor-pointer overflow-hidden transition-all duration-300"
+                                className="relative mr-[2%] min-h-[350px] rounded-md bg-white hover:bg-gray-500/50 group z-20 cursor-pointer overflow-hidden transition-all duration-300"
                                 style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
                             >
                                 <div className="absolute inset-0 bg-gray-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
@@ -76,9 +76,9 @@ const BestSellers = () => {
                                     src={productImg.file_path}
                                     className="rounded-md rounded-b-none w-full object-cover"
                                 />
-                                <div className="relative h-full bg-white">
-                                    <p>{product.name}</p>
-                                    <p>{product.price}</p>
+                                <div className="relative h-full bg-white px-2">
+                                    <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
+                                    <p className='text-center pb-2'>${product.price}</p>
                                 </div>
                             </div>
                         );
