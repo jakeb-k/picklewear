@@ -1,31 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { router } from "@inertiajs/react";
 
-const BestSellers = () => {
+const RelatedItems = (props) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const containerRef = useRef(null); // Ref for the container
-    const [products, setProducts] = useState(null);
+    const products = props.relatedItems; 
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function getData() {
-            await getBestsellers();
-        }
-        getData();
-    }, []);
-
-    function getBestsellers() {
-        return axios
-            .get(route("home.bestsellers"))
-            .then((response) => {
-                setProducts(response.data.bestsellers);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("El Problemo: " + error);
-            });
-    }
+    console.log(products); 
 
     const navigateToProduct = (id) => {
       router.visit(route('products.show', id))
@@ -47,7 +29,6 @@ const BestSellers = () => {
         }
     }, [products?.length, loading]);
 
-    if (!loading) {
         return (
             <div
                 className="relative ml-[1%] border"
@@ -86,9 +67,6 @@ const BestSellers = () => {
                 </div>
             </div>
         );
-    } else {
-        return <p>loading</p>;
-    }
 };
 
-export default BestSellers;
+export default RelatedItems;

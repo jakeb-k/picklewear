@@ -3,13 +3,15 @@ import moment from "moment";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
 import useCartStore from "@/Stores/useCartStore";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import RelatedItems from "@/Components/product/RelatedProducts";
 
 export default function ProductShowLayout(props) {
     const product = props.product;
+    const relatedItems = props.relatedItems;
+    console.log(product); 
     const colors = props.product.options
-        .find((option) => option.type == "color")
-        .values.split(".");
+    .find((option) => option.type === "color")?.values?.split(".") || [];
     const { images } = props.product;
     const sizes = ["XS", "S", "M", "L", "XL"];
     const [selectedSize, setSelectedSize] = useState("M");
@@ -26,7 +28,7 @@ export default function ProductShowLayout(props) {
             size: selectedSize,
             quantity: quantity,
             image: images[0],
-            cartItemId:  uuidv4(),
+            cartItemId: uuidv4(),
         };
         addProduct(productData);
     };
@@ -73,7 +75,7 @@ export default function ProductShowLayout(props) {
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
                     <p className="font-bold">Options</p>
                     <div className="flex flex-wrap w-full mb-4">
-                        {colors.map((color, index) => {
+                        {colors.length > 0 && colors.map((color, index) => {
                             let hex = tinycolor(color);
                             return (
                                 <div
@@ -154,6 +156,12 @@ export default function ProductShowLayout(props) {
                         </button>
                     </div>
                 </div>
+            </div>
+            <div className="mt-8 font-oswald py-10">
+                <h2 className="text-2xl text-secondary italic text-left mb-8">
+                    You might also like...
+                </h2>
+                <RelatedItems relatedItems={relatedItems} />
             </div>
         </div>
     );

@@ -32,8 +32,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $related_items = Product::where('type', $product->type)->whereHas('images')->limit(6)->get();
         return Inertia::render('Products/ProductShowLayout', [
             'product' => $product->load(['options', 'images']),
+            'relatedItems' => $related_items->load(['images']), 
         ]); 
         
     }
@@ -52,21 +54,6 @@ class ProductController extends Controller
         });
         return response()->json([
             'bestsellers' => $bestsellers  
-        ]);
-    }
-
-    /**
-     * Get 6 products that share a type with the specified product
-     *
-     * @param Product $product
-     * @return void
-     */
-    public function getRelatedItems(Product $product)
-    {
-        $related_items = Product::where('type', $product->type)->limit(6)->get();
-
-        return response()->json([
-            'relatedItems' => $related_items,
         ]);
     }
 
