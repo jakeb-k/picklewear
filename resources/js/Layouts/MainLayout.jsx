@@ -3,6 +3,7 @@ import Logo from "@/../assets/images/pickleLogo.png";
 import { useState, useRef, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 import Footer from "@/Components/Footer";
+import ShoppingCart from "@/Components/ShoppingCart";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
@@ -16,6 +17,11 @@ export default function MainLayout({ children }) {
     const handleQueryState = () => {
         setIsQuerying(!isQuerying);
     };
+
+    const [cartOpen, setCartOpen] = useState(false)
+    const setCartState = () => {
+        setCartOpen(!cartOpen); 
+    }       
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -133,9 +139,9 @@ export default function MainLayout({ children }) {
                                 <Link href={route("login")}>
                                     <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
-                                <Link href={route("register")}>
+                                <button onClick={() => setCartOpen(true)}>
                                     <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
-                                </Link>
+                                </button>
                             </>
                         )}
                     </div>
@@ -143,6 +149,15 @@ export default function MainLayout({ children }) {
             </div>
             <div>{children}</div>
             <Footer />
+            <CSSTransition
+                in={cartOpen}
+                timeout={300}
+                classNames="fade"
+                unmountOnExit
+            >
+            <ShoppingCart handleCartClose={() => setCartOpen(false)} /> 
+
+            </CSSTransition>
         </div>
     );
 }

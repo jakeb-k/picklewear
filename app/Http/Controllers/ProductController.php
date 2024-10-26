@@ -56,18 +56,4 @@ class ProductController extends Controller
 
     }
 
-    public function addToCart(Product $product)
-    {
-
-    }
-
-    public function updateQuantityInCart(Product $product)
-    {
-
-    }
-
-    public function removeFromCart(Product $product)
-    {
-        
-    }
 }
