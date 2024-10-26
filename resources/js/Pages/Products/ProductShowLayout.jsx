@@ -5,23 +5,28 @@ import tinycolor from "tinycolor2";
 import useCartStore from "@/Stores/useCartStore";
 import { v4 as uuidv4 } from "uuid";
 import RelatedItems from "@/Components/product/RelatedProducts";
+import { CSSTransition } from "react-transition-group";
 
 export default function ProductShowLayout(props) {
     const product = props.product;
     const relatedItems = props.relatedItems;
-    console.log(product); 
-    const colors = props.product.options
-    .find((option) => option.type === "color")?.values?.split(".") || [];
+    console.log(product);
+    const colors =
+        props.product.options
+            .find((option) => option.type === "color")
+            ?.values?.split(".") || [];
     const { images } = props.product;
     const sizes = ["XS", "S", "M", "L", "XL"];
     const [selectedSize, setSelectedSize] = useState("M");
     const [displayImage, setDisplayImage] = useState(images[0]);
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
+    const [showAlert, setShowAlert] = useState(false); 
 
     const { addProduct, products } = useCartStore();
 
     const addToCart = (product) => {
+        setShowAlert(false); 
         let productData = {
             ...product,
             color: selectedColor,
@@ -31,12 +36,35 @@ export default function ProductShowLayout(props) {
             cartItemId: uuidv4(),
         };
         addProduct(productData);
+        setShowAlert(true)
+        setTimeout(() => {
+            setShowAlert(false); 
+        }, 2500);
     };
+
+    const Alert = () => {
+        return(
+            <div className='border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary'>
+                <i class="fa-regular fa-circle-check text-main mt-1"></i>
+                <p className='tracking-wide ml-4 text-main font-oswald'> Your item/s have been added to the cart. </p>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen py-24 mx-24">
             <Head title={product.name} />
+            <CSSTransition
+                in={showAlert}
+                timeout={300}
+                classNames="fade"
+                unmountOnExit
+            >
+                <Alert /> 
+            </CSSTransition>
+            
             <div className="flex mt-20">
+                
                 <div className="flex justify-between items-center w-[47.5%] ">
                     <div className="w-[20%] space-y-8">
                         {images.map((image) => {
@@ -73,46 +101,56 @@ export default function ProductShowLayout(props) {
                         </span>
                     </p>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
-                    <p className="font-bold">Options</p>
-                    <div className="flex flex-wrap w-full mb-4">
-                        {colors.length > 0 && colors.map((color, index) => {
-                            let hex = tinycolor(color);
-                            return (
-                                <div
-                                    onClick={() => setSelectedColor(color)}
-                                    key={index}
-                                    style={{
-                                        backgroundColor: hex.toHexString(),
-                                    }}
-                                    className={`rounded-full mt-4 mr-4 p-2 w-12 h-12 border transition-all border-black duration-150 ease-in-out cursor-pointer ${
-                                        selectedColor == color
-                                            ? "border-2"
-                                            : "opacity-50 hover:opacity-100 "
-                                    }`}
-                                ></div>
-                            );
-                        })}
-                    </div>
-                    <div className="flex flex-wrap w-full mt-4">
-                        <div className="flex">
-                            {sizes.map((size, index) => {
-                                return (
-                                    <div
-                                        onClick={() => setSelectedSize(size)}
-                                        key={index}
-                                        className={`font-bold min-w-8 text-center text-2xl mr-10 cursor-pointer transition-all duration-150 ease-in-out ${
-                                            size == selectedSize
-                                                ? "border-b-2 border-black pb-1 text-black"
-                                                : "border-b-2 border-transparent pb-1 text-gray-500 hover:text-black"
-                                        }`}
-                                    >
-                                        {size}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div className="w-full my-4 border border-gray-400 mx-auto"></div>
+                    {product.options.length > 0 && (
+                        <>
+                            <p className="font-bold">Options</p>
+                            <div className="flex flex-wrap w-full mb-4">
+                                {colors.length > 0 &&
+                                    colors.map((color, index) => {
+                                        let hex = tinycolor(color);
+                                        return (
+                                            <div
+                                                onClick={() =>
+                                                    setSelectedColor(color)
+                                                }
+                                                key={index}
+                                                style={{
+                                                    backgroundColor:
+                                                        hex.toHexString(),
+                                                }}
+                                                className={`rounded-full mt-4 mr-4 p-2 w-12 h-12 border transition-all border-black duration-150 ease-in-out cursor-pointer ${
+                                                    selectedColor == color
+                                                        ? "border-2"
+                                                        : "opacity-50 hover:opacity-100 "
+                                                }`}
+                                            ></div>
+                                        );
+                                    })}
+                            </div>
+                            <div className="flex flex-wrap w-full mt-4">
+                                <div className="flex">
+                                    {sizes.map((size, index) => {
+                                        return (
+                                            <div
+                                                onClick={() =>
+                                                    setSelectedSize(size)
+                                                }
+                                                key={index}
+                                                className={`font-bold min-w-8 text-center text-2xl mr-10 cursor-pointer transition-all duration-150 ease-in-out ${
+                                                    size == selectedSize
+                                                        ? "border-b-2 border-black pb-1 text-black"
+                                                        : "border-b-2 border-transparent pb-1 text-gray-500 hover:text-black"
+                                                }`}
+                                            >
+                                                {size}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className="w-full my-4 border border-gray-400 mx-auto"></div>
+                        </>
+                    )}
                     <p>{product.description}</p>
                     <p className="italic my-4">
                         {" "}
