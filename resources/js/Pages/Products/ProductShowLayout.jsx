@@ -17,7 +17,7 @@ export default function ProductShowLayout(props) {
 
     return (
         <div className="min-h-screen py-24 mx-24">
-            <Head title="" />
+            <Head title={product.name} />
             <div className="flex mt-20">
                 <div className="w-[10%] space-y-8 ">
                     {images.map((image) => {
