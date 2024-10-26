@@ -9,16 +9,17 @@ export default function ProductShowLayout(props) {
         .values.split(".");
     const { images } = props.product;
     const sizes = ["XS", "S", "M", "L", "XL"];
-    const [selectedSize, setSelectedSize] = useState(null);
+    const [selectedSize, setSelectedSize] = useState("M");
     const [displayImage, setDisplayImage] = useState(images[0]);
-    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedColor, setSelectedColor] = useState(colors[0]);
+    const [quantity, setQuantity] = useState(1);
 
     console.log(colors);
 
     return (
         <div className="min-h-screen py-24 mx-24">
             <Head title="" />
-            <div className="flex mt-20 items-center">
+            <div className="flex mt-20">
                 <div className="w-[10%] space-y-8 ">
                     {images.map((image) => {
                         return (
@@ -41,7 +42,7 @@ export default function ProductShowLayout(props) {
                         className="w-full min-h-[450px] rounded-md object-contain"
                     />
                 </div>
-                <div className="w-[45%] ml-auto">
+                <div className="w-[45%] ml-auto flex flex-col justify-start">
                     <p className="text-xl font-oswald">{product.name}</p>
                     <p className="mt-6">
                         <span className="text-lg line-through">
@@ -52,8 +53,8 @@ export default function ProductShowLayout(props) {
                         </span>
                     </p>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
-                    <p className="font-bold">Color </p>
-                    <div className="flex flex-wrap w-full">
+                    <p className="font-bold">Options</p>
+                    <div className="flex flex-wrap w-full mb-4">
                         {colors.map((color, index) => {
                             let hex = tinycolor(color);
                             console.log(hex.toHexString());
@@ -73,8 +74,7 @@ export default function ProductShowLayout(props) {
                             );
                         })}
                     </div>
-                    <p className="font-bold mt-6 mb-4">Size </p>
-                    <div className="flex flex-wrap w-full">
+                    <div className="flex flex-wrap w-full mt-4">
                         <div className="flex">
                             {sizes.map((size, index) => {
                                 return (
@@ -94,8 +94,36 @@ export default function ProductShowLayout(props) {
                         </div>
                     </div>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
-                    <p className="text-xl text-black mb-2"> Description</p>
                     <p>{product.description}</p>
+                    <div className="mt-auto flex space-x-32 mx-auto">
+                        <div className="flex">
+                            <button
+                                onClick={() => {
+                                    if (quantity != 0) {
+                                        setQuantity(quantity - 1);
+                                    }
+                                }}
+                                className="rounded-l-xl border-2 border-gray-700 p-1 px-2 text-2xl hover:bg-gray-700 hover:border-main w-10 hover:border-2 duration-150 transition-color ease-in-out hover:text-main"
+                            >
+                                -
+                            </button>
+                            <p className="border-y-2 border-black bg-white p-2 px-6 text-2xl w-16 text-center">
+                                {quantity}
+                            </p>
+                            <div></div>
+                            <button
+                                onClick={() => {
+                                    setQuantity(quantity + 1);
+                                }}
+                                className="rounded-r-xl border-2 border-gray-700 p-1 px-2 text-2xl hover:bg-gray-700 hover:border-main w-10 hover:border-2 duration-150 transition-color ease-in-out hover:text-main"
+                            >
+                                +
+                            </button>
+                        </div>
+                        <button className="hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 bg-main rounded-lg ">
+                            Add To Cart
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
