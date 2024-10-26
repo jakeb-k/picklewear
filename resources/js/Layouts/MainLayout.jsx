@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
 import Logo from "@/../assets/images/pickleLogo.png";
 import { useState, useRef, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
@@ -19,10 +19,7 @@ export default function MainLayout({ children }) {
         setIsQuerying(!isQuerying);
     };
 
-    const [cartOpen, setCartOpen] = useState(false)
-    const setCartState = () => {
-        setCartOpen(!cartOpen); 
-    }       
+    const [cartOpen, setCartOpen] = useState(false)  
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -33,6 +30,10 @@ export default function MainLayout({ children }) {
             inputRef.current.focus();
         }
     }, [data.query]);
+
+    const routeToHome = () => {
+        router.visit(route('index'))
+    }
 
     //add carusel for query input when doing the top carusel
 
@@ -103,7 +104,7 @@ export default function MainLayout({ children }) {
                     </div>
                 </div>
                 <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
-                    <div className="flex flex-row w-fit justify-end space-x-2 pl-12 items-center">
+                    <div onClick={() => routeToHome()} className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center">
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
                             <p className="text-xl font-bevan tracking-wider">

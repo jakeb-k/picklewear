@@ -1,6 +1,7 @@
 import useCartStore from "@/Stores/useCartStore";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState, forwardRef } from "react";
+import tinycolor from "tinycolor2";
 
 const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
     const { user } = usePage().props.auth;
@@ -8,21 +9,21 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
     const [loading, setLoading] = useState(true);
     const { products, setProducts } = useCartStore();
 
-    const updateQuantity = (itemIndex, quantity) => {
+    // Function to update the quantity of a product by cartItemId
+    const updateQuantity = (cartItemId, quantity) => {
         setCartItems((prevCartItems) => {
-            const updatedCartItems = [...prevCartItems]; // Create a shallow copy of the array
-            updatedCartItems[itemIndex] = {
-                ...updatedCartItems[itemIndex],
-                quantity: quantity,
-            };
+            const updatedCartItems = prevCartItems.map((item) =>
+                item.cartItemId === cartItemId ? { ...item, quantity } : item
+            );
             return updatedCartItems;
         });
-    };
-    const removeItem = (itemIndex) => {
+    }
+
+    const removeItem = (cartItemId) => {
         setLoading(true);
         setCartItems((prevCartItems) => {
             const updatedCartItems = prevCartItems.filter(
-                (item, index) => item.index !== itemIndex
+                (item) => item.cartItemId !== cartItemId
             );
             return updatedCartItems;
         });
@@ -37,10 +38,13 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
         setCartItems(products);
         setLoading(false);
     }, []);
+    useEffect(() => {
+        setProducts(cartItems);
+    }, [cartItems])
     return (
         <div ref={ref} className="fixed flex w-full min-h-screen z-40">
             <div className="w-2/3 min-h-screen  bg-black/50 "></div>
-            <div className="w-1/3 min-h-screen py-10 bg-gray-100 min-w-[450px]">
+            <div className="w-1/3 min-h-screen relative py-10 bg-gray-100 min-w-[450px]">
                 <div className="flex justify-between items-center text-3xl ml-10">
                     <p>{user ? user.first_name + "'s Cart " : "Your Cart"} </p>
                     <button
@@ -51,8 +55,12 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                     </button>
                 </div>
                 {!loading && cartItems.length > 0 ? (
-                    <div id="show-scroll" className="max-h-[70%] px-8 w-full overflow-y-scroll overflow-x-hidden">
+                    <div
+                        id="show-scroll"
+                        className="max-h-[550px] px-8 w-full overflow-y-scroll overflow-x-hidden"
+                    >
                         {cartItems.map((item, index) => {
+                            let hex = tinycolor(item.color);
                             return (
                                 <div
                                     key={index}
@@ -61,17 +69,27 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                                     <div className=" py-4 flex justify-between items-center">
                                         <img
                                             className="shadow-lg rounded-xl w-[37.5%] h-full border-2 border-main"
-                                            src={item.image.file_path}
+                                            src={item.image?.file_path ?? ''}
                                         />
                                         <div className="w-[57.5%] space-y-6">
                                             <p>{item.name}</p>
-                                            <p>${item.price}</p>
+                                            <div className='flex space-x-6 items-center'>
+                                                <p>${item.price}</p>
+                                                <p>{item.size}</p>
+                                                <div
+                                                    style={{
+                                                        backgroundColor:
+                                                            hex.toHexString(),
+                                                    }}
+                                                    className={`rounded-full  p-2 w-4 h-4 border transition-all border-black duration-150 ease-in-out cursor-pointer`}
+                                                ></div>
+                                            </div>
                                             <div className="flex">
                                                 <button
                                                     onClick={() => {
                                                         if (item.quantity > 1) {
                                                             updateQuantity(
-                                                                item.index,
+                                                                item.cartItemId,
                                                                 item.quantity -
                                                                     1
                                                             );
@@ -88,7 +106,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                                                 <button
                                                     onClick={() => {
                                                         updateQuantity(
-                                                            item.index,
+                                                            item.cartItemId,
                                                             item.quantity + 1
                                                         );
                                                     }}
@@ -102,7 +120,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                                     <div className="absolute top-[35%] -right-2">
                                         <button
                                             onClick={() => {
-                                                removeItem(item.index);
+                                                removeItem(item.cartItemId);
                                             }}
                                             className="border-2 rounded-full border-black px-2 py-0 h-5 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out relative"
                                         >
@@ -122,9 +140,13 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                     </div>
                 )}
 
-                <button className="fixed bottom-8 left-[84%] transform -translate-x-1/2 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
-                    Checkout
-                </button>
+                {cartItems.length > 0 && (
+                    <div className='w-full flex justify-center'>
+                        <button className="absolute bottom-4 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
+                            Checkout
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
