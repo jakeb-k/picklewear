@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import moment from "moment";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
 
@@ -13,8 +14,6 @@ export default function ProductShowLayout(props) {
     const [displayImage, setDisplayImage] = useState(images[0]);
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
-
-    console.log(colors);
 
     return (
         <div className="min-h-screen py-24 mx-24">
@@ -43,7 +42,7 @@ export default function ProductShowLayout(props) {
                     />
                 </div>
                 <div className="w-[45%] ml-auto flex flex-col justify-start">
-                    <p className="text-xl font-oswald">{product.name}</p>
+                    <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
                         <span className="text-lg line-through">
                             ${(product.price + product.price * 0.2).toFixed(2)}{" "}
@@ -95,6 +94,7 @@ export default function ProductShowLayout(props) {
                     </div>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
                     <p>{product.description}</p>
+                    <p className='italic my-4'> Will arrive between the {moment().add(7 , 'days').format('Do MMM YY') + ' to the ' + moment().add(product.delivery_date , 'days').format('Do MMM YY')} </p>
                     <div className="mt-auto flex space-x-32 mx-auto">
                         <div className="flex">
                             <button
@@ -107,7 +107,7 @@ export default function ProductShowLayout(props) {
                             >
                                 -
                             </button>
-                            <p className="border-y-2 border-black bg-white p-2 px-6 text-2xl w-16 text-center">
+                            <p className="border-y-2 flex justify-center border-black bg-white p-2 px-6 text-2xl w-16 text-center">
                                 {quantity}
                             </p>
                             <div></div>
@@ -120,7 +120,7 @@ export default function ProductShowLayout(props) {
                                 +
                             </button>
                         </div>
-                        <button className="hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 bg-main rounded-lg ">
+                        <button className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg ">
                             Add To Cart
                         </button>
                     </div>
