@@ -38,6 +38,11 @@ class ProductController extends Controller
         
     }
 
+    /**
+     * Get the bestsellers of the store to display on the home page
+     *
+     * @return void
+     */
     public function getBestsellers() {
         $bestsellers = Product::where('type', 'Clothing')->orderBy('price', 'DESC')->limit(10)->get();
         $bestsellers->each(function($product) {
@@ -48,7 +53,21 @@ class ProductController extends Controller
         return response()->json([
             'bestsellers' => $bestsellers  
         ]);
+    }
 
+    /**
+     * Get 6 products that share a type with the specified product
+     *
+     * @param Product $product
+     * @return void
+     */
+    public function getRelatedItems(Product $product)
+    {
+        $related_items = Product::where('type', $product->type)->limit(6)->get();
+
+        return response()->json([
+            'relatedItems' => $related_items,
+        ]);
     }
 
     public function search(String $query)
