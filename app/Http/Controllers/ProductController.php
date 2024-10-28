@@ -32,12 +32,19 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $related_items = Product::where('type', $product->type)->whereHas('images')->limit(6)->get();
         return Inertia::render('Products/ProductShowLayout', [
             'product' => $product->load(['options', 'images']),
+            'relatedItems' => $related_items->load(['images']), 
         ]); 
         
     }
 
+    /**
+     * Get the bestsellers of the store to display on the home page
+     *
+     * @return void
+     */
     public function getBestsellers() {
         $bestsellers = Product::where('type', 'Clothing')->orderBy('price', 'DESC')->limit(10)->get();
         $bestsellers->each(function($product) {
@@ -48,7 +55,6 @@ class ProductController extends Controller
         return response()->json([
             'bestsellers' => $bestsellers  
         ]);
-
     }
 
     public function search(String $query)
