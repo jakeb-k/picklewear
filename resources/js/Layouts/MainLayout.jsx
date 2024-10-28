@@ -4,12 +4,15 @@ import { useState, useRef, useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 import Footer from "@/Components/Footer";
 import ShoppingCart from "@/Components/ShoppingCart";
+import SearchResults from "@/Components/home/SearchResults";
+import axios from "axios";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors, reset } = useForm({
         query: "",
     });
+    const [products, setProducts] = useState([]);
     const inputRef = useRef(null);
     const cartRef = useRef(null);
 
@@ -19,11 +22,23 @@ export default function MainLayout({ children }) {
         setIsQuerying(!isQuerying);
     };
 
-    const [cartOpen, setCartOpen] = useState(false)  
+    const [cartOpen, setCartOpen] = useState(false);
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
+        searchProducts(e.target.value);
     };
+
+    const searchProducts = (query) => {
+        axios
+            .get(route("products.search", query ))
+            .then((response) => {
+                setProducts(response.data.products)
+            })
+            .catch((error) => {
+                console.error(error); 
+            });
+    }
 
     useEffect(() => {
         if (inputRef.current) {
@@ -32,8 +47,8 @@ export default function MainLayout({ children }) {
     }, [data.query]);
 
     const routeToHome = () => {
-        router.visit(route('index'))
-    }
+        router.visit(route("index"));
+    };
 
     //add carusel for query input when doing the top carusel
 
@@ -61,6 +76,14 @@ export default function MainLayout({ children }) {
                         className="fa-solid fa-x text-2xl cursor-pointer"
                     ></i>
                 </div>
+                <CSSTransition
+                    in={data.query != ""}
+                    timeout={300}
+                    classNames="fade"
+                    unmountOnExit
+                >
+                    <SearchResults products={products} />
+                </CSSTransition>
             </div>
         );
     };
@@ -104,7 +127,10 @@ export default function MainLayout({ children }) {
                     </div>
                 </div>
                 <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
-                    <div onClick={() => routeToHome()} className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center">
+                    <div
+                        onClick={() => routeToHome()}
+                        className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center"
+                    >
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
                             <p className="text-xl font-bevan tracking-wider">
@@ -157,8 +183,7 @@ export default function MainLayout({ children }) {
                 classNames="fade"
                 unmountOnExit
             >
-            <ShoppingCart handleCartClose={() => setCartOpen(false)} /> 
-
+                <ShoppingCart handleCartClose={() => setCartOpen(false)} />
             </CSSTransition>
         </div>
     );
