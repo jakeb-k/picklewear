@@ -26,19 +26,7 @@ export default function MainLayout({ children }) {
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
-        searchProducts(e.target.value);
     };
-
-    const searchProducts = (query) => {
-        axios
-            .get(route("products.search", query ))
-            .then((response) => {
-                setProducts(response.data.products)
-            })
-            .catch((error) => {
-                console.error(error); 
-            });
-    }
 
     useEffect(() => {
         if (inputRef.current) {
@@ -82,7 +70,7 @@ export default function MainLayout({ children }) {
                     classNames="fade"
                     unmountOnExit
                 >
-                    <SearchResults products={products} />
+                    <SearchResults query={data.query} />
                 </CSSTransition>
             </div>
         );
