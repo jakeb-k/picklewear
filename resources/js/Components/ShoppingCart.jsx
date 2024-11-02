@@ -1,5 +1,6 @@
 import useCartStore from "@/Stores/useCartStore";
 import { usePage } from "@inertiajs/react";
+import axios from "axios";
 import { useEffect, useState, forwardRef } from "react";
 import tinycolor from "tinycolor2";
 
@@ -40,7 +41,22 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
     }, []);
     useEffect(() => {
         setProducts(cartItems);
-    }, [cartItems])
+    }, [cartItems]);
+
+    function routeToCheckout() {
+        axios.post(route('checkout'), { cart: cartItems }, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => {
+            const checkoutUrl = response.data.url;
+            // Redirect the browser to the Stripe checkout page
+            window.location.href = checkoutUrl;
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
     return (
         <div ref={ref} className="fixed flex w-full min-h-screen z-40">
             <div className="w-2/3 min-h-screen  bg-black/50 "></div>
@@ -142,7 +158,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
 
                 {cartItems.length > 0 && (
                     <div className='w-full flex justify-center'>
-                        <button className="absolute bottom-4 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
+                        <button onClick={() => routeToCheckout()} className="absolute bottom-4 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
                             Checkout
                         </button>
                     </div>

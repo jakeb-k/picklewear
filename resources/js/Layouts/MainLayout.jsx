@@ -12,9 +12,7 @@ export default function MainLayout({ children }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         query: "",
     });
-    const [products, setProducts] = useState([]);
     const inputRef = useRef(null);
-    const cartRef = useRef(null);
 
     const [isQuerying, setIsQuerying] = useState(false);
 
@@ -37,6 +35,8 @@ export default function MainLayout({ children }) {
     const routeToHome = () => {
         router.visit(route("index"));
     };
+
+
 
     //add carusel for query input when doing the top carusel
 

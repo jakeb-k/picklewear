@@ -7,8 +7,6 @@ const RelatedItems = (props) => {
     const products = props.relatedItems; 
     const [loading, setLoading] = useState(true);
 
-    console.log(products); 
-
     const navigateToProduct = (id) => {
       router.visit(route('products.show', id))
     }

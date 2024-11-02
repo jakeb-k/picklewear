@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
-use App\Models\Product; 
+use Stripe\Checkout\Session; 
+use Stripe\Stripe;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StripeController extends Controller
@@ -41,7 +42,7 @@ class StripeController extends Controller
                     'product_data' => [
                         'name' => $item['name'],
                         'description' => "<strong>{$item['color']} {$item['size']}</strong><br>{$item['description']}",
-                        'image'=> $item['image']['file_path'] ?? null,
+                        'images'=> [$item['image']['file_path'] ]?? null,
 
                     ],
                     'unit_amount' => intval($item['price'] * 100), // Convert to cents
@@ -65,49 +66,12 @@ class StripeController extends Controller
         // Set Stripe API key
         Stripe::setApiKey(config('stripe.sk'));
 
-        // // Determine if the user is authenticated or a guest
-        // if (Auth::check()) {
-        //     $user = Auth::user();
-
-        //     // Ensure the user has a Stripe customer record
-        //     if (!$user->hasStripeId()) {
-        //         $user->createAsStripeCustomer();
-        //     }
-
-        //     $stripeCustomerId = $user->stripe_id;
-        // } else {
-        //     // Guest checkout: validate email and name
-        //     if (!$email || !$name) {
-        //         return response()->json(['error' => 'Guest checkout requires name and email.'], 422);
-        //     }
-
-        //     // Create or retrieve a Customer record
-        //     $customer = Customer::firstOrCreate(
-        //         ['email' => $email],
-        //         ['name' => $name]
-        //     );
-
-        //     // Ensure the customer has a Stripe customer record
-        //     if (!$customer->hasStripeId()) {
-        //         $customer->createAsStripeCustomer();
-        //     }
-
-        //     $stripeCustomerId = $customer->stripe_id;
-        // }
-
-        // Create Stripe Checkout Session
-        $session = StripeSession::create([
+        $session = Session::create([
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
-            'customer_creation'=> 'always', 
-            'success_url' => route('success', [], true) . "?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => route('checkout', [], true),
-            'metadata' => [
-                'cart' => json_encode($products), // Store cart details in metadata
-                'user_id' => Auth::check() ? Auth::id() : null,
-                'customer_id' => Auth::check() ? null : $customer->id ?? null,
-            ],
+            'success_url' => route('success'),
+            'cancel_url' => route('index'),
         ]);
 
         // Create Order record
@@ -126,8 +90,9 @@ class StripeController extends Controller
 
         // $order->save();
 
-        // Redirect to Stripe Checkout
-        return redirect($session->url);
+                
+        // Return the session URL to the frontend
+        return response()->json(['url' => $session->url]);
     }
 
 
@@ -202,4 +167,5 @@ class StripeController extends Controller
 
         return response('');
     }
+
 }
