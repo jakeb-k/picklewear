@@ -36,12 +36,14 @@ class StripeController extends Controller
         $products = [];
 
         foreach ($cart as $item) {
+            $description = "{$item['description']}";
+            $color = ucfirst($item['color']); 
             $lineItems[] = [
                 'price_data' => [
                     'currency' => 'aud',
                     'product_data' => [
-                        'name' => $item['name'],
-                        'description' => "<strong>{$item['color']} {$item['size']}</strong><br>{$item['description']}",
+                        'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
+                        'description' => $description,
                         'images'=> [$item['image']['file_path'] ]?? null,
 
                     ],
@@ -67,13 +69,12 @@ class StripeController extends Controller
         Stripe::setApiKey(config('stripe.sk'));
 
         $session = Session::create([
-            'payment_method_types' => ['card'],
+            'payment_method_types' => ['card','zip'],
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => route('success'),
             'cancel_url' => route('index'),
         ]);
-
         // Create Order record
         // $order = new Order();
         // $order->products = json_encode($products); // Store as JSON
