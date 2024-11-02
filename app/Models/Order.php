@@ -42,4 +42,9 @@ class Order extends Model
                     ->withPivot('quantity') 
                     ->withTimestamps(); 
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }
