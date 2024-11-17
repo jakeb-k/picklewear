@@ -5,16 +5,66 @@ import { CSSTransition } from "react-transition-group";
 import Footer from "@/Components/Footer";
 import ShoppingCart from "@/Components/ShoppingCart";
 import SearchResults from "@/Components/home/SearchResults";
-import axios from "axios";
+import NavigationMenu from "@/Components/home/NavigationMenu";
+
+const menuOptions = {
+    mens: [
+        "T-Shirts",
+        "Polos",
+        "Singlets",
+        "Visors & Hats",
+        "Shorts",
+        "Track Pants",
+        "Hoodies",
+        "Button Downs", 
+        "Zips"
+    ],
+    womens: [
+        "Dresses",
+        "Tank Tops",
+        "Leggings",
+        "Sleeveless",
+        "Visors & Hats",
+        "Sun Shirts",
+        "Skorts",
+        "Headbands",
+        "Sweat Shirts"
+    ],
+    kids: [
+        "Polos", 
+        "T-Shirts",
+        "Long-Sleeve Shirts",
+        "Shorts",
+        "Skorts",
+        "Leggings",
+        "Track Pants",
+        "Hoodies",
+        "Jackets",
+        "Socks",
+        "Sun Hats",
+        "Visors",
+        "Headbands",
+        "Wristbands"
+    ],
+    gear: [
+        "T-Shirts",
+        "Polos",
+        "Singlets",
+        "Hats",
+        "Sunglasses",
+        "Shorts",
+        "Socks",
+        "Hoodies",
+        "Accessories",
+    ],
+};
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData } = useForm({
         query: "",
     });
-    const [products, setProducts] = useState([]);
     const inputRef = useRef(null);
-    const cartRef = useRef(null);
 
     const [isQuerying, setIsQuerying] = useState(false);
 
@@ -23,6 +73,11 @@ export default function MainLayout({ children }) {
     };
 
     const [cartOpen, setCartOpen] = useState(false);
+
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuOptions, setMenuOptions] = useState([]); 
+
+    
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -114,23 +169,25 @@ export default function MainLayout({ children }) {
                         </Link>
                     </div>
                 </div>
-                <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
-                    <div
-                        onClick={() => routeToHome()}
-                        className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center"
-                    >
-                        <img src={Logo} className="w-12 h-auto" />
-                        <div>
-                            <p className="text-xl font-bevan tracking-wider">
-                                Picklewear
-                            </p>
+                <div className=" p-1 flex flex-row justify-between items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
+                    <div className="flex flex-row ml-12 space-x-24">
+                        <div
+                            onClick={() => routeToHome()}
+                            className="flex cursor-pointer flex-row w-fit justify-end space-x-2  items-center"
+                        >
+                            <img src={Logo} className="w-12 h-auto" />
+                            <div>
+                                <p className="text-xl font-bevan tracking-wider">
+                                    Picklewear
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-row w-fit space-x-16 items-center text-lg">
-                        <div>Mens</div>
-                        <div>Womens</div>
-                        <div>Children</div>
-                        <div>Gear</div>
+                        <div className="flex flex-row w-fit space-x-16 items-center text-2xl">
+                            <div>Mens</div>
+                            <div>Womens</div>
+                            <div>Kids</div>
+                            <div>Gear</div>
+                        </div>
                     </div>
                     <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
@@ -173,6 +230,15 @@ export default function MainLayout({ children }) {
             >
                 <ShoppingCart handleCartClose={() => setCartOpen(false)} />
             </CSSTransition>
+            <CSSTransition
+                in={menuOpen}
+                timeout={300}
+                classNames="fade"
+                unmountOnExit
+            >
+                <ShoppingCart handleCartClose={() => setMenuOpen(false)} />
+            </CSSTransition>
+            
         </div>
     );
 }
