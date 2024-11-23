@@ -10,7 +10,6 @@ import { CSSTransition } from "react-transition-group";
 export default function ProductShowLayout(props) {
     const product = props.product;
     const relatedItems = props.relatedItems;
-    console.log(product);
     const colors =
         props.product.options
             .find((option) => option.type === "color")

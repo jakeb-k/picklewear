@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Logo from "@/../assets/images/pickleLogo.png";
+import ZipLogo from "@/../assets/images/icons/zip.svg";
 
 export default function Footer() {
     const [email, setEmail] = useState("");
@@ -120,16 +121,16 @@ export default function Footer() {
                 </div>
             </div>
             <div className="flex flex-row-reverse justify-between px-12 items-center mt-8 -mb-2">
-                <div className="flex space-x-4 text-3xl border-[3px] border-main p-3 pt-4 relative">
+                <div className="flex space-x-4 text-3xl border-[3px] border-main p-3 pt- relative items-center">
                     <i className="fa-brands fa-cc-visa"></i>
 
                     <i className="fa-brands fa-cc-mastercard"></i>
 
                     <i className="fa-brands fa-cc-amex"></i>
 
-                    <i className="fa-brands fa-cc-discover"></i>
+                    <i class="fa-brands fa-cc-jcb"></i>
 
-                    <i className="fa-brands fa-cc-paypal"></i>
+                    <img className='w-[42px] h-[42px]' src={ZipLogo} /> 
 
                     <i className="fa-brands fa-apple-pay"></i>
 

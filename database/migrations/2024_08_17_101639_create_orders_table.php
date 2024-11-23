@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('session_id')->nullable(); 
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('customer_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
