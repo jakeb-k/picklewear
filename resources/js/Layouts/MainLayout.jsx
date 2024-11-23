@@ -7,57 +7,6 @@ import ShoppingCart from "@/Components/ShoppingCart";
 import SearchResults from "@/Components/home/SearchResults";
 import NavigationMenu from "@/Components/home/NavigationMenu";
 
-const menuOptions = {
-    mens: [
-        "T-Shirts",
-        "Polos",
-        "Singlets",
-        "Visors & Hats",
-        "Shorts",
-        "Track Pants",
-        "Hoodies",
-        "Button Downs", 
-        "Zips"
-    ],
-    womens: [
-        "Dresses",
-        "Tank Tops",
-        "Leggings",
-        "Sleeveless",
-        "Visors & Hats",
-        "Sun Shirts",
-        "Skorts",
-        "Headbands",
-        "Sweat Shirts"
-    ],
-    kids: [
-        "Polos", 
-        "T-Shirts",
-        "Long-Sleeve Shirts",
-        "Shorts",
-        "Skorts",
-        "Leggings",
-        "Track Pants",
-        "Hoodies",
-        "Jackets",
-        "Socks",
-        "Sun Hats",
-        "Visors",
-        "Headbands",
-        "Wristbands"
-    ],
-    gear: [
-        "T-Shirts",
-        "Polos",
-        "Singlets",
-        "Hats",
-        "Sunglasses",
-        "Shorts",
-        "Socks",
-        "Hoodies",
-        "Accessories",
-    ],
-};
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
@@ -74,7 +23,7 @@ export default function MainLayout({ children }) {
 
     const [cartOpen, setCartOpen] = useState(false);
 
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(true);
     const [menuOptions, setMenuOptions] = useState([]); 
 
     
@@ -182,7 +131,7 @@ export default function MainLayout({ children }) {
                                 </p>
                             </div>
                         </div>
-                        <div className="flex flex-row w-fit space-x-16 items-center text-2xl">
+                        <div onMouseEnter={() => setMenuOpen(true)} className="flex flex-row w-fit space-x-16 items-center text-2xl">
                             <div>Mens</div>
                             <div>Womens</div>
                             <div>Kids</div>
@@ -219,6 +168,14 @@ export default function MainLayout({ children }) {
                         )}
                     </div>
                 </div>
+                <CSSTransition
+                    in={menuOpen}
+                    timeout={300}
+                    classNames="fade"
+                    unmountOnExit
+                >
+                    <NavigationMenu type={'mens'} />
+                </CSSTransition>
             </div>
             <div>{children}</div>
             <Footer />
@@ -229,14 +186,6 @@ export default function MainLayout({ children }) {
                 unmountOnExit
             >
                 <ShoppingCart handleCartClose={() => setCartOpen(false)} />
-            </CSSTransition>
-            <CSSTransition
-                in={menuOpen}
-                timeout={300}
-                classNames="fade"
-                unmountOnExit
-            >
-                <ShoppingCart handleCartClose={() => setMenuOpen(false)} />
             </CSSTransition>
             
         </div>
