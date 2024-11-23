@@ -76,12 +76,12 @@ class StripeController extends Controller
             'cancel_url' => route('index'),
         ]);
         // Create Order record
-        // $order = new Order();
-        // $order->products = json_encode($products); // Store as JSON
-        // $order->status = 'unpaid';
-        // $order->total = $total;
-        // $order->session_id = $session->id;
-        // $order->sent = false;
+        $order = new Order();
+        $order->products = json_encode($products); // Store as JSON
+        $order->status = 'unpaid';
+        $order->total = $total;
+        $order->session_id = $session->id;
+        $order->sent = false;
 
         // if (Auth::check()) {
         //     $order->user_id = Auth::id();
@@ -89,7 +89,7 @@ class StripeController extends Controller
         //     $order->customer_id = $customer->id;
         // }
 
-        // $order->save();
+        $order->save();
 
                 
         // Return the session URL to the frontend

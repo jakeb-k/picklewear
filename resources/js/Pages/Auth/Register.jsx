@@ -16,9 +16,14 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-
+    
         post(route("register"), {
             onFinish: () => reset("password", "password_confirmation"),
+            onError: (errors) => {
+                console.error("Validation errors:", errors);
+                // Optionally display errors to the user
+                // For example, set them in a state or toast notification
+            },
         });
     };
 
@@ -30,7 +35,10 @@ export default function Register() {
                 <form onSubmit={submit}>
                     <div className="flex justify-between">
                         <div className='w-[47.5%]'>
-                            <InputLabel htmlFor="first_name" value="First Name" isRequired={true}/>
+                            <div className='flex flex-row relative'>
+                                <InputLabel htmlFor="first_name" value="First Name"/>
+                                <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                            </div>
 
                             <TextInput
                                 id="first_name"
@@ -51,7 +59,10 @@ export default function Register() {
                             />
                         </div>
                         <div className='w-[47.5%]'>
-                            <InputLabel htmlFor="last_name" value="Last Name" isRequired={true}/>
+                            <div className='flex flex-row relative'>
+                                <InputLabel htmlFor="last_name" value="Last Name"/>
+                                <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                            </div>
 
                             <TextInput
                                 id="last_name"
@@ -73,14 +84,16 @@ export default function Register() {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <InputLabel htmlFor="mobile" value="Mobile" isRequired={true}/>
+                        <div className='flex flex-row relative'>
+                            <InputLabel htmlFor="mobile" value="Mobile"/>
+                            <span className='text-red-400 text-2xl absolute left-12 top-0 ml-2'>*</span>
+                        </div>
                         <TextInput
                             id="mobile"
                             type="text"
                             name="mobile"
                             value={data.mobile}
                             className="mt-1 block w-full"
-                            autoComplete="username"
                             onChange={(e) => setData("mobile", e.target.value)}
                             required
                         />
@@ -105,7 +118,10 @@ export default function Register() {
                     </div>
 
                     <div className="mt-4">
-                        <InputLabel htmlFor="password" value="Password" isRequired={true} />
+                        <div className='flex flex-row relative'>
+                            <InputLabel htmlFor="password" value="Password" />
+                            <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                        </div>
 
                         <TextInput
                             id="password"
@@ -127,11 +143,10 @@ export default function Register() {
                     </div>
 
                     <div className="mt-4">
-                        <InputLabel
-                            htmlFor="password_confirmation"
-                            value="Confirm Password"
-                            isRequired={true}
-                        />
+                        <div className='flex flex-row relative'>
+                            <InputLabel htmlFor="password_confirmation" value="Password Confirmation" />
+                            <span className='text-red-400 text-2xl absolute left-36 top-0 ml-2'>*</span>
+                        </div>
 
                         <TextInput
                             id="password_confirmation"
