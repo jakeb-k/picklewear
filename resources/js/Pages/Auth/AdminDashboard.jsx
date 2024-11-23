@@ -27,15 +27,15 @@ export default function AdminDashboard(props) {
                     Orders
                 </button>
             </div>
-            <Head title="admin" />
+            <Head title="Admin" />
             {tab == "products" ? (
-                <>
+                <div className='py-10'>
                     <ProductsTable products={props.products} />
-                </>
+                </div>
             ) : (
-                <>
+                <div className='my-10 w-fit mx-auto min-h-[100vh]'>
                     <OrdersTable orders={props.orders} />
-                </>
+                </div>
             )}
         </div>
     );
