@@ -5,11 +5,11 @@ import { CSSTransition } from "react-transition-group";
 import Footer from "@/Components/Footer";
 import ShoppingCart from "@/Components/ShoppingCart";
 import SearchResults from "@/Components/home/SearchResults";
-import axios from "axios";
+import NavigationMenu from "@/Components/home/NavigationMenu";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData } = useForm({
         query: "",
     });
     const inputRef = useRef(null);
@@ -21,6 +21,9 @@ export default function MainLayout({ children }) {
     };
 
     const [cartOpen, setCartOpen] = useState(false);
+
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuType, setMenuType] = useState("");
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -85,7 +88,13 @@ export default function MainLayout({ children }) {
             >
                 <SearchBar />
             </CSSTransition>
-            <div className="fixed w-full z-30">
+            <div
+                onMouseLeave={() => {
+                    setMenuType("");
+                    setMenuOpen(false);
+                }}
+                className="fixed w-full z-30"
+            >
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
                         FREE SHIPPING STOREWIDE
@@ -114,23 +123,56 @@ export default function MainLayout({ children }) {
                         </Link>
                     </div>
                 </div>
-                <div className=" p-1 flex flex-row justify-start items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
-                    <div
-                        onClick={() => routeToHome()}
-                        className="flex cursor-pointer flex-row w-fit justify-end space-x-2 pl-12 items-center"
-                    >
-                        <img src={Logo} className="w-12 h-auto" />
-                        <div>
-                            <p className="text-xl font-bevan tracking-wider">
-                                Picklewear
-                            </p>
+                <div className=" p-1 flex flex-row justify-between items-center w-full mx-auto bg-secondary text-main font-oswald space-x-16">
+                    <div className="flex flex-row ml-12 space-x-24">
+                        <div
+                            onClick={() => routeToHome()}
+                            className="flex cursor-pointer flex-row w-fit justify-end space-x-2  items-center"
+                        >
+                            <img src={Logo} className="w-12 h-auto" />
+                            <div>
+                                <p className="text-xl font-bevan tracking-wider">
+                                    Picklewear
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-row w-fit space-x-16 items-center text-lg">
-                        <div>Mens</div>
-                        <div>Womens</div>
-                        <div>Children</div>
-                        <div>Gear</div>
+                        <div
+                            onMouseEnter={() => setMenuOpen(true)}
+                            className="flex flex-row w-fit space-x-16 items-center text-2xl"
+                        >
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "mens" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("mens")}
+                            >
+                                Mens
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "womens" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("womens")}
+                            >
+                                Womens
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "kids" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("kids")}
+                            >
+                                Kids
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "gear" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("gear")}
+                            >
+                                Gear
+                            </div>
+                        </div>
                     </div>
                     <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
@@ -162,6 +204,14 @@ export default function MainLayout({ children }) {
                         )}
                     </div>
                 </div>
+                <CSSTransition
+                    in={menuOpen}
+                    timeout={300}
+                    classNames="fade"
+                    unmountOnExit
+                >
+                    <NavigationMenu type={menuType} />
+                </CSSTransition>
             </div>
             <div>{children}</div>
             <Footer />

@@ -69,3 +69,18 @@
 .bestseller-img img {
   mix-blend-mode: multiply;
 }
+
+.line-link {
+  font-size:20px !important; 
+  text-decoration: none !important;
+  box-shadow: inset 0 0 0 0 rgb(50, 50, 50) !important;
+  color: rgb(50,50,50) !important;
+  margin: 0 -.25rem !important;
+  padding: .25rem !important;
+  cursor:pointer !important; 
+  transition: color .3s ease-in-out, box-shadow .3s ease-in-out !important;
+}
+.line-link:hover {
+  box-shadow: inset 350px 0 0 0 rgb(50, 50, 50)  !important;
+  color: #FFD100  !important;
+}
