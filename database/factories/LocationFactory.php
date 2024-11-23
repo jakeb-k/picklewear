@@ -17,7 +17,11 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'street'=> $this->faker->streetAddress(),
+            'city' => $this->faker->city(),
+            'state'=> $this->faker->randomElement(['QLD', 'NSW', 'VIC', 'TAS', 'SA', 'WA', 'ACT', 'NT']),
+            'postcode' => $this->faker->randomNumber(4, true),
+            'country'=> 'Australia', 
         ];
     }
 }

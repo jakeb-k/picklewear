@@ -4,7 +4,7 @@ import { Head } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function AdminDashboard(props) {
-    const [tab, setTab] = useState("products");
+    const [tab, setTab] = useState("orders");
 
     return (
         <div className="min-h-screen pt-32 w-11/12 mx-auto">

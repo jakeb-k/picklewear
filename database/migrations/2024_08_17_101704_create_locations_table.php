@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('state',['QLD','NSW','VIC','ACT','SA','WA','NT','TAS']);
             $table->integer('postcode');
             $table->string('country')->nullable(); 
+            $table->unsignedBigInteger('locationable_id'); 
+            $table->string('locationable_type');
             $table->timestamps();
         });
 

@@ -67,7 +67,7 @@ class ProfileController extends Controller
     {
         if(Auth::user()->is_admin){
             return Inertia::render('Auth/AdminDashboard', [
-                'orders' => Order::with(['products'])->orderBy('created_at', 'desc')->get(),
+                'orders' => Order::with(['products', 'user', 'location'])->orderBy('created_at', 'desc')->get(),
                 'products' => Product::with(['options'])->orderBy('updated_at', 'desc')->get()
             ]);
         } else {
