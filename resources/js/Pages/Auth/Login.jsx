@@ -2,8 +2,10 @@ import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -85,7 +87,7 @@ export default function Login({ status, canResetPassword }) {
                         </label>
                     </div>
 
-                    <div className="flex items-center justify-end mt-4">
+                    <div className="flex items-center justify-between mt-4">
                         {canResetPassword && (
                             <Link
                                 href={route("password.request")}
@@ -94,10 +96,18 @@ export default function Login({ status, canResetPassword }) {
                                 Forgot your password?
                             </Link>
                         )}
-
-                        <PrimaryButton className="ms-4" disabled={processing}>
-                            Log in
-                        </PrimaryButton>
+                        <div>
+                            <SecondaryButton onClick={(e) => {
+                                e.preventDefault();
+                                router.visit(route('register'))
+                                }} 
+                            className="ms-4" disabled={processing}>
+                                Register
+                            </SecondaryButton>
+                            <PrimaryButton className="ms-4" disabled={processing}>
+                                Log in
+                            </PrimaryButton>
+                        </div>
                     </div>
                 </form>
             </div>
