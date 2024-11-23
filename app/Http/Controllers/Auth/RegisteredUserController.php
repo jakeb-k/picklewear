@@ -33,8 +33,8 @@ class RegisteredUserController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'mobile'=>  ['required', 'regex:/^(?:\+61|0)[4]\d{8}$/', 'numeric'], 
-            'email' => 'nullable|string|lowercase|email|max:255|unique:'.User::class,
+            'mobile'=>  ['required', 'regex:/^(?:\+61|0)[4]\d{8}$/', 'numeric', 'unique:'.User::class], 
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'mobile.regex' => 'The mobile number must be a valid Australian phone number starting with +61 or 04.'
