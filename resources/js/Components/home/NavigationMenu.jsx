@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 export default function NavigationMenu(props) {
     const menuOptions = {
         mens: [
@@ -50,22 +52,28 @@ export default function NavigationMenu(props) {
             "Accessories",
         ],
     };
-    const type = props.type;
-    const options = menuOptions.mens;
+    const [type, setType] = useState(props.type);
+
+    useEffect(() => {
+        setType(props.type)
+        setOptions(menuOptions[props.type])
+    }, [props.type])
+
+    const [options, setOptions] = useState(menuOptions[type]);
 
     return (
-        <div className="bg-[#e5e7eb]/90 border-4 border-main rounded-xl rounded-t-none border-t-0 px-8 py-4 w-[75%] left-[12.5%] -bottom-[230%] mx-auto flex">
+        <div className="bg-[#e5e7eb] border-4 border-main rounded-xl rounded-t-none border-t-0 px-8 py-4 w-[75%] left-[12.5%] -bottom-[230%] mx-auto flex">
             <div className="w-[12.5%] mr-24">
                 <h3 className="font-bold mb-2">Shop By Price</h3>
-                <ul className="text-secondary text-xl space-y-2">
-                    <li className="bold">On Sale</li>
-                    <li className="hover:underline">$20 or Under</li>
-                    <li className="hover:underline">$30 or Under</li>
-                    <li className="hover:underline">$40 or Under</li>
-                    <li className="hover:underline">Bundle Deals</li>
+                <ul className="text-secondary text-xl space-y-4">
+                    <li className="bold line-link">On Sale</li>
+                    <li className="line-link">$20 or Under</li>
+                    <li className="line-link">$30 or Under</li>
+                    <li className="line-link">$40 or Under</li>
+                    <li className="line-link">Bundle Deals</li>
                 </ul>
             </div>
-            <div className="w-[25%]">
+            <div className="w-[40%]">
                 <h3 className="font-bold mb-2">Shop By Category</h3>
                 <div className="flex flex-wrap text-secondary text-xl">
                     {options &&
@@ -81,10 +89,10 @@ export default function NavigationMenu(props) {
                             .map((row, rowIndex) => (
                                 <div
                                     key={rowIndex}
-                                    className="flex w-full justify-between mb-2"
+                                    className="flex w-full justify-between"
                                 >
                                     {row.map((option) => (
-                                        <p key={option} className="w-[47.5%]">
+                                        <p key={option} className="w-[47.5%] line-link py-1">
                                             {option}
                                         </p>
                                     ))}

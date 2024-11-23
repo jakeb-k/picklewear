@@ -7,7 +7,6 @@ import ShoppingCart from "@/Components/ShoppingCart";
 import SearchResults from "@/Components/home/SearchResults";
 import NavigationMenu from "@/Components/home/NavigationMenu";
 
-
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
     const { data, setData } = useForm({
@@ -23,10 +22,8 @@ export default function MainLayout({ children }) {
 
     const [cartOpen, setCartOpen] = useState(false);
 
-    const [menuOpen, setMenuOpen] = useState(true);
-    const [menuOptions, setMenuOptions] = useState([]); 
-
-    
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuType, setMenuType] = useState("");
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -89,7 +86,13 @@ export default function MainLayout({ children }) {
             >
                 <SearchBar />
             </CSSTransition>
-            <div className="fixed w-full z-30">
+            <div
+                onMouseLeave={() => {
+                    setMenuType("");
+                    setMenuOpen(false);
+                }}
+                className="fixed w-full z-30"
+            >
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
                         FREE SHIPPING STOREWIDE
@@ -131,11 +134,42 @@ export default function MainLayout({ children }) {
                                 </p>
                             </div>
                         </div>
-                        <div onMouseEnter={() => setMenuOpen(true)} className="flex flex-row w-fit space-x-16 items-center text-2xl">
-                            <div>Mens</div>
-                            <div>Womens</div>
-                            <div>Kids</div>
-                            <div>Gear</div>
+                        <div
+                            onMouseEnter={() => setMenuOpen(true)}
+                            className="flex flex-row w-fit space-x-16 items-center text-2xl"
+                        >
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "mens" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("mens")}
+                            >
+                                Mens
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "womens" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("womens")}
+                            >
+                                Womens
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "kids" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("kids")}
+                            >
+                                Kids
+                            </div>
+                            <div
+                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
+                                    menuType == "gear" ? "underline" : ""
+                                }`}
+                                onMouseEnter={() => setMenuType("gear")}
+                            >
+                                Gear
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
@@ -174,7 +208,7 @@ export default function MainLayout({ children }) {
                     classNames="fade"
                     unmountOnExit
                 >
-                    <NavigationMenu type={'mens'} />
+                    <NavigationMenu type={menuType} />
                 </CSSTransition>
             </div>
             <div>{children}</div>
@@ -187,7 +221,6 @@ export default function MainLayout({ children }) {
             >
                 <ShoppingCart handleCartClose={() => setCartOpen(false)} />
             </CSSTransition>
-            
         </div>
     );
 }
