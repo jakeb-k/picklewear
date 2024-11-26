@@ -4,7 +4,10 @@ import moment from "moment";
 export default function ProductsTable(props) {
     const products = props.products;
     const processedData = products.map((product) => {
-        const image = product.images.length > 0 ? product.images[0] : "/images/placeholder.jpg";
+        const image =
+            product.images.length > 0
+                ? product.images[0]
+                : "/images/placeholder.jpg";
         const code = product.id.toString().padStart(4, "0"); // Format product code
         const name = product.name;
         const price = product.price;
@@ -12,6 +15,7 @@ export default function ProductsTable(props) {
         const tags = product.tags ?? [];
         const options = product.options;
         const route = `/product/${product.id}`; // Link to view product details
+        const available = product.available;
 
         return {
             image,
@@ -24,7 +28,7 @@ export default function ProductsTable(props) {
             route,
         };
     });
-    console.log(products); 
+    console.log(products);
 
     const customStyles = {
         table: {
@@ -37,6 +41,7 @@ export default function ProductsTable(props) {
                 fontSize: "1.5em",
                 fontWeight: "bold",
                 paddingLeft: "10px",
+                
             },
         },
         headRow: {
@@ -44,6 +49,12 @@ export default function ProductsTable(props) {
                 backgroundColor: "#f0f0f0",
                 borderBottomWidth: "1px",
                 borderBottomColor: "#e0e0e0",
+            },
+        },
+        headCells: {
+            style: {
+                justifyContent: "center",
+                textAlign: "center",
             },
         },
         rows: {
@@ -71,6 +82,8 @@ export default function ProductsTable(props) {
             style: {
                 paddingLeft: "12px",
                 paddingRight: "12px",
+                justifyContent: "center",
+                textAlign: "center",
             },
         },
     };
@@ -78,23 +91,20 @@ export default function ProductsTable(props) {
     const columns = [
         {
             name: "",
-            cell: (row) => (
-                <img src={row.image?.file_path} /> 
-            ),
+            cell: (row) => <img src={row.image?.file_path} />,
             width: "200px",
         },
         {
             name: "Code",
             selector: (row) => row.code,
-            cell: (row) => (
-                <p>#{row.code}</p>
-            ), 
+            cell: (row) => <p>#{row.code}</p>,
             sortable: true,
             width: "100px",
         },
         {
             name: "Name",
             selector: (row) => row.name,
+            cell: (row) => <p>{row.name}</p>,
             sortable: true,
             width: "175px",
         },
@@ -121,32 +131,29 @@ export default function ProductsTable(props) {
             width: "100px",
         },
         {
-            name: "Options",
-            sortable: false,
-            cell: (row) => <p>options</p>,
-            width: "150px",
-        },
-        {
             name: "Actions",
-            selector: (row) => row.status === "Delivered",
+            selector: (row) => row.available,
             cell: (row) => (
-                <div className="flex space-x-4 text-xl">
+                <div className="flex items-center space-x-2 text-xl">
+                    <a href={row.route}
+                        target="_blank"
+                    >
+                        <i className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
+                    </a>
                     <i
-                        onClick={() => {
-                            window.location.href = row.route;
-                        }}
-                        className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1"
-                    ></i>
-                    <i
-                        className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${
-                            row.status === "Delivered"
+                        className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1.5 ${
+                            !row.available
                                 ? "hover:text-gray-800 hover:bg-white text-white bg-green-400"
                                 : "hover:bg-green-400 hover:text-white"
                         }`}
                     ></i>
+                    <i className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
+                    <i className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-trash hover:bg-red-600 hover:text-white rounded-full 
+                    p-2"></i>
+
                 </div>
             ),
-            width: "100px",
+            width: "250px",
         },
     ];
 
