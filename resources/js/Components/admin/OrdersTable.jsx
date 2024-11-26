@@ -1,15 +1,13 @@
-import React from "react";
 import DataTable from "react-data-table-component";
+import moment from "moment";
 
 export default function OrdersTable(props) {
-    console.log(props.orders);
-
     const orders = props.orders;
     const processedData = orders.map((order) => {
         const code = order.id.toString().padStart(4, "0"); // Format order code
         const status = order.status;
-        const userName = order.user.first_name + " " + order.user.last_name; // Full name
-        const email = order.user.email; // User email
+        const userName = order.user?.first_name + " " + order.user?.last_name; // Full name
+        const email = order.user?.email; // User email
         const total = order.total; // Order total
         const location =
             order.location.street +
@@ -20,6 +18,7 @@ export default function OrdersTable(props) {
             ", " +
             order.location.postcode;
         const viewDetails = `/orders/${order.id}`; // Link to view order details
+        const createdAt = order.created_at; 
 
         return {
             code,
@@ -28,7 +27,8 @@ export default function OrdersTable(props) {
             email,
             total,
             location,
-            viewDetails, // Add a link to view details
+            viewDetails, 
+            createdAt, 
         };
     });
 
@@ -113,6 +113,14 @@ export default function OrdersTable(props) {
             cell: (row) => <p className="">{row.location}</p>,
             width: "300px",
         },
+        
+        {
+            name: "Created At",
+            selector: (row) => row.createdAt,
+            sortable: true,
+            cell: (row) => <p className='text-center'>{moment(row.createdAt).format('DD/MM/YY')}</p>,
+            width: "125px",
+        },
         {
             name: "Total",
             selector: (row) => row.total,
@@ -126,8 +134,10 @@ export default function OrdersTable(props) {
             sortable: true,
             cell: (row) => 
                 (<div className="flex space-x-4 text-xl">
-                    <i class="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"></i>
-                    <i class={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == 'Delivered' ? 'hover:text-gray-800 hover:bg-white text-white bg-green-400 ' : 'hover:bg-gray-800 hover:text-white '}`}></i>
+                    <i onClick={() => {
+                        window.location.href = row.viewDetails; 
+                    }} className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"></i>
+                    <i className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == 'Delivered' ? 'hover:text-gray-800 hover:bg-white text-white bg-green-400 ' : 'hover:bg-green-400 hover:text-white '}`}></i>
                 </div>
                 ),
             width: "100px",
