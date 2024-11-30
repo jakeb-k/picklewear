@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['role:admin', 'auth'])->group(function () {
     Route::get('/admin', [ProfileController::class, 'admin'])->name('admin.dashboard'); 
     Route::post('/product/{product}/available', [ProductController::class, 'setAvailable'])->name('product.available'); 
+    Route::delete('/product/{product}/delete', [ProductController::class, 'destroy'])->name('product.destroy'); 
 
 });
 

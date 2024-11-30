@@ -97,9 +97,9 @@ export default function ProductsTable(props) {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(`/products/${productId}`)
+                    .delete(route('product.destroy', product.id))
                     .then((response) => {
-                   
+                        setProducts(response.data.products); 
                     })
                     .catch((error) => {
             

@@ -94,4 +94,13 @@ class ProductController extends Controller
             "products" => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get(),
         ]);
     }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return response()->json([
+            "products" => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get(),
+        ]);
+    }
 }
