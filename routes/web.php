@@ -25,9 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/admin', [ProfileController::class, 'admin'])->name('admin.dashboard'); 
 });
 
+Route::middleware(['role:admin', 'auth'])->group(function () {
+    Route::get('/admin', [ProfileController::class, 'admin'])->name('admin.dashboard'); 
+    Route::post('/product/{product}/available', [ProductController::class, 'setAvailable'])->name('product.available'); 
+
+});
 
 Route::get('/home/bestsellers', [ProductController::class, 'getBestsellers'])->name('home.bestsellers'); 
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('products.show'); 

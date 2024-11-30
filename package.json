@@ -23,6 +23,7 @@
         "moment": "^2.30.1",
         "react-data-table-component": "^7.6.2",
         "react-transition-group": "^4.4.5",
+        "sweetalert2": "^11.14.5",
         "tinycolor2": "^1.6.0",
         "uuid": "^10.0.0",
         "zustand": "^5.0.0"
