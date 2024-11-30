@@ -43,7 +43,7 @@ export default function ContactForm() {
     }
 
     return (
-        <section className="py-8 px-12 rounded-xl max-w-3xl mx-auto space-y-8">
+        <section id="contact" className="py-8 px-12 rounded-xl max-w-3xl mx-auto space-y-8">
             <h1>Get In Touch</h1>
             <div className="flex items-center justify-between">
                 <div className="w-[47.5%] flex flex-col">

@@ -2,7 +2,7 @@ import { Head } from "@inertiajs/react";
 import ContactForm from "@/Components/ContactForm";
 export default function FAQs() {
     return (
-        <article id="contact-form" className="m-24 bg-white p-12 space-y-8 rounded-lg mt-32">
+        <article id="faqs" className="m-24 bg-white p-12 space-y-8 rounded-lg mt-32">
             <Head title="FAQs" />
             <h1>Frequently Asked Questions</h1>
             <p className='text-lg'>
@@ -10,7 +10,7 @@ export default function FAQs() {
                 (and a few serves).{" "}
             </p>
             <hr />
-            <section className="space-y-4 py-4">
+            <section id="shipping" className="space-y-4 py-4">
                 <h2>Shipping - How soon will my gear arrive?</h2>
                 <p className='text-lg'>
                     We know you can't wait to smash your opponents in style. Our
@@ -25,7 +25,7 @@ export default function FAQs() {
             </section>
 
             <hr />
-            <section className="space-y-4 py-4">
+            <section id="returns" className="space-y-4 py-4">
                 <h2>Returns - What if I change my mind?</h2>
                 <p className='text-lg'>
                     Changed your mind or ordered pickleball socks instead of a
@@ -49,6 +49,27 @@ export default function FAQs() {
                     Refunds are processed faster than a dink once we receive
                     your return. Drop us a message at <a href="mailto:admin@picklewear.com.au">admin@picklewear.com.au</a> before sending anything back,
                     so we're ready for the rally!
+                </p>
+            </section>
+            <hr />
+            <section id="privacy" className="space-y-4 py-4">
+                <h2>Privacy Policy - What are you doing with my info?</h2>
+                <p className='text-lg'>
+                    Relax, champ - we play fair. Your data is safe and sound:
+                </p>
+                <ul>
+                    <li>
+                        We'll <b>never</b> share your details (except with our delivery pros)
+                    </li>
+                    <li>
+                        Emails? Only the good kind: deals, updates and exclusive pickleball secrets. ONLY if you sign up at the <a href="#footer">bottom</a> of our site
+                    </li>
+                    <li>
+                        Payment info? Encrypted tighter than a tournament tie-breaker, thanks to Stripe - the GOAT of secure payments.
+                    </li>
+                </ul>
+                <p className='text-lg'>
+                    No spam, no nonsense, just great pickleball vibes.
                 </p>
             </section>
             <hr />

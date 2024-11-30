@@ -98,10 +98,10 @@ export default function MainLayout({ children }) {
                         FREE SHIPPING STOREWIDE
                     </div>
                     <div className="flex absolute w-fit right-0 space-x-6 mr-12">
-                        <Link href={route("dashboard")}>
+                        <Link href={'/faqs'}>
                             <i className="fa-regular fa-circle-question text-white text-lg hover:text-black "></i>
                         </Link>
-                        <Link href={route("dashboard")}>
+                        <Link href={'/faqs#contact'}>
                             <i className="fa-regular fa-envelope text-white text-lg hover:text-black"></i>
                         </Link>
                         <Link href={route("dashboard")}>

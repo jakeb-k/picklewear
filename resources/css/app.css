@@ -97,7 +97,7 @@ h2 {
   margin:0.5em 0; 
 }
 
-li {
+#faqs li {
   list-style-type: disc;
   margin:1.5em 1em; 
 }
@@ -106,4 +106,8 @@ li {
 }
 #contact-form a:hover {
   text-decoration: underline;
+}
+
+html {
+  scroll-behavior: smooth;
 }
