@@ -9,11 +9,11 @@ class Location extends Model
 {
     use HasFactory;
 
-    /**
-     * Define the polymorphic relationship of an location
+     /**
+     * Define the relationship with the Order.
      */
-    public function locationable()
+    public function order()
     {
-        return $this->morphTo();
+        return $this->morphedByOne(Order::class, 'locationable');
     }
 }

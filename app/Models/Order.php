@@ -9,6 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id']; 
     /**
      * The relationship for an orders location
      */
@@ -38,8 +39,8 @@ class Order extends Model
      */
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'order_product')
-                    ->withPivot('quantity') 
+        return $this->belongsToMany(Product::class, 'order_products')
+                    ->withPivot('quantity', 'size', 'color') 
                     ->withTimestamps(); 
     }
 

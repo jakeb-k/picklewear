@@ -58,6 +58,8 @@ class StripeController extends Controller
                 'name' => $item['name'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
+                'size' => $item['size'],
+                'color' => $item['color'],
                 'options' => $item['options'] ?? [],
             ];
             $products[] = $productDetails;
@@ -76,12 +78,21 @@ class StripeController extends Controller
             'cancel_url' => route('index'),
         ]);
         // Create Order record
-        // $order = new Order();
-        // $order->products = json_encode($products); // Store as JSON
-        // $order->status = 'unpaid';
-        // $order->total = $total;
-        // $order->session_id = $session->id;
-        // $order->sent = false;
+        $order = Order::create([
+            'status' => 'Unpaid',
+            'total' => $total, 
+            'session_id' => $session->id, 
+            'sent' => false, 
+            'user_id' => Auth::user()->id ?? null, 
+        ]);
+        
+        foreach($products as $product){
+            $order->products()->attach($product['id'], [
+                'quantity' => $product['quantity'],
+                'size'=> $product['size'],
+                'color'=> $product['color'],
+            ]);
+        }   
 
         // if (Auth::check()) {
         //     $order->user_id = Auth::id();
@@ -89,7 +100,7 @@ class StripeController extends Controller
         //     $order->customer_id = $customer->id;
         // }
 
-        // $order->save();
+        $order->save();
 
                 
         // Return the session URL to the frontend

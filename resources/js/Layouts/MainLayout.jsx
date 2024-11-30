@@ -39,8 +39,6 @@ export default function MainLayout({ children }) {
         router.visit(route("index"));
     };
 
-
-
     //add carusel for query input when doing the top carusel
 
     const SearchBar = () => {
@@ -183,6 +181,7 @@ export default function MainLayout({ children }) {
                         </div>
                         {auth?.user ? (
                             <>
+                                {auth.user.is_admin ? (<Link href='/admin'>Admin</Link>) : ''}
                                 <Link
                                     href={route("logout")}
                                     method="post"

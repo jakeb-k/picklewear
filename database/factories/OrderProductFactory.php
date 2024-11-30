@@ -21,6 +21,8 @@ class OrderProductFactory extends Factory
         return [
             'product_id' => Product::inRandomOrder()->first()->id, 
             'quantity'=> $this->faker->numberBetween(1,4),
+            'size'=> $this->faker->randomElement(['XS','S','M','L','XL','2XL']),
+            'color'=> $this->faker->colorName(), 
             'order_id'=> Order::inRandomOrder()->first()->id
         ];
     }

@@ -128,7 +128,7 @@ export default function Footer() {
 
                     <i className="fa-brands fa-cc-amex"></i>
 
-                    <i class="fa-brands fa-cc-jcb"></i>
+                    <i className="fa-brands fa-cc-jcb"></i>
 
                     <img className='w-[42px] h-[42px]' src={ZipLogo} /> 
 

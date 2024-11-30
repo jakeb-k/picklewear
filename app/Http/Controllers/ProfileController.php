@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -59,5 +61,17 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function admin()
+    {
+        if(Auth::user()->is_admin){
+            return Inertia::render('Auth/AdminDashboard', [
+                'orders' => Order::with(['products', 'user', 'location'])->orderBy('created_at', 'desc')->get(),
+                'products' => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get()
+            ]);
+        } else {
+            return redirect()->back(); 
+        }
     }
 }

@@ -44,7 +44,7 @@ export default function ProductShowLayout(props) {
     const Alert = () => {
         return(
             <div className='border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary'>
-                <i class="fa-regular fa-circle-check text-main mt-1"></i>
+                <i className="fa-regular fa-circle-check text-main mt-1"></i>
                 <p className='tracking-wide ml-4 text-main font-oswald'> Your item/s have been added to the cart. </p>
             </div>
         )
