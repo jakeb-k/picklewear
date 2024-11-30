@@ -1,9 +1,9 @@
-import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
+import Checkbox from "@/Components/common/Checkbox";
+import InputError from "@/Components/common/InputError";
+import InputLabel from "@/Components/common/InputLabel";
+import PrimaryButton from "@/Components/common/PrimaryButton";
+import SecondaryButton from "@/Components/common/SecondaryButton";
+import TextInput from "@/Components/common/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
 
