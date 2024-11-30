@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeController;
@@ -40,5 +41,7 @@ Route::get('/faqs', function(){
 Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
 Route::post('webhook',  [StripeController::class, 'webhook'])->name('webhook');
 Route::get('/success',  [StripeController::class, 'success'])->name('success');
+
+Route::post('/contact/email', [MailController::class, 'sendContactEmail'])->name('contact.email'); 
 
 require __DIR__.'/auth.php';

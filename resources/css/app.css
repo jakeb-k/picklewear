@@ -84,3 +84,26 @@
   box-shadow: inset 350px 0 0 0 rgb(50, 50, 50)  !important;
   color: #FFD100  !important;
 }
+
+h1 {
+  font-size:32px; 
+  font-weight:bold; 
+  letter-spacing: 2px;
+  font-family:'Oswald', Arial, Helvetica, sans-serif; 
+}
+
+h2 {
+  font-size:24px; 
+  margin:0.5em 0; 
+}
+
+li {
+  list-style-type: disc;
+  margin:1.5em 1em; 
+}
+#contact-form a {
+  color:#2196f3;
+}
+#contact-form a:hover {
+  text-decoration: underline;
+}
