@@ -9,19 +9,18 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendContactMail extends Mailable
 {
     use Queueable, SerializesModels;
-    
-    protected $data; 
 
     /**
      * Create a new message instance.
      */
-    public function __construct($data)
+    public function __construct(public $data)
     {
-        $this->data = $data; 
+        //
     }
 
     /**
@@ -29,8 +28,9 @@ class SendContactMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        Log::info($this->data); 
         return new Envelope(
-            from: new Address($this->data->first_name, $this->data->email),
+            from: new Address($this->data['email'], $this->data['first_name']),
             subject: 'You have a new Enquiry',
         );
     }
