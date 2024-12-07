@@ -1,8 +1,9 @@
 import { useForm } from "@inertiajs/react";
+import axios from "axios";
 import { useEffect } from "react";
 import Select from "react-select";
 
-export default function ProductForm(props) {
+export default function ProductForm({setProducts, ...props}) {
     const { product } = props;
     const { data, setData } = useForm({
         name: product.name,
@@ -28,6 +29,16 @@ export default function ProductForm(props) {
             type: selectedOption,
         }));
     };
+
+    function updateProduct(product){
+        axios.post(route('product.update', product), data)
+        .then((response) => {
+            setProducts(response.data.products); 
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+    }
 
     const customStyles = {
         control: (provided, state) => ({
@@ -221,7 +232,7 @@ export default function ProductForm(props) {
                 </div>
             </div>
             <div className="w-full flex justify-end">
-                <button className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main">
+                <button onClick={() => updateProduct(product)} className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main">
                     UPDATE
                 </button>
             </div>

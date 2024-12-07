@@ -7,6 +7,7 @@ import ProductForm from "@/Components/product/ProductForm";
 export default function AdminDashboard(props) {
     const [tab, setTab] = useState("products");
     const [editItem, setEditItem] = useState(null);
+    const [products, setProducts] = useState(props.products); 
 
     useEffect(() => {
         if (tab) {
@@ -51,7 +52,7 @@ export default function AdminDashboard(props) {
             {tab == "products" && (
                 <div className="my-10 w-fit mx-auto min-h-[100vh]">
                     <ProductsTable
-                        products={props.products}
+                        products={products}
                         setEditItem={(data) => {
                             setEditItem(data);
                             setTab("");
@@ -64,7 +65,7 @@ export default function AdminDashboard(props) {
                     <OrdersTable orders={props.orders} />
                 </div>
             )}
-            {editItem && <ProductForm product={editItem} />}
+            {editItem && <ProductForm product={editItem} setProducts={setProducts} />}
         </div>
     );
 }

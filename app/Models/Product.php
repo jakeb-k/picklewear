@@ -11,7 +11,7 @@ class Product extends Model
 {
     use HasFactory, HasTags, SoftDeletes;
 
-
+    protected $guarded = ['id']; 
     /**
      * The relationship for a products images
      */
