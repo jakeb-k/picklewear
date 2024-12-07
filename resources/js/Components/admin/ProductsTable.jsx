@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-export default function ProductsTable(props) {
+export default function ProductsTable({ setEditItem, ...props }) {
     const [success, setSuccess] = useState(null);
 
     const [products, setProducts] = useState(props.products);
@@ -57,6 +57,7 @@ export default function ProductsTable(props) {
                 const available = product.available;
 
                 return {
+                    ...product, 
                     id,
                     image,
                     code,
@@ -97,12 +98,11 @@ export default function ProductsTable(props) {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .delete(route('product.destroy', product.id))
+                    .delete(route("product.destroy", product.id))
                     .then((response) => {
-                        setProducts(response.data.products); 
+                        setProducts(response.data.products);
                     })
                     .catch((error) => {
-            
                         console.error(error);
                     });
             }
@@ -224,8 +224,9 @@ export default function ProductsTable(props) {
                                 : "hover:bg-green-400 hover:text-white"
                         }`}
                     ></i>
-                    <i className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
-                    <i  onClick={() => deleteProduct(row)}
+                    <i onClick={() => setEditItem(row)} className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
+                    <i
+                        onClick={() => deleteProduct(row)}
                         className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-trash hover:bg-red-600 hover:text-white rounded-full 
                     p-2"
                     ></i>
