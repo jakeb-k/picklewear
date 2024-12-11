@@ -1,10 +1,11 @@
 import { useForm } from "@inertiajs/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
 
 export default function ProductForm({ setProducts, ...props }) {
     const { product } = props;
+    const [images, setImages] = useState([]); 
     const { data, setData } = useForm({
         name: product.name,
         price: product.price,
@@ -13,6 +14,7 @@ export default function ProductForm({ setProducts, ...props }) {
         delivery_date: product.delivery_date,
         discount: product.discount ?? 0,
         description: product.description,
+        images: [], 
     });
 
     const handleOnChange = (e) => {
@@ -31,6 +33,8 @@ export default function ProductForm({ setProducts, ...props }) {
     };
 
     function updateProduct(product) {
+console.log(data); 
+        return 
         axios
             .post(route("product.update", product), data)
             .then((response) => {
@@ -64,16 +68,19 @@ export default function ProductForm({ setProducts, ...props }) {
         }
     }, [data.discount]);
 
-    const ImageUploader = () => {
-        const [images, setImages] = useState([]);
-
+    const ImageUploader = ({updateImages, images, setImages}) => {
         const handleDrop = (event) => {
             event.preventDefault();
             const files = Array.from(event.dataTransfer.files);
             const newImages = files
                 .slice(0, 3 - images.length)
                 .map((file) => URL.createObjectURL(file));
-            setImages((prev) => [...prev, ...newImages]);
+                
+                setImages((prev) => {
+                    const updatedImages = [...prev, ...newImages];
+                    updateImages(updatedImages);
+                    return updatedImages;
+                  });
         };
 
         const handleRemove = (index) => {
@@ -85,9 +92,13 @@ export default function ProductForm({ setProducts, ...props }) {
             const newImages = files
                 .slice(0, 3 - images.length)
                 .map((file) => URL.createObjectURL(file));
-            setImages((prev) => [...prev, ...newImages]);
+                setImages((prev) => {
+                    const updatedImages = [...prev, ...newImages];
+                    updateImages(updatedImages);
+                    return updatedImages;
+                  });
         };
-
+        
         return (
             <div
                 onDrop={handleDrop}
@@ -306,7 +317,7 @@ export default function ProductForm({ setProducts, ...props }) {
                     />
                 </div>
             </div>
-            <ImageUploader />
+            <ImageUploader updateImages={(data) => setData('images', data)} images={images} setImages={setImages} />
             <div className="w-full flex justify-end">
                 <button
                     onClick={() => updateProduct(product)}
