@@ -41,6 +41,48 @@ class ProductController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:100',
+                'type' => 'required',
+                'url' => 'required',
+                'delivery_date'=> 'numeric|required',
+                'price'=> 'numeric|required|min:0',
+                'discount'=> 'numeric|nullable|min:0|max:100',
+                'description'=> 'required',
+                'images'=> 'required|array|min:3',
+                'options'=> 'nullable|arary'
+
+            ]);
+    
+            $product = Product::create([
+                'name' => $request->name, 
+                'type' => $request->type['value'] ,
+                'url' => $request->url,
+                'delivery_date'=> $request->delivery_date,
+                'price'=> $request->price,
+                'discount'=> $request->discount,
+                'description'=> $request->description,
+            ]);
+    
+            
+            // 'images'=> 'required|array|min:3',
+            // 'options'=> 'nullable|arary'
+
+            return response()->json([
+                'success'=> 'Your Product was updated',
+                'products' => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get()
+            ]); 
+
+        } catch(\Exception $e){
+            return response()->json([
+                'error'=> $e->getMessage()
+            ], 400); 
+        }
+    }
+
     public function update(Request $request, Product $product)
     {
         try {
