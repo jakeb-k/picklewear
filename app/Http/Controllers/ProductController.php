@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Product;
+use App\Models\ProductOption;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -57,17 +62,50 @@ class ProductController extends Controller
 
             ]);
     
-            $product = Product::create([
-                'name' => $request->name, 
-                'type' => $request->type['value'] ,
-                'url' => $request->url,
-                'delivery_date'=> $request->delivery_date,
-                'price'=> $request->price,
-                'discount'=> $request->discount,
-                'description'=> $request->description,
-            ]);
-    
+            DB::transaction(function () use ($request) {
+                $product = Product::create([
+                    'name' => $request->name, 
+                    'type' => $request->type,
+                    'url' => $request->url,
+                    'delivery_date'=> $request->delivery_date,
+                    'available' => true, 
+                    'price'=> $request->price,
+                    'discount'=> $request->discount,
+                    'description'=> $request->description,
+                ]);
             
+                $images = $request->file('images');
+            
+                foreach ($images as $index => $imageData) {
+                    Log::info($imageData);
+                    $fileName = time() . $index . '.' . $imageData->extension();
+            
+                    $folder = 'files/products/';
+                    $filePath = $imageData->storeAs($folder, $fileName, 'public');
+            
+                    $disk = config('filesystems.default');
+                    $path = Storage::disk($disk)->path($filePath);
+            
+                    $image = Image::create([
+                        'file_name' => $imageData->getClientOriginalName(),
+                        'mime_type' => $imageData->getClientMimeType(),
+                        'file_path' => $path,
+                        'file_size' => $imageData->getSize(),
+                    ]);
+            
+                    $product->images()->attach($image);
+                }
+            }, 1);
+            
+            // foreach($options as $optionData){   
+            //     $values = collect($optionData)->pluck('values');
+                
+            //     $option = ProductOption::create([
+            //         'values'=> implode('.', $values), 
+            //         'product_id' => $product->id, 
+            //     ]);
+                
+            // }
             // 'images'=> 'required|array|min:3',
             // 'options'=> 'nullable|arary'
 
@@ -83,10 +121,19 @@ class ProductController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource
+     *
+     * @param Request $request
+     * @param Product $product
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, Product $product)
     {
-        try {
+        
+        try {   
             $request->validate([
+                'images.*' => 'required|file|mimes:jpeg,png,jpg|max:2048',
                 'name' => 'required|string|max:100',
                 'type' => 'required',
                 'url' => 'required',

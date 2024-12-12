@@ -10,6 +10,7 @@ export default function AdminDashboard(props) {
     const [editItem, setEditItem] = useState(null);
     const [products, setProducts] = useState(props.products);
     const [showAlert, setShowAlert] = useState(false);
+    const [isCreating, setIsCreating] = useState(false); 
     useEffect(() => {
         if (tab) {
             setEditItem(null);
@@ -65,7 +66,10 @@ export default function AdminDashboard(props) {
                     </button>
                 </div>
                 {!editItem && (
-                    <button className="p-2 px-6 border-2 rounded-lg border-secondary text-lg font-bold transition-all duration-150 ease-in-out hover:bg-gray-400/50 mr-52">
+                    <button onClick={() =>{
+                        setEditItem(null)
+                        setTab('')
+                        setIsCreating(true)}} className="p-2 px-6 border-2 rounded-lg border-secondary text-lg font-bold transition-all duration-150 ease-in-out hover:bg-gray-400/50 mr-52">
                         CREATE
                     </button>
                 )}
@@ -88,8 +92,9 @@ export default function AdminDashboard(props) {
                     <OrdersTable orders={props.orders} />
                 </div>
             )}
-            {editItem && (
+            {(editItem || isCreating) && (
                 <ProductForm
+                    isCreating={isCreating}
                     product={editItem}
                     setProducts={(data) => {
                         setProducts(data);

@@ -1,20 +1,25 @@
 import { useForm } from "@inertiajs/react";
 import axios from "axios";
+import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
 
-export default function ProductForm({ setProducts, ...props }) {
+export default function ProductForm({
+    setProducts,
+    isCreating = false,
+    ...props
+}) {
     const { product } = props;
-    const [images, setImages] = useState([]); 
+    const [images, setImages] = useState([]);
     const { data, setData } = useForm({
-        name: product.name,
-        price: product.price,
-        type: { value: product.type, label: product.type },
-        url: product.url,
-        delivery_date: product.delivery_date,
-        discount: product.discount ?? 0,
-        description: product.description,
-        images: [], 
+        name: product?.name ?? "",
+        price: product?.price ?? "",
+        type: { value: product?.type ?? "", label: product?.type },
+        url: product?.url ?? "",
+        delivery_date: product?.delivery_date ?? "",
+        discount: product?.discount ?? 0,
+        description: product?.description ?? "",
+        images: [],
     });
 
     const handleOnChange = (e) => {
@@ -33,16 +38,51 @@ export default function ProductForm({ setProducts, ...props }) {
     };
 
     function updateProduct(product) {
-console.log(data); 
-        return 
-        axios
-            .post(route("product.update", product), data)
-            .then((response) => {
-                setProducts(response.data.products);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        //Create new form data object to put files in
+        const formData = new FormData();
+        //append files to files [] - will send an array of file objects
+        images.forEach((image, index) => {
+            formData.append("images[]", image); // Use 'files[]' to ensure array format
+        });
+        Object.entries(data).forEach(([key, value]) => {
+            if(key == 'type'){
+                formData.append(key, value['value']);
+
+            } else {
+                formData.append(key, value);
+
+            }
+        });
+        formData.append("data", data);
+        if (isCreating) {
+            axios
+                .post(route("product.store", product),  formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((response) => {
+                    setProducts(response.data.products);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            
+            formData.append("_method", "PUT");
+            axios
+                .post(route("product.update", product), formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((response) => {
+                    setProducts(response.data.products);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     }
 
     const customStyles = {
@@ -68,37 +108,39 @@ console.log(data);
         }
     }, [data.discount]);
 
-    const ImageUploader = ({updateImages, images, setImages}) => {
+    const ImageUploader = ({ updateImages, images, setImages }) => {
         const handleDrop = (event) => {
             event.preventDefault();
             const files = Array.from(event.dataTransfer.files);
             const newImages = files
                 .slice(0, 3 - images.length)
-                .map((file) => URL.createObjectURL(file));
-                
-                setImages((prev) => {
-                    const updatedImages = [...prev, ...newImages];
-                    updateImages(updatedImages);
-                    return updatedImages;
-                  });
+                .map((file) => file);
+            setImages((prev) => {
+                const updatedImages = [...prev, ...newImages];
+                updateImages(updatedImages);
+                return updatedImages;
+            });
         };
 
         const handleRemove = (index) => {
-            setImages((prev) => prev.filter((_, i) => i !== index));
+            setImages((prev) => {
+                const updatedImages = prev.filter((_, i) => i !== index);
+                updateImages(updatedImages);
+                return updatedImages;
+            });
         };
 
         const handleFileInput = (event) => {
             const files = Array.from(event.target.files);
             const newImages = files
                 .slice(0, 3 - images.length)
-                .map((file) => URL.createObjectURL(file));
-                setImages((prev) => {
-                    const updatedImages = [...prev, ...newImages];
-                    updateImages(updatedImages);
-                    return updatedImages;
-                  });
+                .map((file) => file);
+            setImages((prev) => {
+                const updatedImages = [...prev, ...newImages];
+                updateImages(updatedImages);
+                return updatedImages;
+            });
         };
-        
         return (
             <div
                 onDrop={handleDrop}
@@ -108,13 +150,13 @@ console.log(data);
                 <div className=" text-center cursor-pointer w-full">
                     {images.length < 3 ? (
                         <>
-                            <p className="text-gray-600">
+                            <p className="flex items-center text-gray-600">
                                 Drag & drop images here, or click to upload
                             </p>
                             <input
                                 type="file"
+                                name="images[]"
                                 multiple
-                                accept="image/*"
                                 onChange={handleFileInput}
                                 className="hidden"
                                 id="fileInput"
@@ -127,15 +169,17 @@ console.log(data);
                             </label>
                         </>
                     ) : (
-                        <p className="text-gray-600">Image limit reached (3)</p>
+                        <p className="flex items-center text-gray-600">
+                            Image limit reached (3)
+                        </p>
                     )}
                 </div>
 
                 <div className="flex flex-wrap gap-4 mt-4">
-                    {images.map((src, index) => (
+                    {images.map((file, index) => (
                         <div key={index} className="relative w-56 h-56">
                             <img
-                                src={src}
+                                src={URL.createObjectURL(file)}
                                 alt={`Uploaded ${index}`}
                                 className="w-full h-full object-cover rounded-lg"
                             />
@@ -153,14 +197,12 @@ console.log(data);
     };
 
     return (
-        <div className="min-w-[450px] w-[70%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6 space-y-8">
+        <div className="min-w-[750px] w-[70%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6 space-y-8">
             <div className="flex items-center space-x-[5%]">
                 <div className="flex-1">
-                    <p className="text-base">
+                    <p className="flex items-center text-base">
                         Name:{" "}
-                        <span className="text-red-500 text-sm italic">
-                            (required)
-                        </span>
+                        <span className="text-red-500 text-3xl italic">*</span>
                     </p>
                     <input
                         name="name"
@@ -174,10 +216,12 @@ console.log(data);
                 </div>
                 <div className="flex-1">
                     <div className="text-base">
-                        Type:{" "}
-                        <span className="text-red-500 text-sm italic">
-                            (required)
-                        </span>
+                        <p className="flex items-center">
+                            Type
+                            <span className="text-red-500 text-3xl italic">
+                                *
+                            </span>
+                        </p>
                         <Select
                             name="type"
                             options={[
@@ -196,11 +240,8 @@ console.log(data);
             </div>
             {/* URL */}
             <div className="w-full">
-                <p className="text-base">
-                    URL:{" "}
-                    <span className="text-red-500 text-sm italic">
-                        (required)
-                    </span>
+                <p className="flex items-center text-base">
+                    URL: <span className="text-red-500 text-3xl italic">*</span>
                 </p>
                 <input
                     name="url"
@@ -214,97 +255,118 @@ console.log(data);
             </div>
             {/* TYPE, DELIVERY RANGE, DISCOUNT */}
             <div className="flex items-center justify-between">
-                <div className="w-fit">
-                    <p className="text-base text-nowrap">
-                        Delivery Range:{" "}
-                        <span className="text-red-500 text-sm italic">
-                            (required)
-                        </span>
-                    </p>
-                    <div className="relative">
-                        <input
-                            name="delivery_date"
-                            type="number"
-                            min={0}
-                            onChange={handleOnChange}
-                            required
-                            className="rounded-md py-2 px-4 w-full text-xl pl-8"
-                            placeholder="Enter the products name"
-                            value={data.delivery_date}
-                        />
-                        <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
-                            Days
+                <div className="flex items-center justify-between w-3/5">
+                    <div className="w-[30%]">
+                        <p className="flex items-center text-sm text-nowrap">
+                            Delivery Range:{" "}
+                            <span className="text-red-500 text-3xl italic">
+                                *
+                            </span>
                         </p>
+                        <div className="relative">
+                            <input
+                                name="delivery_date"
+                                type="number"
+                                min={0}
+                                onChange={handleOnChange}
+                                required
+                                className="rounded-md py-2 px-4 w-full text-xl "
+                                value={data.delivery_date}
+                                placeholder="7"
+                            />
+                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
+                                Days
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div className="w-fit">
-                    <p className="text-base">
-                        Price:{" "}
-                        <span className="text-red-500 text-sm italic">
-                            (required)
-                        </span>
-                    </p>
-                    <div className="relative">
-                        <input
-                            name="price"
-                            type="number"
-                            min={0}
-                            onChange={handleOnChange}
-                            required
-                            className="rounded-md py-2 px-4 w-full text-xl  max-w-44 pl-12"
-                            placeholder="Enter the products name"
-                            value={data.price}
-                        />
-                        <p className="bg-secondary text-main absolute left-0 top-0 h-full min-w-8 text-2xl flex flex-col justify-center items-center rounded-l-lg">
-                            $
+                    <div className="w-[30%]">
+                        <p className="flex items-center text-base">
+                            Price:{" "}
+                            <span className="text-red-500 text-3xl italic">
+                                *
+                            </span>
                         </p>
+                        <div className="relative">
+                            <input
+                                name="price"
+                                type="number"
+                                min={0}
+                                onChange={handleOnChange}
+                                required
+                                className="rounded-md py-2 px-4 w-full text-xl max-w-44 pl-12"
+                                value={data.price}
+                                placeholder="0.00"
+                            />
+                            <p className="bg-secondary text-main absolute left-0 top-0 h-full min-w-8 text-2xl flex flex-col justify-center items-center rounded-l-lg">
+                                $
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="w-fit">
-                    <p className="text-base">Discount:</p>
-                    <div className="relative">
-                        <input
-                            name="discount"
-                            type="number"
-                            min={0}
-                            max={100}
-                            onChange={handleOnChange}
-                            required
-                            className="rounded-md py-2 px-4 w-28 text-xl"
-                            value={data.discount}
-                        />
-                        <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
-                            %
+                    <div className="w-[30%]">
+                        <p className="flex items-center text-base mb-2">
+                            Discount:
                         </p>
+                        <div className="relative">
+                            <input
+                                name="discount"
+                                type="number"
+                                min={0}
+                                max={100}
+                                onChange={handleOnChange}
+                                required
+                                className="rounded-md py-2 px-4 w-full text-xl"
+                                value={data.discount}
+                            />
+                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
+                                %
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div className="flex w-[25%] text-nowrap">
-                    <p className="text-lg pt-4">
-                        Total Price:{" "}
-                        <b>
+                <div className="w-[40%]">
+                    <div className="flex text-nowrap pl-8 text-left">
+                        <p className="text-base pt-4">
+                            Total Price:{" "}
+                            <b>
+                                {" "}
+                                $
+                                {(
+                                    data.price -
+                                    data.price * (data.discount / 100)
+                                ).toFixed(2)}{" "}
+                            </b>{" "}
+                        </p>
+                        <p className="text-base w-fit pt-4 text-red-500 italic ml-1">
                             {" "}
-                            $
-                            {(
-                                data.price -
-                                data.price * (data.discount / 100)
-                            ).toFixed(2)}{" "}
-                        </b>{" "}
-                    </p>
-                    <p className="text-lg w-fit pt-4 text-red-500 italic ml-1">
-                        {" "}
-                        (- ${(data.price * (data.discount / 100)).toFixed(2)})
-                    </p>
+                            (- $
+                            {(data.price * (data.discount / 100)).toFixed(2)})
+                        </p>
+                    </div>
+                    <div className="flex text-nowrap pl-8">
+                        <p className="text-base pt-4">
+                            Will Arrive Between: <br />
+                            <b>
+                                {data.delivery_date
+                                    ? moment()
+                                          .add(data.delivery_date || 0, "days")
+                                          .format("Do MMM YYYY") +
+                                      " and " +
+                                      moment()
+                                          .add(parseInt(data.delivery_date)+7 || 0, "days")
+                                          .format("Do MMM YYYY")
+                                    : ""}
+                            </b>{" "}
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <div className="flex items-center space-x-[5%]">
                 <div className="flex-1">
-                    <p className="text-base">
+                    <p className="flex items-center text-base">
                         Description:{" "}
-                        <span className="text-red-500 text-sm italic">
-                            (required)
-                        </span>
+                        <span className="text-red-500 text-3xl italic">*</span>
                     </p>
                     <textarea
                         name="description"
@@ -312,12 +374,16 @@ console.log(data);
                         onChange={handleOnChange}
                         required
                         className="rounded-md py-2 px-4 w-full text-base min-h-40"
-                        placeholder="Enter the products name"
+                        placeholder="Enter the products description"
                         value={data.description}
                     />
                 </div>
             </div>
-            <ImageUploader updateImages={(data) => setData('images', data)} images={images} setImages={setImages} />
+            <ImageUploader
+                updateImages={(data) => setData("images", data)}
+                images={images}
+                setImages={setImages}
+            />
             <div className="w-full flex justify-end">
                 <button
                     onClick={() => updateProduct(product)}
