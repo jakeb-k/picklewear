@@ -84,7 +84,7 @@ class ProductController extends Controller
                     $filePath = $imageData->storeAs($folder, $fileName, 'public');
             
                     $disk = config('filesystems.default');
-                    $path = Storage::disk($disk)->path($filePath);
+                    $path = Storage::disk($disk)->url($filePath);
             
                     $image = Image::create([
                         'file_name' => $imageData->getClientOriginalName(),
