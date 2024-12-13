@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\SubscriberEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -73,5 +74,30 @@ class ProfileController extends Controller
         } else {
             return redirect()->back(); 
         }
+    }
+
+    /**
+     * Send an email to subscribe to mail list
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function subscribe(Request $request)
+    {
+        $request->validate([
+            'email'=> 'required|email|unique:subscriber_emails'
+        ],[
+            'email.unique' => 'This email is already taken',
+            'email.required' => 'An email is required dumbass'
+        ]);
+
+        SubscriberEmail::create([
+            "email" => $request->email
+        ]);
+
+        return response()->json([
+            'success'=> "This didn't fail",
+        ]);
+        
     }
 }
