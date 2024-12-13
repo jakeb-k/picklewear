@@ -1,34 +1,113 @@
 import DataTable from "react-data-table-component";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-export default function ProductsTable(props) {
-    const products = props.products;
-    const processedData = products.map((product) => {
-        const image =
-            product.images.length > 0
-                ? product.images[0]
-                : "/images/placeholder.jpg";
-        const code = product.id.toString().padStart(4, "0"); // Format product code
-        const name = product.name;
-        const price = product.price;
-        const type = product.type;
-        const tags = product.tags ?? [];
-        const options = product.options;
-        const route = `/product/${product.id}`; // Link to view product details
-        const available = product.available;
+export default function ProductsTable({ setEditItem, ...props }) {
+    const [success, setSuccess] = useState(null);
 
-        return {
-            image,
-            code,
-            name,
-            price,
-            type,
-            tags,
-            options,
-            route,
-        };
-    });
-    console.log(products);
+    const [products, setProducts] = useState(props.products);
+    const [data, setData] = useState(
+        products.map((product) => {
+            const id = products.id;
+            const image =
+                product.images.length > 0
+                    ? product.images[0]
+                    : "/images/placeholder.jpg";
+            const code = product.id.toString().padStart(4, "0"); // Format product code
+            const name = product.name;
+            const price = product.price;
+            const type = product.type;
+            const tags = product.tags ?? [];
+            const options = product.options;
+            const route = `/product/${product.id}`; // Link to view product details
+            const available = product.available;
+
+            return {
+                id,
+                image,
+                code,
+                name,
+                price,
+                type,
+                tags,
+                options,
+                available,
+                route,
+            };
+        })
+    );
+
+    useEffect(() => {
+        setData(
+            products.map((product) => {
+                const id = product.id;
+                const image =
+                    product.images.length > 0
+                        ? product.images[0]
+                        : "/images/placeholder.jpg";
+                const code = product.id.toString().padStart(4, "0"); // Format product code
+                const name = product.name;
+                const price = product.price;
+                const type = product.type;
+                const tags = product.tags ?? [];
+                const options = product.options;
+                const route = `/product/${product.id}`; // Link to view product details
+                const available = product.available;
+
+                return {
+                    ...product, 
+                    id,
+                    image,
+                    code,
+                    name,
+                    price,
+                    type,
+                    tags,
+                    options,
+                    available,
+                    route,
+                };
+            })
+        );
+    }, [products]);
+
+    function setAvailability(product) {
+        axios
+            .post(route("product.available", product))
+            .then((response) => {
+                setProducts(response.data.products);
+                setSuccess("The availability of your product was updated");
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    function deleteProduct(product) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: `You are deleting ${product.name}`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .delete(route("product.destroy", product.id))
+                    .then((response) => {
+                        setProducts(response.data.products);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        });
+    }
 
     const customStyles = {
         table: {
@@ -41,7 +120,6 @@ export default function ProductsTable(props) {
                 fontSize: "1.5em",
                 fontWeight: "bold",
                 paddingLeft: "10px",
-                
             },
         },
         headRow: {
@@ -135,22 +213,23 @@ export default function ProductsTable(props) {
             selector: (row) => row.available,
             cell: (row) => (
                 <div className="flex items-center space-x-2 text-xl">
-                    <a href={row.route}
-                        target="_blank"
-                    >
+                    <a href={row.route} target="_blank">
                         <i className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
                     </a>
                     <i
+                        onClick={() => setAvailability(row.id)}
                         className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1.5 ${
-                            !row.available
+                            row.available
                                 ? "hover:text-gray-800 hover:bg-white text-white bg-green-400"
                                 : "hover:bg-green-400 hover:text-white"
                         }`}
                     ></i>
-                    <i className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
-                    <i className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-trash hover:bg-red-600 hover:text-white rounded-full 
-                    p-2"></i>
-
+                    <i onClick={() => setEditItem(row)} className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
+                    <i
+                        onClick={() => deleteProduct(row)}
+                        className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-trash hover:bg-red-600 hover:text-white rounded-full 
+                    p-2"
+                    ></i>
                 </div>
             ),
             width: "250px",
@@ -161,7 +240,7 @@ export default function ProductsTable(props) {
         <div className="rounded-lg shadow-lg">
             <DataTable
                 columns={columns}
-                data={processedData}
+                data={data}
                 pagination
                 paginationPerPage={10}
                 customStyles={customStyles}
