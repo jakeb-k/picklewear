@@ -13,16 +13,20 @@ export default function Footer() {
 
     const handleValidation = () => {
         
+        setLoading(true);
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setIsInvalid(true);
             setTimeout(() => setIsInvalid(false), 100); // Reset animation after 1 second
         } else {
             setIsInvalid(false);
-            setTimeout(() => {
-                setLoading(true); 
-            }, 2000);
+            
             subscribe();
+            setTimeout(() => {
+                setLoading(false)
+                setSuccess(true)
+            }, 4000);
         }
     };
 
@@ -136,9 +140,11 @@ export default function Footer() {
                         Receive email updates about our latest events, newest
                         products and exclusive discounts
                     </p>
-                    <div className={`relative w-2/3 mt-6 ${
-                                isInvalid ? "animate-wiggle" : ""
-                            }`}>
+                    <div
+                        className={`relative w-2/3 mt-6 ${
+                            (isInvalid || error) ? "animate-wiggle" : ""
+                        }`}
+                    >
                         <input
                             className={`py-2 w-full px-4 rounded-md bg-white border-main border-2 text-black focus:border-main focus:ring-main `}
                             type="email"
@@ -150,9 +156,18 @@ export default function Footer() {
                         />
                         <button
                             onClick={handleValidation}
-                            className="absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300"
+                            className={`absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300 ${success ? 'bg-green-500' : ''}`}
                         >
-                            {!loading ? (<i className="fa-solid fa-arrow-right"></i>) : (<LoadingIcon />)}
+                            {(!loading && !success)&&  (
+                                <i className="fa-solid fa-arrow-right"></i>
+                            ) }
+                            {loading && (
+                                    <LoadingIcon />
+                            )}
+                            {(!loading && success)&&  (
+                               <i className="fa-solid fa-check text-white"></i>
+                            ) }
+
                         </button>
                     </div>
                     <div className="flex space-x-8 text-3xl p-3 pt-8">
