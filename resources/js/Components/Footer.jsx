@@ -24,7 +24,7 @@ export default function Footer() {
     const account = ["Track Order", "Favourites", "My Details"];
 
     return (
-        <div className="bg-secondary text-main w-full py-8 px-4">
+        <div id="footer" className="bg-secondary text-main w-full py-8 px-4">
             <div className="flex w-full flex-row-reverse px-12 justify-between">
                 <div className="flex flex-row w-fit space-x-2 items-start">
                     <img src={Logo} className="w-12 h-auto" />
@@ -59,9 +59,10 @@ export default function Footer() {
                         </p>
                         <div className="flex flex-col space-y-2">
                             {help.map((cat, index) => {
+                                let link = cat.toLowerCase();
                                 return (
                                     <p key={index} className="">
-                                        <a className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
+                                        <a href={'/faqs#'+link} className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
                                             {cat}
                                         </a>
                                     </p>

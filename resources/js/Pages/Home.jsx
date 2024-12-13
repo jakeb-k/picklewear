@@ -8,11 +8,12 @@ import Slideshow from "@/Components/home/Slideshow";
 export default function Home() {
     return (
         <>
-        <div className="w-full flex flex-col mt-20 h-fit pt-[225px] pb-[150px] justify-center overflow-x-hidden"
+        <div className="w-full min-h-screen flex flex-col mt-20 h-fit justify-center overflow-x-hidden"
         style={{backgroundImage: `url(${HomeBackground})` }}>
             <Head title="Home" />
             <div className="ml-12 font-oswald">
-                <h1 className='text-main text-5xl w-5/12'>Smash It in Style! Pickleball Gear That’s a <em className="underline">Real Dill!</em></h1>
+                <h1 className='text-main text-5xl w-1/2'>Smash It in Style!</h1>
+                <h1 className='text-main text-5xl w-1/2'>Pickleball Gear That’s a <em className="underline">Real Dill!</em></h1>
                 <h3 className='text-main text-xl w-1/2 mt-6 font-sans'>Use code REALDILL to relish a 20% discount sitewide until September! Spend $75 or more, and we’ll throw in a free gift—now that's a deal worth grabbing!</h3>
                 <div className="mt-8 flex space-x-8">
                     <button className="px-8 font-bold py-4 bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out">

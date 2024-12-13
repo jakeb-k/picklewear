@@ -1,11 +1,3 @@
-{
-    "overrides": [
-        {
-            "files": "*.php",
-            "options": {
-                "parser": "php",
-                "bracketSpacing": false
-            }
-        }
-    ]
+{    
+    "plugins": ["@prettier/plugin-php"]
 }

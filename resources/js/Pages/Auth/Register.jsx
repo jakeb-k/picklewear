@@ -1,7 +1,7 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import InputError from "@/Components/common/InputError";
+import InputLabel from "@/Components/common/InputLabel";
+import PrimaryButton from "@/Components/common/PrimaryButton";
+import TextInput from "@/Components/common/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Register() {
