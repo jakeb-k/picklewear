@@ -1,9 +1,31 @@
 import { useState } from "react";
 import Logo from "@/../assets/images/pickleLogo.png";
 import ZipLogo from "@/../assets/images/icons/zip.svg";
+import axios from "axios";
+import LoadingIcon from "@/Components/common/LoadingIcon";
 
 export default function Footer() {
     const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+    const [isInvalid, setIsInvalid] = useState(false);
+
+    const handleValidation = () => {
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setIsInvalid(true);
+            setTimeout(() => setIsInvalid(false), 100); // Reset animation after 1 second
+        } else {
+            setIsInvalid(false);
+            setTimeout(() => {
+                setLoading(true); 
+            }, 2000);
+            subscribe();
+        }
+    };
+
     const clothing = [
         "Hats",
         "Shirts",
@@ -22,6 +44,22 @@ export default function Footer() {
     ];
     const help = ["Shipping", "Returns", "Privacy", "Contact"];
     const account = ["Track Order", "Favourites", "My Details"];
+
+    function subscribe() {
+        setLoading(true);
+        axios
+            .post(route("subscribe.email"), { email: email })
+            .then((response) => {
+                setLoading(false);
+                setSuccess(true);
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
 
     return (
         <div id="footer" className="bg-secondary text-main w-full py-8 px-4">
@@ -62,7 +100,10 @@ export default function Footer() {
                                 let link = cat.toLowerCase();
                                 return (
                                     <p key={index} className="">
-                                        <a href={'/faqs#'+link} className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
+                                        <a
+                                            href={"/faqs#" + link}
+                                            className="tracking-wider hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out"
+                                        >
                                             {cat}
                                         </a>
                                     </p>
@@ -95,17 +136,23 @@ export default function Footer() {
                         Receive email updates about our latest events, newest
                         products and exclusive discounts
                     </p>
-                    <div className="relative w-2/3 mt-6">
+                    <div className={`relative w-2/3 mt-6 ${
+                                isInvalid ? "animate-wiggle" : ""
+                            }`}>
                         <input
-                            className="py-2 w-full px-4 rounded-md bg-white border-main border-2 text-black focus:border-main focus:ring-main"
+                            className={`py-2 w-full px-4 rounded-md bg-white border-main border-2 text-black focus:border-main focus:ring-main `}
                             type="email"
-                            id="email"
+                            id="sub-email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter Email"
+                            required={true}
                         />
-                        <button className="absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300">
-                            <i className="fa-solid fa-arrow-right"></i>
+                        <button
+                            onClick={handleValidation}
+                            className="absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300"
+                        >
+                            {!loading ? (<i className="fa-solid fa-arrow-right"></i>) : (<LoadingIcon />)}
                         </button>
                     </div>
                     <div className="flex space-x-8 text-3xl p-3 pt-8">
@@ -131,7 +178,7 @@ export default function Footer() {
 
                     <i className="fa-brands fa-cc-jcb"></i>
 
-                    <img className='w-[42px] h-[42px]' src={ZipLogo} /> 
+                    <img className="w-[42px] h-[42px]" src={ZipLogo} />
 
                     <i className="fa-brands fa-apple-pay"></i>
 

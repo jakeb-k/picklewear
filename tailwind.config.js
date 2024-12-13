@@ -25,7 +25,16 @@ export default {
             },
             boxShadow: {
                 summer: 'inset 5px 5px 0 2px #000000'
-            }
+            },
+            animation: {
+                wiggle: 'wiggle 0.1s ease-in-out',
+            },
+            keyframes: {
+                wiggle: {
+                  '0%, 100%': { transform: 'rotate(-3deg)' },
+                  '50%': { transform: 'rotate(3deg)' },
+                }
+              }
         },
     },
 
