@@ -49,5 +49,7 @@ Route::post('webhook',  [StripeController::class, 'webhook'])->name('webhook');
 Route::get('/success',  [StripeController::class, 'success'])->name('success');
 
 Route::post('/contact/email', [MailController::class, 'sendContactEmail'])->name('contact.email'); 
+Route::get('/unsubscribe', [MailController::class, 'unsubscribe'])->name('unsubscribe.email');
+Route::post('/email/subscribe', [MailController::class, 'subscribe' ])->name('subscribe.email');
 
 require __DIR__.'/auth.php';
