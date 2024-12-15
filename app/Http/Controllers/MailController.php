@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendContactMail;
+use App\Models\SubscriberEmail;
 use App\Models\User;
+use App\Notifications\NewSubscriberEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class MailController extends Controller
 {
@@ -44,5 +47,48 @@ class MailController extends Controller
                 400
             );
         }
+    }
+
+    /**
+     * Send an email to subscribe to mail list
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function subscribe(Request $request)
+    {
+        $request->validate([
+            'email'=> 'required|email|unique:subscriber_emails'
+        ],[
+            'email.unique' => 'This email is already taken',
+            'email.required' => 'An email is required'
+        ]);
+
+        SubscriberEmail::create([
+            "email" => $request->email
+        ]);
+        Notification::route('mail', $request->email)->notify(new NewSubscriberEmail($request->email));
+
+        return response()->json([
+            'success'=> "This didn't fail",
+        ]);
+    }
+
+    /**
+     * Delete the email from the database
+     *
+     * @param string $email
+     * @return void
+     */
+    public function unsubscribe(Request $request)
+    {
+        $email = $request->query('email');
+        $unsub = SubscriberEmail::where('email', urldecode($email))->first();
+        if ($unsub) {
+            $unsub->delete();
+        }
+
+        return view('mail.unsub'); 
+
     }
 }

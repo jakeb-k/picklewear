@@ -77,30 +77,4 @@ class ProfileController extends Controller
             return redirect()->back(); 
         }
     }
-
-    /**
-     * Send an email to subscribe to mail list
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function subscribe(Request $request)
-    {
-        $request->validate([
-            'email'=> 'required|email|unique:subscriber_emails'
-        ],[
-            'email.unique' => 'This email is already taken',
-            'email.required' => 'An email is required dumbass'
-        ]);
-
-        SubscriberEmail::create([
-            "email" => $request->email
-        ]);
-        Notification::route('mail', $request->email)->notify(new NewSubscriberEmail($request->email));
-
-        return response()->json([
-            'success'=> "This didn't fail",
-        ]);
-        
-    }
 }
