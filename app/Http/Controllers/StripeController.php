@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
+use Inertia\Inertia;
 use Stripe\Checkout\Session; 
 use Stripe\Stripe;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StripeController extends Controller
 {   
+    public function checkoutShow()
+    {
+        return Inertia::render('Checkout', []); 
+    }
     //Need to make a Stripe Web Hook to validate processed payment before 
     //creating new order.
     public function checkout(Request $request)
