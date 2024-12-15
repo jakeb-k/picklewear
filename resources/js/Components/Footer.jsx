@@ -12,8 +12,6 @@ export default function Footer() {
     const [isInvalid, setIsInvalid] = useState(false);
 
     const handleValidation = () => {
-        
-        setLoading(true);
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -26,7 +24,7 @@ export default function Footer() {
             setTimeout(() => {
                 setLoading(false)
                 setSuccess(true)
-            }, 4000);
+            }, 2000);
         }
     };
 
@@ -58,6 +56,7 @@ export default function Footer() {
                 setSuccess(true);
             })
             .catch((error) => {
+                setIsInvalid(true)
                 console.error(error);
             })
             .finally(() => {
