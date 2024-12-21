@@ -16,6 +16,7 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
                 bevan: ['Bevan', ...defaultTheme.fontFamily.sans],
                 oswald: ['Oswald', ...defaultTheme.fontFamily.sans], 
+                roboto_mono: ['Roboto-Mono', ...defaultTheme.fontFamily.sans]
             },
             colors: {
                 main: '#FFD100',

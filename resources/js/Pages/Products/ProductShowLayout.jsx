@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import moment from "moment";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import tinycolor from "tinycolor2";
 import useCartStore from "@/Stores/useCartStore";
 import { v4 as uuidv4 } from "uuid";
@@ -20,12 +20,12 @@ export default function ProductShowLayout(props) {
     const [displayImage, setDisplayImage] = useState(images[0]);
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
-    const [showAlert, setShowAlert] = useState(false); 
+    const [showAlert, setShowAlert] = useState(false);
 
     const { addProduct, products } = useCartStore();
 
     const addToCart = (product) => {
-        setShowAlert(false); 
+        setShowAlert(false);
         let productData = {
             ...product,
             color: selectedColor,
@@ -35,20 +35,33 @@ export default function ProductShowLayout(props) {
             cartItemId: uuidv4(),
         };
         addProduct(productData);
-        setShowAlert(true)
+        setShowAlert(true);
         setTimeout(() => {
-            setShowAlert(false); 
+            setShowAlert(false);
         }, 2500);
     };
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            // Reset height to auto to calculate new height correctly
+            textarea.style.height = "auto";
+            // Set height based on scrollHeight
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    }, []);
 
     const Alert = () => {
-        return(
-            <div className='border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary'>
+        return (
+            <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary">
                 <i className="fa-regular fa-circle-check text-main mt-1"></i>
-                <p className='tracking-wide ml-4 text-main font-oswald'> Your item/s have been added to the cart. </p>
+                <p className="tracking-wide ml-4 text-main font-oswald">
+                    Your item/s have been added to the cart.
+                </p>
             </div>
-        )
-    }
+        );
+    };
 
     return (
         <div className="min-h-screen py-24 mx-24">
@@ -59,11 +72,10 @@ export default function ProductShowLayout(props) {
                 classNames="fade"
                 unmountOnExit
             >
-                <Alert /> 
+                <Alert />
             </CSSTransition>
-            
+
             <div className="flex mt-20">
-                
                 <div className="flex justify-between items-center w-[47.5%] ">
                     <div className="w-[20%] space-y-8">
                         {images.map((image) => {
@@ -84,7 +96,7 @@ export default function ProductShowLayout(props) {
                     <div className="w-[75%]">
                         <img
                             src={displayImage.file_path}
-                            className="w-full min-h-[450px] rounded-md object-contain"
+                            className="w-full max-h-[450px] rounded-md object-contain"
                         />
                     </div>
                 </div>
@@ -93,8 +105,8 @@ export default function ProductShowLayout(props) {
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
                         <span className="text-lg line-through">
-                            ${(product.price + product.price * 0.2).toFixed(2)}{" "}
-                        </span>{" "}
+                            ${(product.price + product.price * 0.2).toFixed(2)}
+                        </span>
                         <span className="text-2xl font-bold ml-12">
                             ${product.price}
                         </span>
@@ -150,15 +162,29 @@ export default function ProductShowLayout(props) {
                             <div className="w-full my-4 border border-gray-400 mx-auto"></div>
                         </>
                     )}
-                    <p>{product.description}</p>
+                    <textarea
+                        ref={textareaRef}
+                        value={product.description}
+                        disabled={true}
+                        style={{ height: "auto" }}
+                        className="h-full resize-none p-0 py-2 mb-6 overflow-visible w-full bg-transparent cursor-default pointer-events-none border-none text-black auto-resize"
+                    ></textarea>
                     <p className="italic my-4">
-                        {" "}
-                        Will arrive between the{" "}
-                        {moment().add(7, "days").format("Do MMM YY") +
-                            " to the " +
-                            moment()
-                                .add(product.delivery_date, "days")
-                                .format("Do MMM YY")}{" "}
+                        <b>
+                            Will be delivered between{" "}
+                            {product.delivery_date
+                                ? moment()
+                                      .add(product.delivery_date || 0, "days")
+                                      .format("Do MMM YYYY") +
+                                  " and " +
+                                  moment()
+                                      .add(
+                                          parseInt(product.delivery_date) + 7 || 0,
+                                          "days",
+                                      )
+                                      .format("Do MMM YYYY")
+                                : ""}
+                        </b>
                     </p>
                     <div className="mt-auto flex space-x-32 mx-auto">
                         <div className="flex">

@@ -1,5 +1,5 @@
 import useCartStore from "@/Stores/useCartStore";
-import { useForm, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
 
@@ -74,10 +74,11 @@ export default function Checkout(props) {
 
     return (
         <div className="flex justify-between min-h-screen py-24 px-32 mt-12">
+            <Head title="Checkout" />
             <div className="w-[60%]">
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg ">
-                    <p className="text-xl">Contact Information</p>
-                    <div className="w-full flex space-x-4 mt-2">
+                    <p className="text-xl mb-2">Contact Information</p>
+                    <div className="w-full flex xl:flex-row flex-col xl:space-x-4 xl:space-y-0 space-y-4 mt-2">
                         <input
                             name="first_name"
                             id="first_name"
@@ -107,14 +108,14 @@ export default function Checkout(props) {
                                 required
                                 onChange={handleOnChange}
                                 value={data.mobile}
-                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${error?.mobile ? "border-red-500" : ""}`}
+                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${error?.mobile ? "border-red-500" : ""}`}
                             />
                             <p className="absolute left-0 top-0 flex flex-col justify-center px-2 h-full border-r border-gray-500">
                                 +61{" "}
                             </p>
                         </div>
                     </div>
-                    <p className="text-xl mt-8">Address</p>
+                    <p className="text-xl mt-8 mb-2">Address</p>
                     <div className="relative">
                         <input
                             name="street_name"
@@ -132,7 +133,7 @@ export default function Checkout(props) {
                     </div>
                 </div>
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg mt-8">
-                    <p className='text-xl'>Cart</p>
+                    <p className="text-xl">Cart</p>
                     {!loading && cartItems.length > 0 ? (
                         <div
                             id="show-scroll"
@@ -155,7 +156,7 @@ export default function Checkout(props) {
                                             <div className="w-[57.5%] space-y-6">
                                                 <p>{item.name}</p>
                                                 <div className="flex space-x-6 items-center">
-                                                    <p>${item.price}</p>
+                                                    <p className="font-roboto_mono">${item.price}</p>
                                                     <p>{item.size}</p>
                                                     <div
                                                         style={{
@@ -230,7 +231,23 @@ export default function Checkout(props) {
             </div>
 
             <div className="bg-white p-8 rounded-lg drop-shadow-lg w-[37.5%]">
-                <p className="text-xl">Summary</p>
+                <p className="text-2xl">Summary</p>
+                <div className="flex justify-between mt-4">
+                    <p>Subtotal</p>
+                    <p className='font-bold font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                </div>
+                <div className="flex justify-between mt-4">
+                    <p>Subtotal</p>
+                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                </div>
+                <div className="flex justify-between mt-4">
+                    <p>Tax</p>
+                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => (total + item.price * item.quantity)*0.10 , 0).toFixed(2)}</p>
+                </div>
+                <div className="flex justify-between mt-4">
+                    <p>Subtotal</p>
+                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                </div>
             </div>
         </div>
     );

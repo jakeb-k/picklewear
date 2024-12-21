@@ -16,6 +16,14 @@
     font-style: normal;
 }
 
+@font-face {
+  font-family: "Roboto-Mono";
+  src: url("../assets/fonts/Roboto-Mono-Variable.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 .fade-enter {
     opacity: 0;
     transform: translateY(-10px);
