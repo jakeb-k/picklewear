@@ -64,10 +64,21 @@ export default function Checkout(props) {
     }, [cartItems]);
 
     function routeToCheckout() {
+        const total =
+            cartItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0,
+            ) +
+            cartItems.reduce(
+                (total, item) => (total + item.price * item.quantity) * 0.1,
+                0,
+            ) -
+            data.discount;
+
         axios
             .post(
                 route("checkout.store"),
-                { ...data, cart: cartItems },
+                { ...data, cart: cartItems, total: total },
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -152,7 +163,7 @@ export default function Checkout(props) {
                             <input
                                 name="mobile"
                                 id="mobile"
-                                placeholder="Mobile Number*"
+                                placeholder="412 345 678*"
                                 type="text"
                                 required
                                 onChange={handleOnChange}
@@ -355,12 +366,7 @@ export default function Checkout(props) {
                     <p>Tax (10%)</p>
                     <p className="font-bold font-roboto_mono text-lg">
                         ${" "}
-                        {cartItems
-                            .reduce(
-                                (total, item) =>
-                                    (total + item.price * item.quantity) * 0.1,
-                                0,
-                            )
+                        {  (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1)
                             .toFixed(2)}
                     </p>
                 </div>
@@ -375,11 +381,7 @@ export default function Checkout(props) {
                                     total + item.price * item.quantity,
                                 0,
                             ) +
-                            cartItems.reduce(
-                                (total, item) =>
-                                    (total + item.price * item.quantity) * 0.1,
-                                0,
-                            ) -
+                            (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1)-
                             data.discount
                         ).toLocaleString(undefined, {
                             minimumFractionDigits: 2,
@@ -387,14 +389,13 @@ export default function Checkout(props) {
                         })}
                     </p>
                 </div>
-                <div className='w-full flex justify-center'>
-
-                <button
-                    onClick={() => routeToCheckout()}
-                    className="hover:bg-secondary mt-8 hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap w-2/3"
-                >
-                    CHECKOUT
-                </button>
+                <div className="w-full flex justify-center">
+                    <button
+                        onClick={() => routeToCheckout()}
+                        className="hover:bg-secondary mt-8 hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap w-2/3"
+                    >
+                        CHECKOUT
+                    </button>
                 </div>
             </div>
         </div>

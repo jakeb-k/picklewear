@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
@@ -32,55 +34,61 @@ class StripeController extends Controller
             'cart.*.size' => 'required|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'mobile' => ['required', 'regex:/^(?:\+61|0)[2-478](?:[ -]?[0-9]){8}$/'],
-            'address' => 'required|string',
+            'mobile' => ['required', 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
             // Add other necessary validations based on cart structure
         ], [
             'first_name.required' => 'First name is required',
             'last_name.required' => 'Last name is required',
             'mobile.required' => 'Mobile number is required',
             'mobile.regex' => 'Mobile number is invalid',
-            'address.required' => 'Address is required',
         ]);
 
         $cart = $request->input('cart');
 
         // Initialize line items for Stripe Checkout
         $lineItems = [];
-        $total = 0;
-        $products = [];
+        $products = []; 
+        foreach ($cart as $item) {
+            $description = "{$item['description']}";
+            $color = ucfirst($item['color']); 
+            $basePriceCents = intval($item['price'] * 100); // Convert base price to cents
+            $discountValue = isset($discountValue) ? $discountValue : 0; // Default discount to 0 if not set
+        
+            // Calculate discounted total
+            $discountedPriceCents = $basePriceCents - ($basePriceCents * $discountValue);
+        
+            // Calculate GST (10% of the discounted price)
+            $gstCents = $discountedPriceCents * 0.1;
+        
+            // Final price including GST
+            $finalPriceCents = $discountedPriceCents + $gstCents;
+        
+            // Add line item with the calculated final price
+            $lineItems[] = [
+                'price_data' => [
+                    'currency' => 'aud',
+                    'product_data' => [
+                        'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
+                        'description' => $description,
+                        'images' => [$item['image']['file_path']] ?? null,
+                    ],
+                    'unit_amount' => round($finalPriceCents), // Ensure it's rounded to the nearest cent
+                ],
+                'quantity' => $item['quantity'],
+            ];
 
-        // foreach ($cart as $item) {
-        //     $description = "{$item['description']}";
-        //     $color = ucfirst($item['color']); 
-        //     $lineItems[] = [
-        //         'price_data' => [
-        //             'currency' => 'aud',
-        //             'product_data' => [
-        //                 'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
-        //                 'description' => $description,
-        //                 'images'=> [$item['image']['file_path'] ]?? null,
-
-        //             ],
-        //             'unit_amount' => intval($item['price'] * 100), // Convert to cents
-        //         ],
-        //         'quantity' => $item['quantity'],
-        //     ];
-
-        //     // Prepare products string for Order
-        //     $productDetails = [
-        //         'id' => $item['id'],
-        //         'name' => $item['name'],
-        //         'price' => $item['price'],
-        //         'quantity' => $item['quantity'],
-        //         'size' => $item['size'],
-        //         'color' => $item['color'],
-        //         'options' => $item['options'] ?? [],
-        //     ];
-        //     $products[] = $productDetails;
-
-        //     $total += $item['price'] * $item['quantity'];
-        // }
+            // Prepare products string for Order
+            $productDetails = [
+                'id' => $item['id'],
+                'name' => $item['name'],
+                'price' => $item['price'],
+                'quantity' => $item['quantity'],
+                'size' => $item['size'],
+                'color' => $item['color'],
+                'options' => $item['options'] ?? [],
+            ];
+            $products[] = $productDetails;
+        }
 
         // Set Stripe API key
         Stripe::setApiKey(config('stripe.sk'));
@@ -90,8 +98,22 @@ class StripeController extends Controller
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => route('success'),
-            'cancel_url' => route('index'),
+            'cancel_url' => route('checkout.show'),
         ]);
+
+        $newCustomer = Customer::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'mobile' => $request->mobile,
+            'address' => $request->address,
+        ]);
+        // $customerLocation = Location::create([
+        //     'street' => $request->street_address,
+        //     'city' => $request->city,
+        //     'state' => $request->state,
+        //     'postcode' => $request->postcode,
+        // ]); 
+        // $newCustomer->locations()->attach($customerLocation->id);
         // Create Order record
         $order = Order::create([
             'status' => 'Unpaid',
@@ -100,7 +122,8 @@ class StripeController extends Controller
             'sent' => false, 
             'user_id' => Auth::user()->id ?? null, 
         ]);
-        
+        $order->customer_id = $newCustomer->id; 
+        $order->save();
         foreach($products as $product){
             $order->products()->attach($product['id'], [
                 'quantity' => $product['quantity'],
@@ -134,6 +157,7 @@ class StripeController extends Controller
                 throw new NotFoundHttpException(); 
             }
             $customer = \Stripe\Customer::retrieve($session->customer); 
+
             $order = Order::where('session_id', $session->id)->where('status','unpaid')->first(); 
             
             if(!$order) {
