@@ -142,10 +142,9 @@ class ProductController extends Controller
                 'discount'=> 'numeric|nullable|min:0|max:100',
                 'description'=> 'required'
             ]);
-    
             $product->update([
                 'name' => $request->name ,
-                'type' => $request->type['value'] ,
+                'type' => $request->type,
                 'url' => $request->url,
                 'delivery_date'=> $request->delivery_date,
                 'price'=> $request->price,

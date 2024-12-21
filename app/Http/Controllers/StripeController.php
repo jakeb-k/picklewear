@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
+use Inertia\Inertia;
 use Stripe\Checkout\Session; 
 use Stripe\Stripe;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StripeController extends Controller
 {   
+    public function checkoutShow()
+    {
+        return Inertia::render('Checkout', []); 
+    }
     //Need to make a Stripe Web Hook to validate processed payment before 
     //creating new order.
     public function checkout(Request $request)
@@ -24,30 +31,48 @@ class StripeController extends Controller
             'cart.*.price' => 'required|numeric|min:0.5',
             'cart.*.quantity' => 'required|integer|min:1',
             'cart.*.color' => 'required|string',
-            'cart.*.size' => 'required|string'
+            'cart.*.size' => 'required|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'mobile' => ['required', 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
             // Add other necessary validations based on cart structure
+        ], [
+            'first_name.required' => 'First name is required',
+            'last_name.required' => 'Last name is required',
+            'mobile.required' => 'Mobile number is required',
+            'mobile.regex' => 'Mobile number is invalid',
         ]);
 
         $cart = $request->input('cart');
 
         // Initialize line items for Stripe Checkout
         $lineItems = [];
-        $total = 0;
-        $products = [];
-
+        $products = []; 
         foreach ($cart as $item) {
             $description = "{$item['description']}";
             $color = ucfirst($item['color']); 
+            $basePriceCents = intval($item['price'] * 100); // Convert base price to cents
+            $discountValue = isset($request->discount) ? $request->discount : 0; // Default discount to 0 if not set
+        
+            // Calculate GST (10% of the original price)
+            $gstCents = $basePriceCents * 0.1;
+
+            // Calculate discounted total (after applying discount to the original price)
+            $discountedPriceCents = $basePriceCents - ($basePriceCents * $discountValue);
+
+            // Final price including GST (add GST to the discounted price)
+            $finalPriceCents = $discountedPriceCents + $gstCents;
+        
+            // Add line item with the calculated final price
             $lineItems[] = [
                 'price_data' => [
                     'currency' => 'aud',
                     'product_data' => [
                         'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
                         'description' => $description,
-                        'images'=> [$item['image']['file_path'] ]?? null,
-
+                        'images' => [$item['image']['file_path']] ?? null,
                     ],
-                    'unit_amount' => intval($item['price'] * 100), // Convert to cents
+                    'unit_amount' => round($finalPriceCents), // Ensure it's rounded to the nearest cent
                 ],
                 'quantity' => $item['quantity'],
             ];
@@ -63,8 +88,6 @@ class StripeController extends Controller
                 'options' => $item['options'] ?? [],
             ];
             $products[] = $productDetails;
-
-            $total += $item['price'] * $item['quantity'];
         }
 
         // Set Stripe API key
@@ -75,17 +98,34 @@ class StripeController extends Controller
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => route('success'),
-            'cancel_url' => route('index'),
+            'cancel_url' => route('checkout.show'),
         ]);
+
+        $newCustomer = Customer::create([
+            'email' => Auth::user()->email ?? null,
+            'stripe_id' => $session->id, 
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'mobile' => $request->mobile,
+            'address' => $request->address,
+        ]);
+        // $customerLocation = Location::create([
+        //     'street' => $request->street_address,
+        //     'city' => $request->city,
+        //     'state' => $request->state,
+        //     'postcode' => $request->postcode,
+        // ]); 
+        // $newCustomer->locations()->attach($customerLocation->id);
         // Create Order record
         $order = Order::create([
             'status' => 'Unpaid',
-            'total' => $total, 
+            'total' => $request->total, 
             'session_id' => $session->id, 
             'sent' => false, 
             'user_id' => Auth::user()->id ?? null, 
         ]);
-        
+        $order->customer_id = $newCustomer->id; 
+        $order->save();
         foreach($products as $product){
             $order->products()->attach($product['id'], [
                 'quantity' => $product['quantity'],
@@ -119,14 +159,15 @@ class StripeController extends Controller
                 throw new NotFoundHttpException(); 
             }
             $customer = \Stripe\Customer::retrieve($session->customer); 
-            $order = Order::where('session_id', $session->id)->where('status','unpaid')->first(); 
+
+            $order = Order::where('session_id', $session->id)->where('status','Unpaid')->first(); 
             
             if(!$order) {
                 throw new NotFoundHttpException(); 
             }
 
-            if ($order->status === 'unpaid') {
-                $order->status = 'paid';
+            if ($order->status === 'Unpaid') {
+                $order->status = 'Paid';
                 $order->save();
             } 
 

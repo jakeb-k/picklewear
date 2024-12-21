@@ -9,8 +9,8 @@ class Customer extends Model
 {
     use Billable;
 
-    protected $fillable = [
-        'email',
+    protected $guarded = [
+        'id',
     ];
 
     public function orders()

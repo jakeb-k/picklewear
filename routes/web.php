@@ -44,6 +44,7 @@ Route::get('/faqs', function(){
     return Inertia::render('FAQs',[]); 
 });
 
+Route::get('/checkout', [StripeController::class, 'checkoutShow'])->name('checkout.show'); 
 Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout.store');
 Route::post('webhook',  [StripeController::class, 'webhook'])->name('webhook');
 Route::get('/success',  [StripeController::class, 'success'])->name('success');

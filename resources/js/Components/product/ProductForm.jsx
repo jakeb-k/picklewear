@@ -10,7 +10,7 @@ export default function ProductForm({
     ...props
 }) {
     const { product } = props;
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(product.images ?? []);
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
@@ -19,7 +19,7 @@ export default function ProductForm({
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount ?? 0,
         description: product?.description ?? "",
-        images: [],
+        images: product.images,
     });
 
     const handleOnChange = (e) => {
@@ -45,18 +45,16 @@ export default function ProductForm({
             formData.append("images[]", image); // Use 'files[]' to ensure array format
         });
         Object.entries(data).forEach(([key, value]) => {
-            if(key == 'type'){
-                formData.append(key, value['value']);
-
+            if (key == "type") {
+                formData.append(key, value["value"]);
             } else {
                 formData.append(key, value);
-
             }
         });
         formData.append("data", data);
         if (isCreating) {
             axios
-                .post(route("product.store", product),  formData, {
+                .post(route("product.store", product), formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -68,7 +66,6 @@ export default function ProductForm({
                     console.error(error);
                 });
         } else {
-            
             formData.append("_method", "PUT");
             axios
                 .post(route("product.update", product), formData, {
@@ -108,7 +105,19 @@ export default function ProductForm({
         }
     }, [data.discount]);
 
-    const ImageUploader = ({ updateImages, images, setImages }) => {
+    const ImageUploader = ({
+        updateImages,
+        images,
+        setImages,
+        defaultImages,
+    }) => {
+        // Set default images
+        useEffect(() => {
+            if (defaultImages && defaultImages.length > 0) {
+                setImages(defaultImages); // Preload default images
+            }
+        }, [defaultImages, setImages]);
+
         const handleDrop = (event) => {
             event.preventDefault();
             const files = Array.from(event.dataTransfer.files);
@@ -141,13 +150,14 @@ export default function ProductForm({
                 return updatedImages;
             });
         };
+
         return (
             <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 className="flex flex-col items-center min-w-[350px] border-2 border-dashed border-gray-400 rounded-lg p-5 py-10"
             >
-                <div className=" text-center cursor-pointer w-full">
+                <div className="text-center cursor-pointer w-full">
                     {images.length < 3 ? (
                         <>
                             <p className="flex items-center text-gray-600">
@@ -179,8 +189,12 @@ export default function ProductForm({
                     {images.map((file, index) => (
                         <div key={index} className="relative w-56 h-56">
                             <img
-                                src={URL.createObjectURL(file)}
-                                alt={`Uploaded ${index}`}
+                                src={
+                                    file.file_path // If it's a default image, use its URL
+                                        ? `${window.location.origin}${file.file_path}`
+                                        : URL.createObjectURL(file) // Otherwise, create an object URL
+                                }
+                                alt={file.file_name || `Uploaded ${index}`}
                                 className="w-full h-full object-cover rounded-lg"
                             />
                             <button
@@ -353,7 +367,11 @@ export default function ProductForm({
                                           .format("Do MMM YYYY") +
                                       " and " +
                                       moment()
-                                          .add(parseInt(data.delivery_date)+7 || 0, "days")
+                                          .add(
+                                              parseInt(data.delivery_date) +
+                                                  7 || 0,
+                                              "days",
+                                          )
                                           .format("Do MMM YYYY")
                                     : ""}
                             </b>{" "}
@@ -382,6 +400,7 @@ export default function ProductForm({
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
                 images={images}
+                defaultImages={product.images}
                 setImages={setImages}
             />
             <div className="w-full flex justify-end">

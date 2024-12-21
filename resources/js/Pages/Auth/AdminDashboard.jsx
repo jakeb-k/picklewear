@@ -22,8 +22,7 @@ export default function AdminDashboard(props) {
             <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary z-50">
                 <i className="fa-regular fa-circle-check text-main mt-1"></i>
                 <p className="tracking-wide ml-4 text-main font-oswald">
-                    {" "}
-                    Your product was updated.{" "}
+                    Your product was {isCreating ? 'created' : 'updated'}.
                 </p>
             </div>
         );
@@ -103,6 +102,7 @@ export default function AdminDashboard(props) {
                         setTimeout(() => {
                             setShowAlert(false)
                         }, 3000);
+                        setIsCreating(false) 
                     }}
                 />
             )}

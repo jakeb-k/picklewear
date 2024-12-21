@@ -43,19 +43,19 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
         setProducts(cartItems);
     }, [cartItems]);
 
-    function routeToCheckout() {
-        axios.post(route('checkout'), { cart: cartItems }, {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then((response) => {
-            const checkoutUrl = response.data.url;
-            // Redirect the browser to the Stripe checkout page
-            window.location.href = checkoutUrl;
-        }).catch((error) => {
-            console.error(error);
-        });
-    }
+    // function routeToCheckout() {
+    //     axios.post(route('checkout'), { cart: cartItems }, {
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //     }).then((response) => {
+    //         const checkoutUrl = response.data.url;
+    //         // Redirect the browser to the Stripe checkout page
+    //         window.location.href = checkoutUrl;
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
+    // }
 
     return (
         <div ref={ref} className="fixed flex w-full min-h-screen z-40">
@@ -158,9 +158,9 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
 
                 {cartItems.length > 0 && (
                     <div className='w-full flex justify-center'>
-                        <button onClick={() => routeToCheckout()} className="absolute bottom-4 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
+                        <a href={route('checkout.show')} className="absolute bottom-4 hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2  border-black rounded-lg text-nowrap">
                             Checkout
-                        </button>
+                        </a>
                     </div>
                 )}
             </div>

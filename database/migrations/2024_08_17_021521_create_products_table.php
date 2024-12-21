@@ -20,7 +20,7 @@ return new class extends Migration
             $table->float('price');
             $table->float('discount')->nullable();
             $table->string('sku')->nullable();
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->boolean('available')->default(true); 
             $table->softDeletes(); 
             $table->timestamps();
