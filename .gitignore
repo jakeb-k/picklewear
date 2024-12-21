@@ -19,3 +19,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/resources/js/utils/discountCodes.js

@@ -47,7 +47,7 @@
         
         <h1>Welcome to Picklewear Mail List!</h1>
         <div class='message-box'>
-            <p>Thank you for signing up to join our email list! We're thrilled to have you on board, and as a reward use code <b>Pickleliscious</b> for 20% off on your first order!</p>
+            <p>Thank you for signing up to join our email list! We're thrilled to have you on board, and as a reward use code <b>PICKLELISCIOUS</b> for 20% off on your first order!</p>
             <br />
             <p>By subscribing, you'll be the first to know about exciting updates, exclusive offers, and the latest news from Picklewear.</p>
             <br />

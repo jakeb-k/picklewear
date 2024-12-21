@@ -2,9 +2,10 @@ import LoadingIcon from "@/Components/common/LoadingIcon";
 import useCartStore from "@/Stores/useCartStore";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import tinycolor from "tinycolor2";
 import { CSSTransition } from "react-transition-group";
+import discountCodes from "@/utils/discountCodes";
 
 export default function Checkout(props) {
     const [error, setError] = useState({});
@@ -23,6 +24,12 @@ export default function Checkout(props) {
         postcode: "",
         discount: 0,
     });
+
+    const [code, setCode] = useState("");
+    const [promoError, setPromoError] = useState(false);
+    const [promoSuccess, setPromoSuccess] = useState(false);
+    const [promoLoading, setPromoLoading] = useState(false);
+
     // Function to update the quantity of a product by cartItemId
     const updateQuantity = (cartItemId, quantity) => {
         setCartItems((prevCartItems) => {
@@ -77,62 +84,36 @@ export default function Checkout(props) {
         }));
     };
 
-    const PromoCode = ({ handleDiscount }) => {
-        const [code, setCode] = useState("");
-        const [success, setSuccess] = useState(false);
-        const [loading, setLoading] = useState(false);
-
-        function checkPromoCode() {
-            setLoading(true);
-            axios
-                .post(route("promo.check"), { code: code })
-                .then((response) => {
-                    setLoading(false);
-                    setSuccess(true);
-                    handleDiscount(response.data.discount);
-                })
-                .catch((error) => {
-                    setError(true);
-                    console.error(error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        }
-
-        return (
-            <div className="bg-gray-200 border-main border-2 rounded-lg p-4 my-4">
-                <p className="text-xs italic mb-4">
-                    Discount codes can expire or stop working anytime, no
-                    promises, no guarantees. If it's not working, it's just not
-                    your lucky day. Try again next time!
-                </p>
-                <div className="relative">
-                    <input
-                        className={`py-2 w-full px-4 rounded-md bg-white border-main border-2 text-black focus:border-main focus:ring-main `}
-                        type="code"
-                        id="code"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        placeholder="Enter Code"
-                        required={true}
-                    />
-                    <button
-                        onClick={checkPromoCode}
-                        className={`absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300 ${success ? "bg-green-500" : ""}`}
-                    >
-                        {!loading && !success && (
-                            <i className="fa-solid fa-arrow-right"></i>
-                        )}
-                        {loading && <LoadingIcon />}
-                        {!loading && success && (
-                            <i className="fa-solid fa-check text-white"></i>
-                        )}
-                    </button>
-                </div>
-            </div>
-        );
+    const handleDiscount = (data) => {
+        const total = cartItems
+            .reduce((total, item) => total + item.price * item.quantity, 0)
+            .toFixed(2);
+        console.log(total, data);
+        const discountTotal = total * data;
+        console.log(discountTotal);
+        setData("discount", discountTotal);
     };
+
+    function checkPromoCode() {
+        setPromoLoading(true);
+        setPromoError(false);
+        setPromoSuccess(false);
+
+        setTimeout(() => {
+            const discount = discountCodes.find((item) => item.name === code);
+
+            if (discount) {
+                setPromoSuccess(true);
+                handleDiscount(discount.value);
+                setPromoError(false);
+            } else {
+                setPromoSuccess(false);
+                setPromoError(true);
+            }
+
+            setPromoLoading(false);
+        }, 1000);
+    }
 
     return (
         <div className="flex justify-between min-h-screen py-24 px-32 mt-12">
@@ -190,7 +171,7 @@ export default function Checkout(props) {
                             className={`rounded-lg py-1 px-4 w-2/3 pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${error?.first_name ? "border-red-500" : ""}`}
                         />
                         <p className="absolute left-0 top-0 h-full flex flex-col justify-center px-2">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i className="fa-solid fa-magnifying-glass"></i>
                         </p>
                     </div>
                 </div>
@@ -311,7 +292,7 @@ export default function Checkout(props) {
                         Promo Code{" "}
                         <i
                             onClick={() => setExpanded(!expanded)}
-                            class={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded ? "rotate-180" : "rotate-0"}`}
+                            className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded ? "rotate-180" : "rotate-0"}`}
                         ></i>
                     </div>
                     <p className="font-bold font-roboto_mono text-lg">
@@ -328,7 +309,41 @@ export default function Checkout(props) {
                     classNames="fade"
                     unmountOnExit
                 >
-                    <PromoCode />
+                    <div className="bg-gray-200 border-main border-2 rounded-lg p-4 my-4">
+                        <p className="text-xs italic mb-4">
+                            Discount codes can expire or stop working anytime,
+                            no promises, no guarantees. If it's not working,
+                            it's just not your lucky day. Try again next time!
+                        </p>
+                        <div className="relative">
+                            <input
+                                className={`py-2 w-full px-4 rounded-md bg-white border-main border-2 text-black focus:border-main focus:ring-main `}
+                                type="code"
+                                id="code"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                                placeholder="Enter Code"
+                                required={true}
+                            />
+                            <button
+                                onClick={checkPromoCode}
+                                className={`absolute w-[50px] right-0 h-full rounded-r-md border border-main text-black hover:bg-main transition-all duration-300 ${promoSuccess ? "bg-green-500" : ""} ${promoError ? "bg-red-500" : ""}`}
+                            >
+                                {!promoLoading &&
+                                    !promoSuccess &&
+                                    !promoError && (
+                                        <i className="fa-solid fa-arrow-right"></i>
+                                    )}
+                                {promoLoading && <LoadingIcon />}
+                                {!promoLoading && promoSuccess && (
+                                    <i className="fa-solid fa-check text-white"></i>
+                                )}
+                                {!promoLoading && promoError && (
+                                    <i className="fa-solid fa-x text-white"></i>
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </CSSTransition>
                 <div className="flex justify-between mt-8 mb-4">
                     <p>Tax (10%)</p>
@@ -358,7 +373,8 @@ export default function Checkout(props) {
                                 (total, item) =>
                                     (total + item.price * item.quantity) * 0.1,
                                 0,
-                            )
+                            ) -
+                            data.discount
                         ).toLocaleString(undefined, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
