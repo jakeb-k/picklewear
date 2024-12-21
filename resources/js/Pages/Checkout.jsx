@@ -17,6 +17,7 @@ export default function Checkout(props) {
         state: "",
         suburb: "",
         postcode: "",
+        discount: 0, 
     });
     // Function to update the quantity of a product by cartItemId
     const updateQuantity = (cartItemId, quantity) => {
@@ -156,7 +157,9 @@ export default function Checkout(props) {
                                             <div className="w-[57.5%] space-y-6">
                                                 <p>{item.name}</p>
                                                 <div className="flex space-x-6 items-center">
-                                                    <p className="font-roboto_mono">${item.price}</p>
+                                                    <p className="font-roboto_mono">
+                                                        ${item.price}
+                                                    </p>
                                                     <p>{item.size}</p>
                                                     <div
                                                         style={{
@@ -232,21 +235,59 @@ export default function Checkout(props) {
 
             <div className="bg-white p-8 rounded-lg drop-shadow-lg w-[37.5%]">
                 <p className="text-2xl">Summary</p>
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-between mt-8">
                     <p>Subtotal</p>
-                    <p className='font-bold font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                    <p className="font-bold font-roboto_mono text-lg">
+                        ${" "}
+                        {cartItems.reduce(
+                            (total, item) => total + item.price * item.quantity,
+                            0,
+                        )}
+                    </p>
                 </div>
-                <div className="flex justify-between mt-4">
-                    <p>Subtotal</p>
-                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                <div className="flex justify-between mt-8">
+                    <p>Promo Code <i class="fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full"></i></p>
+                    <p className="font-bold font-roboto_mono text-lg">
+                       $ {data.discount.toLocaleString(0, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}
+                    </p>
                 </div>
-                <div className="flex justify-between mt-4">
-                    <p>Tax</p>
-                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => (total + item.price * item.quantity)*0.10 , 0).toFixed(2)}</p>
+                <div className="flex justify-between mt-8 mb-4">
+                    <p>Tax (10%)</p>
+                    <p className="font-bold font-roboto_mono text-lg">
+                        ${" "}
+                        {cartItems
+                            .reduce(
+                                (total, item) =>
+                                    (total + item.price * item.quantity) * 0.1,
+                                0,
+                            )
+                            .toFixed(2)}
+                    </p>
                 </div>
+                <hr className="border-gray-500 border-dashed" />
                 <div className="flex justify-between mt-4">
-                    <p>Subtotal</p>
-                    <p className='font-bold  font-roboto_mono'>${cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
+                    <p className="text-lg font-bold">Total</p>
+                    <p className="font-bold font-roboto_mono text-lg">
+                        ${" "}
+                        {(
+                            cartItems.reduce(
+                                (total, item) =>
+                                    total + item.price * item.quantity,
+                                0,
+                            ) +
+                            cartItems.reduce(
+                                (total, item) =>
+                                    (total + item.price * item.quantity) * 0.1,
+                                0,
+                            )
+                        ).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}
+                    </p>
                 </div>
             </div>
         </div>
