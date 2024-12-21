@@ -52,15 +52,15 @@ class StripeController extends Controller
             $description = "{$item['description']}";
             $color = ucfirst($item['color']); 
             $basePriceCents = intval($item['price'] * 100); // Convert base price to cents
-            $discountValue = isset($discountValue) ? $discountValue : 0; // Default discount to 0 if not set
+            $discountValue = isset($request->discount) ? $request->discount : 0; // Default discount to 0 if not set
         
-            // Calculate discounted total
+            // Calculate GST (10% of the original price)
+            $gstCents = $basePriceCents * 0.1;
+
+            // Calculate discounted total (after applying discount to the original price)
             $discountedPriceCents = $basePriceCents - ($basePriceCents * $discountValue);
-        
-            // Calculate GST (10% of the discounted price)
-            $gstCents = $discountedPriceCents * 0.1;
-        
-            // Final price including GST
+
+            // Final price including GST (add GST to the discounted price)
             $finalPriceCents = $discountedPriceCents + $gstCents;
         
             // Add line item with the calculated final price

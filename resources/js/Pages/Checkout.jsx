@@ -23,6 +23,7 @@ export default function Checkout(props) {
         suburb: "",
         postcode: "",
         discount: 0,
+        discountAmount: 0, 
     });
 
     const [code, setCode] = useState("");
@@ -105,10 +106,12 @@ export default function Checkout(props) {
 
     const handleDiscount = (data) => {
         const total = cartItems
-            .reduce((total, item) => total + item.price * item.quantity, 0)
-            .toFixed(2);
-        const discountTotal = total * data;
-        setData("discount", discountTotal);
+            .reduce((total, item) => total +( item.price * item.quantity) * data, 0);
+        setData({
+            ...data,
+            discountAmount: total.toFixed(2),
+            discount: data,
+        });
     };
 
     function checkPromoCode() {
@@ -314,7 +317,7 @@ export default function Checkout(props) {
                     </div>
                     <p className="font-bold font-roboto_mono text-lg">
                         ${" "}
-                        {data.discount.toLocaleString(0, {
+                        {data.discountAmount.toLocaleString(0, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                         })}
@@ -382,7 +385,7 @@ export default function Checkout(props) {
                                 0,
                             ) +
                             (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1)-
-                            data.discount
+                            data.discountAmount
                         ).toLocaleString(undefined, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
