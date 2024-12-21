@@ -29,8 +29,18 @@ class StripeController extends Controller
             'cart.*.price' => 'required|numeric|min:0.5',
             'cart.*.quantity' => 'required|integer|min:1',
             'cart.*.color' => 'required|string',
-            'cart.*.size' => 'required|string'
+            'cart.*.size' => 'required|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'mobile' => ['required', 'regex:/^(?:\+61|0)[2-478](?:[ -]?[0-9]){8}$/'],
+            'address' => 'required|string',
             // Add other necessary validations based on cart structure
+        ], [
+            'first_name.required' => 'First name is required',
+            'last_name.required' => 'Last name is required',
+            'mobile.required' => 'Mobile number is required',
+            'mobile.regex' => 'Mobile number is invalid',
+            'address.required' => 'Address is required',
         ]);
 
         $cart = $request->input('cart');
@@ -40,37 +50,37 @@ class StripeController extends Controller
         $total = 0;
         $products = [];
 
-        foreach ($cart as $item) {
-            $description = "{$item['description']}";
-            $color = ucfirst($item['color']); 
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => 'aud',
-                    'product_data' => [
-                        'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
-                        'description' => $description,
-                        'images'=> [$item['image']['file_path'] ]?? null,
+        // foreach ($cart as $item) {
+        //     $description = "{$item['description']}";
+        //     $color = ucfirst($item['color']); 
+        //     $lineItems[] = [
+        //         'price_data' => [
+        //             'currency' => 'aud',
+        //             'product_data' => [
+        //                 'name' => "{$item['name']}: {$color} \n {$item['size']} \n ",
+        //                 'description' => $description,
+        //                 'images'=> [$item['image']['file_path'] ]?? null,
 
-                    ],
-                    'unit_amount' => intval($item['price'] * 100), // Convert to cents
-                ],
-                'quantity' => $item['quantity'],
-            ];
+        //             ],
+        //             'unit_amount' => intval($item['price'] * 100), // Convert to cents
+        //         ],
+        //         'quantity' => $item['quantity'],
+        //     ];
 
-            // Prepare products string for Order
-            $productDetails = [
-                'id' => $item['id'],
-                'name' => $item['name'],
-                'price' => $item['price'],
-                'quantity' => $item['quantity'],
-                'size' => $item['size'],
-                'color' => $item['color'],
-                'options' => $item['options'] ?? [],
-            ];
-            $products[] = $productDetails;
+        //     // Prepare products string for Order
+        //     $productDetails = [
+        //         'id' => $item['id'],
+        //         'name' => $item['name'],
+        //         'price' => $item['price'],
+        //         'quantity' => $item['quantity'],
+        //         'size' => $item['size'],
+        //         'color' => $item['color'],
+        //         'options' => $item['options'] ?? [],
+        //     ];
+        //     $products[] = $productDetails;
 
-            $total += $item['price'] * $item['quantity'];
-        }
+        //     $total += $item['price'] * $item['quantity'];
+        // }
 
         // Set Stripe API key
         Stripe::setApiKey(config('stripe.sk'));
@@ -85,7 +95,7 @@ class StripeController extends Controller
         // Create Order record
         $order = Order::create([
             'status' => 'Unpaid',
-            'total' => $total, 
+            'total' => $request->total, 
             'session_id' => $session->id, 
             'sent' => false, 
             'user_id' => Auth::user()->id ?? null, 

@@ -8,7 +8,7 @@ import { CSSTransition } from "react-transition-group";
 import discountCodes from "@/utils/discountCodes";
 
 export default function Checkout(props) {
-    const [error, setError] = useState({});
+    const [errors, setErrors] = useState({});
     const { user } = usePage().props.auth;
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -63,19 +63,27 @@ export default function Checkout(props) {
         setProducts(cartItems);
     }, [cartItems]);
 
-    // function routeToCheckout() {
-    //     axios.post(route('checkout'), { cart: cartItems }, {
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //     }).then((response) => {
-    //         const checkoutUrl = response.data.url;
-    //         // Redirect the browser to the Stripe checkout page
-    //         window.location.href = checkoutUrl;
-    //     }).catch((error) => {
-    //         console.error(error);
-    //     });
-    // }
+    function routeToCheckout() {
+        axios
+            .post(
+                route("checkout.store"),
+                { ...data, cart: cartItems },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            )
+            .then((response) => {
+                const checkoutUrl = response.data.url;
+                // Redirect the browser to the Stripe checkout page
+                window.location.href = checkoutUrl;
+            })
+            .catch((error) => {
+                console.error(error);
+                setErrors(error.response.data.errors);
+            });
+    }
 
     const handleOnChange = (e) => {
         setData((prevData) => ({
@@ -88,9 +96,7 @@ export default function Checkout(props) {
         const total = cartItems
             .reduce((total, item) => total + item.price * item.quantity, 0)
             .toFixed(2);
-        console.log(total, data);
         const discountTotal = total * data;
-        console.log(discountTotal);
         setData("discount", discountTotal);
     };
 
@@ -130,7 +136,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.first_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${error?.first_name ? "border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
                         />
                         <input
                             name="last_name"
@@ -140,7 +146,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.last_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${error?.last_name ? "border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-red-500" : ""}`}
                         />
                         <div className="relative">
                             <input
@@ -151,7 +157,7 @@ export default function Checkout(props) {
                                 required
                                 onChange={handleOnChange}
                                 value={data.mobile}
-                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${error?.mobile ? "border-red-500" : ""}`}
+                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${errors?.mobile ? "border-red-500" : ""}`}
                             />
                             <p className="absolute left-0 top-0 flex flex-col justify-center px-2 h-full border-r border-gray-500">
                                 +61{" "}
@@ -168,7 +174,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.street_name}
-                            className={`rounded-lg py-1 px-4 w-2/3 pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${error?.first_name ? "border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 w-2/3 pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
                         />
                         <p className="absolute left-0 top-0 h-full flex flex-col justify-center px-2">
                             <i className="fa-solid fa-magnifying-glass"></i>
@@ -275,7 +281,7 @@ export default function Checkout(props) {
                 </div>
             </div>
 
-            <div className="bg-white p-8 rounded-lg drop-shadow-lg w-[37.5%]">
+            <div className="bg-white p-8 rounded-lg drop-shadow-lg w-[37.5%] h-fit">
                 <p className="text-2xl">Summary</p>
                 <div className="flex justify-between mt-8">
                     <p>Subtotal</p>
@@ -380,6 +386,15 @@ export default function Checkout(props) {
                             maximumFractionDigits: 2,
                         })}
                     </p>
+                </div>
+                <div className='w-full flex justify-center'>
+
+                <button
+                    onClick={() => routeToCheckout()}
+                    className="hover:bg-secondary mt-8 hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap w-2/3"
+                >
+                    CHECKOUT
+                </button>
                 </div>
             </div>
         </div>
