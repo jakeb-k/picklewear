@@ -3,20 +3,21 @@ import moment from "moment";
 
 export default function OrdersTable(props) {
     const orders = props.orders;
+    console.log(orders)
     const processedData = orders.map((order) => {
         const code = order.id.toString().padStart(4, "0"); // Format order code
         const status = order.status;
-        const userName = order.user?.first_name + " " + order.user?.last_name; // Full name
-        const email = order.user?.email; // User email
+        const userName = order.customer?.first_name + " " + order.customer?.last_name; // Full name
+        const mobile = order.customer?.mobile; // User email
         const total = order.total; // Order total
-        const location =
-            order.location.street +
-            ", " +
-            order.location.city +
-            ", " +
-            order.location.state +
-            ", " +
-            order.location.postcode;
+        const location = 
+        (order.location?.street ?? "") +
+        ", " +
+        (order.location?.city ?? "") +
+        ", " +
+        (order.location?.state ?? "") +
+        ", " +
+        (order.location?.postcode ?? "");
         const viewDetails = `/orders/${order.id}`; // Link to view order details
         const createdAt = order.created_at; 
 
@@ -24,7 +25,7 @@ export default function OrdersTable(props) {
             code,
             status,
             userName,
-            email,
+            mobile,
             total,
             location,
             viewDetails, 
@@ -101,16 +102,16 @@ export default function OrdersTable(props) {
             width: "175px",
         },
         {
-            name: "Email",
-            selector: (row) => row.email,
+            name: "Mobile",
+            selector: (row) => '0'+ row.mobile,
             sortable: true,
             width: "200px",
         },
         {
             name: "Location",
-            selector: (row) => row.location,
+            selector: (row) => row.location ?? "",
             sortable: true,
-            cell: (row) => <p className="">{row.location}</p>,
+            cell: (row) => <p className="">{row.location ?? 'N/A'}</p>,
             width: "300px",
         },
         

@@ -384,7 +384,7 @@ export default function Checkout(props) {
                                     total + item.price * item.quantity,
                                 0,
                             ) +
-                            (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1)-
+                            (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1) -
                             data.discountAmount
                         ).toLocaleString(undefined, {
                             minimumFractionDigits: 2,

@@ -102,6 +102,8 @@ class StripeController extends Controller
         ]);
 
         $newCustomer = Customer::create([
+            'email' => Auth::user()->email ?? null,
+            'stripe_id' => $session->id, 
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'mobile' => $request->mobile,
@@ -158,14 +160,14 @@ class StripeController extends Controller
             }
             $customer = \Stripe\Customer::retrieve($session->customer); 
 
-            $order = Order::where('session_id', $session->id)->where('status','unpaid')->first(); 
+            $order = Order::where('session_id', $session->id)->where('status','Unpaid')->first(); 
             
             if(!$order) {
                 throw new NotFoundHttpException(); 
             }
 
-            if ($order->status === 'unpaid') {
-                $order->status = 'paid';
+            if ($order->status === 'Unpaid') {
+                $order->status = 'Paid';
                 $order->save();
             } 
 
