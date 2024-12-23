@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeController;
@@ -34,6 +35,7 @@ Route::middleware(['role:admin', 'auth'])->group(function () {
     Route::delete('/product/{product}/delete', [ProductController::class, 'destroy'])->name('product.destroy'); 
     Route::put('/product/{product}/update', [ProductController::class, 'update'])->name('product.update'); 
     Route::post('/product/store', [ProductController::class, 'store'])->name('product.store'); 
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
 });
 
 Route::get('/home/bestsellers', [ProductController::class, 'getBestsellers'])->name('home.bestsellers'); 
