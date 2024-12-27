@@ -25,7 +25,7 @@ export default function OrderShowLayout(props) {
                     <div className="flex ml-auto w-1/6 justify-end space-x-2">
                         <i class="fa-regular fa-envelope border-main border rounded-full cursor-pointer p-1.5 py-1 hover:bg-secondary text-main transition-all duration-150 ease-in-out"></i>
                         <i
-                            className={`transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-check rounded-full p-1.5 py-1 border border-secondary py-1 ${order.status == "Delivered" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
+                            className={`transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-check rounded-full p-1.5 border border-secondary py-1 ${order.status == "Delivered" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
                         ></i>
                     </div>
                 </div>

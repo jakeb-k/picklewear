@@ -177,21 +177,9 @@ export default function Checkout(props) {
                         </div>
                     </div>
                     <p className="text-xl mt-8 mb-2">Address</p>
-                    <AddressSearch onAddressSelect={(data) => console.log(data)} />
-                    <div className="relative">
-                        <input
-                            name="street_name"
-                            id="street_name"
-                            placeholder="Enter your address"
-                            type="text"
-                            required
-                            onChange={handleOnChange}
-                            value={data.street_name}
-                            className={`rounded-lg py-1 px-4 w-2/3 pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
-                        />
-                        <p className="absolute left-0 top-0 h-full flex flex-col justify-center px-2">
-                            <i className="fa-solid fa-magnifying-glass"></i>
-                        </p>
+                    <div className='relative'>
+                    <AddressSearch onAddressSelect={(data) => console.log(data)} errors={errors} />
+
                     </div>
                 </div>
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg mt-8">

@@ -1,74 +1,63 @@
-import React, { useState } from "react";
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
+import usePlacesAutocomplete from "use-places-autocomplete";
 
-const AddressSearch = ({ onAddressSelect }) => {
-  const {
-    ready,
-    value,
-    setValue,
-    suggestions: { status, data },
-    clearSuggestions,
-  } = usePlacesAutocomplete();
+const AddressSearch = ({ onAddressSelect, errors }) => {
+    const {
+        ready,
+        value,
+        setValue,
+        suggestions: { status, data },
+        clearSuggestions,
+    } = usePlacesAutocomplete({
+        requestOptions: {
+            // Restrict the results to Australia
+            componentRestrictions: { country: "au" },
+        },
+    });
 
-  const handleInputChange = (e) => {
-    setValue(e.target.value);
-  };
+    const handleInputChange = (e) => {
+        setValue(e.target.value);
+    };
 
-  const handleSuggestionClick = async (description) => {
-    setValue(description, false);
-    clearSuggestions();
+    const handleSuggestionClick = async (suggestion) => { 
+        setValue(suggestion, false);
+        clearSuggestions();
+        onAddressSelect({ address: suggestion.description, formattedAddress: suggestion.terms });
+    };
 
-    try {
-      const results = await getGeocode({ address: description });
-      const { lat, lng } = await getLatLng(results[0]);
-      onAddressSelect({ address: description, lat, lng });
-    } catch (error) {
-      console.error("Error fetching geocode: ", error);
-    }
-  };
+    return (
+        <div className="relative z-50">
+            <div className="relative">
+                <input
+                    type="text"
+                    value={value}
+                    onChange={handleInputChange}
+                    disabled={!ready}
+                    placeholder="Enter an address"
+                    className={`rounded-lg py-1 px-4 w-2/3 min-w-[410px] pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
+                />
 
-  return (
-    <div style={{ position: "relative" }}>
-      <input
-        type="text"
-        value={value}
-        onChange={handleInputChange}
-        disabled={!ready}
-        placeholder="Enter an address"
-        style={{ width: "100%", padding: "10px", boxSizing: "border-box" }}
-      />
-      {status === "OK" && (
-        <div
-          style={{
-            position: "absolute",
-            background: "#fff",
-            border: "1px solid #ccc",
-            maxHeight: "200px",
-            overflowY: "auto",
-            zIndex: 1000,
-            width: "100%",
-          }}
-        >
-          {data.map((suggestion) => (
-            <div
-              key={suggestion.place_id}
-              onClick={() => handleSuggestionClick(suggestion.description)}
-              style={{
-                padding: "10px",
-                cursor: "pointer",
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              {suggestion.description}
+                <p className="absolute left-0 top-0 h-full flex flex-col justify-center px-2">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </p>
             </div>
-          ))}
+            {status === "OK" && (
+                <div className="relative left-0 w-full bg-white shadow-lg rounded-lg border border-gray-300 max-h-60 overflow-y-auto z-[1000]">
+                    {data.map((suggestion) => (
+                        <div
+                            key={suggestion.place_id}
+                            onClick={() =>{
+                                console.log(suggestion)
+                                handleSuggestionClick(suggestion)}
+                            }
+                            className="p-2 cursor-pointer hover:bg-gray-100"
+                        >
+                            {suggestion.description}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default AddressSearch;
