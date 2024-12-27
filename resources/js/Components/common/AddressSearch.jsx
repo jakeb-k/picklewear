@@ -19,9 +19,9 @@ const AddressSearch = ({ onAddressSelect, errors }) => {
     };
 
     const handleSuggestionClick = async (suggestion) => { 
-        setValue(suggestion, false);
+        setValue(suggestion.description, false);
         clearSuggestions();
-        onAddressSelect({ address: suggestion.description, formattedAddress: suggestion.terms });
+        onAddressSelect(suggestion);
     };
 
     return (

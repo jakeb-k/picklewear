@@ -73,6 +73,9 @@ export default function Checkout(props) {
                 0,
             ) -
             data.discount;
+        
+            console.log(data); 
+            return
 
         axios
             .post(
@@ -111,6 +114,16 @@ export default function Checkout(props) {
             discount: data,
         });
     };
+
+    const handleAddressSelect = (address) => {
+        setData({
+            ...data, 
+            street_name: address.terms[0].value + ' ' + address.terms[1].value,
+            suburb: address.terms[2].value,
+            state: address.terms[3].value,
+            postcode: address.terms[4].value, 
+        })
+    }
 
     function checkPromoCode() {
         setPromoLoading(true);
@@ -178,8 +191,7 @@ export default function Checkout(props) {
                     </div>
                     <p className="text-xl mt-8 mb-2">Address</p>
                     <div className='relative'>
-                    <AddressSearch onAddressSelect={(data) => console.log(data)} errors={errors} />
-
+                        <AddressSearch onAddressSelect={handleAddressSelect} errors={errors} />
                     </div>
                 </div>
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg mt-8">
