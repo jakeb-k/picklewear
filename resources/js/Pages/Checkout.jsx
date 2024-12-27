@@ -2,10 +2,11 @@ import LoadingIcon from "@/Components/common/LoadingIcon";
 import useCartStore from "@/Stores/useCartStore";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import axios from "axios";
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState} from "react";
 import tinycolor from "tinycolor2";
 import { CSSTransition } from "react-transition-group";
 import discountCodes from "@/utils/discountCodes";
+import AddressSearch from "@/Components/common/AddressSearch";
 
 export default function Checkout(props) {
     const [errors, setErrors] = useState({});
@@ -38,7 +39,7 @@ export default function Checkout(props) {
                 item.cartItemId === cartItemId ? { ...item, quantity } : item,
             );
             return updatedCartItems;
-        });
+        }); 
     };
 
     const removeItem = (cartItemId) => {
@@ -52,14 +53,11 @@ export default function Checkout(props) {
         setLoading(false);
     };
 
-    const setItemsAndClose = () => {
-        setProducts(cartItems);
-        handleCartClose();
-    };
     useEffect(() => {
         setCartItems(products);
         setLoading(false);
     }, []);
+
     useEffect(() => {
         setProducts(cartItems);
     }, [cartItems]);
@@ -179,6 +177,7 @@ export default function Checkout(props) {
                         </div>
                     </div>
                     <p className="text-xl mt-8 mb-2">Address</p>
+                    <AddressSearch onAddressSelect={(data) => console.log(data)} />
                     <div className="relative">
                         <input
                             name="street_name"
