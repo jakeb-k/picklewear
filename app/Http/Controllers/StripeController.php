@@ -112,10 +112,10 @@ class StripeController extends Controller
 
         $stripeCustomer = \Stripe\Customer::create([
             "email" => Auth::user()->email ?? null, // Optional but commonly used
-            "name" => $request->first_name . ' ' . $request->last_name, // Combine first and last name for Stripe's 'name' field
+            "name" => $request->first_name . " " . $request->last_name, // Combine first and last name for Stripe's 'name' field
             "phone" => $request->mobile ?? null, // Optional
             "address" => [
-            "line1" => $request->address ?? null, // Optional
+                "line1" => $request->address ?? null, // Optional
             ],
         ]);
 
@@ -123,7 +123,9 @@ class StripeController extends Controller
             "payment_method_types" => ["card", "zip"],
             "line_items" => $lineItems,
             "mode" => "payment",
-            "success_url" =>  route('success', [], true)."?session_id={CHECKOUT_SESSION_ID}",
+            "success_url" =>
+                route("success", [], true) .
+                "?session_id={CHECKOUT_SESSION_ID}",
             "cancel_url" => route("checkout.show"),
             "customer" => $stripeCustomer->id,
         ]);
@@ -156,7 +158,8 @@ class StripeController extends Controller
 
         $order->customer_id = $newCustomer->id;
         $order->save();
-        
+        $order->locations()->attach($customerLocation->id);
+
         foreach ($products as $product) {
             $order->products()->attach($product["id"], [
                 "quantity" => $product["quantity"],
@@ -173,7 +176,7 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
-        \Stripe\Stripe::setApiKey(config("stripe.sk")); 
+        \Stripe\Stripe::setApiKey(config("stripe.sk"));
         $sessionId = $request->get("session_id");
 
         try {
@@ -181,26 +184,28 @@ class StripeController extends Controller
             if (!$session) {
                 throw new NotFoundHttpException();
             }
-            $customer = \Stripe\Customer::retrieve($session->customer);
-
             $order = Order::where("session_id", $session->id)->first();
 
+            if ($order->status == "Unpaid") {
+                $order->status = "Paid";
+                $order->save();
+            }
             return Inertia::render("Products/OrderShowLayout", [
                 "order" => $order->load([
-                    "location",
+                    "locations",
                     "customer",
                     "user",
                     "products.images",
                 ]),
             ]);
         } catch (\Exception $e) {
-            Log::info($e->getMessage()); 
+            Log::info($e->getMessage());
             throw new NotFoundHttpException();
         }
     }
     public function webhook()
     {
-        Log::info('webhook is hit'); 
+        Log::info("webhook is hit");
         // This is your Stripe CLI webhook secret for testing your endpoint locally.
         $endpoint_secret = env("STRIPE_WEBHOOK_SECRET");
 
@@ -228,16 +233,14 @@ class StripeController extends Controller
                 $session = $event->data->object;
 
                 $order = Order::where("session_id", $session->id)->first();
-                if ($order && $order->status === "Unpaid") {
-                    $order->status = "Paid";
-                    $order->save();
-                    // Send email to customer
-                }
+                $order->status = "Paid";
+                $order->save();
+                return response("", 200);
 
             // ... handle other event types
             default:
                 echo "Received unknown event type " . $event->type;
         }
-        return redirect()->route("success");
+        return response("", 400);
     }
 }

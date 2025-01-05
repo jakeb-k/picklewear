@@ -14,7 +14,7 @@ class Order extends Model
     /**
      * The relationship for an orders location
      */
-    public function location()
+    public function locations()
     {
         return $this->morphToMany(Location::class, 'locationable');
     }

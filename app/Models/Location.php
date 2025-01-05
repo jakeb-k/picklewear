@@ -10,6 +10,7 @@ class Location extends Model
     use HasFactory;
 
     protected $guarded = ['id']; 
+    protected $visible = ['street', 'city', 'state', 'postcode'];
 
     /**
      *A Location is morphed by many orders
