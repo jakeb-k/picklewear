@@ -179,6 +179,7 @@ export default function MainLayout({ children }) {
                                 className="fa-solid fa-magnifying-glass text-2xl cursor-pointer absolute right-2"
                             ></i>
                         </div>
+                        
                         {auth?.user ? (
                             <>
                                 {auth.user.is_admin ? (<Link href='/admin'>Admin</Link>) : ''}

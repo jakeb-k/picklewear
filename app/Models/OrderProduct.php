@@ -7,7 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderProduct extends Model
 {
-    protected $guarded = []; 
-    
+    protected $guarded = ["id"];
+
     use HasFactory;
+
+    /**
+     * An order product belongs to an order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class, "order_id");
+    }
 }
