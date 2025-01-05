@@ -19,12 +19,15 @@ class ProductController extends Controller
      * @param String $type
      * @return \Inertia\Response The Inertia response for the client-side renderer.
      */
-    public function index(string $type)
-    {
-        $products = Product::where("type", $type)->get();
+    public function index(Request $request, string $category)
+    {   
+        $category = 'Clothing';
+        $products = Product::where("type", $category)->get();
 
         return Inertia::render("Products/ProductIndexLayout", [
             "products" => $products,
+            'category' => $category,
+            'type' => $request->get('type'), 
         ]);
     }
 
