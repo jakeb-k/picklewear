@@ -20,12 +20,17 @@ export default function ProductIndexLayout(props) {
 
     const productChunks = chunkProducts(products);
 
-    console.log(products);
-
     return (
         <div className="min-h-screen py-24">
             <div className="mx-24">
-                <Head title={"Category"} />
+                <Head
+                    title={
+                        category +
+                        " / " +
+                        type.charAt(0).toUpperCase() +
+                        type.slice(1)
+                    }
+                />
 
                 <Alert />
 
@@ -35,16 +40,29 @@ export default function ProductIndexLayout(props) {
                             className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
                             href={route("index")}
                         >
-                            Home /{" "}
+                            Home{" "}
                         </a>
-                        {category}
+                        <a
+                            className={`${type == "" ? "" : "text-gray-400 hover:text-black duration-150 ease-in-out transition-all"}`}
+                            href={route("products.index", category)}
+                        >
+                            {" / "}
+                            {category}
+                        </a>
+                        {type != "" && (
+                            <a
+                                className=""
+                                href={route("products.index", category)+ "?type=" + encodeURIComponent(type.toLowerCase())}
+                            >
+                                {" "}
+                               / {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </a>
+                        )}
                     </p>
                     <p className="font-oswald text-3xl italic text-gray-500">
                         {products.length} items found
                     </p>
                 </div>
-
-               
             </div>
             <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
             <main className="flex space-x-6 mr-16">

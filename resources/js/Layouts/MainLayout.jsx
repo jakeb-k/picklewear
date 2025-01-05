@@ -144,7 +144,7 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("mens")}
                             >
-                                Mens
+                                <a href={route('products.index', 'mens')}>Mens</a>
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -152,7 +152,7 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("womens")}
                             >
-                                Womens
+                               <a href={route('products.index', 'womens')}>Womens </a> 
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -160,7 +160,7 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("kids")}
                             >
-                                Kids
+                                <a href={route('products.index', 'kids')}>Kids</a> 
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -168,7 +168,7 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("gear")}
                             >
-                                Gear
+                                <a href={route('products.index', 'gear')}>Gear</a>
                             </div>
                         </div>
                     </div>
