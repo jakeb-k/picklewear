@@ -10,14 +10,7 @@ export default function OrdersTable(props) {
         const userName = order.customer?.first_name + " " + order.customer?.last_name; // Full name
         const mobile = order.customer?.mobile; // User email
         const total = order.total; // Order total
-        const location = 
-        (order.location?.street ?? "") +
-        ", " +
-        (order.location?.city ?? "") +
-        ", " +
-        (order.location?.state ?? "") +
-        ", " +
-        (order.location?.postcode ?? "");
+        const location = order.locations[0] ? Object.values(order.locations[0]).join(" ") : 'N/A';
         const viewDetails = `/orders/${order.id}`; // Link to view order details
         const createdAt = order.created_at; 
 

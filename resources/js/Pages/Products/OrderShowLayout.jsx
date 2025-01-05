@@ -7,10 +7,10 @@ export default function OrderShowLayout(props) {
     const order_products = props.order.products;
     const order = props.order;
     const customer = props.order.user ?? props.order.customer;
-    const isAdmin = usePage().props.auth?.user?.roles?.some(
-        (role) => role.name == "admin",
+    const isAdmin = usePage().props.auth?.roles?.some(
+        (role) => role == "admin",
     );
-    console.log(order);
+    
     return (
         <>
             <Head title={`Order #${String(order.id).padStart(4, 0)}`} />
