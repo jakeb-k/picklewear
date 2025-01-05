@@ -25,7 +25,7 @@ class ProductController extends Controller
         $products = Product::where("type", $category)->get();
 
         return Inertia::render("Products/ProductIndexLayout", [
-            "products" => $products,
+            "products" => $products->load(["options", "images"]),
             'category' => $category,
             'type' => $request->get('type'), 
         ]);
