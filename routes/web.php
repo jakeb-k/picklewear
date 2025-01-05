@@ -35,9 +35,9 @@ Route::middleware(['role:admin', 'auth'])->group(function () {
     Route::delete('/product/{product}/delete', [ProductController::class, 'destroy'])->name('product.destroy'); 
     Route::put('/product/{product}/update', [ProductController::class, 'update'])->name('product.update'); 
     Route::post('/product/store', [ProductController::class, 'store'])->name('product.store'); 
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
 });
 
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 
 Route::get('/home/bestsellers', [ProductController::class, 'getBestsellers'])->name('home.bestsellers'); 
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('products.show'); 
 Route::get('/products/search/{query}', [ProductController::class, 'search'])->name('products.search');

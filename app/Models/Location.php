@@ -9,11 +9,26 @@ class Location extends Model
 {
     use HasFactory;
 
-     /**
-     * Define the relationship with the Order.
+    protected $guarded = ['id']; 
+
+    /**
+     *A Location is morphed by many orders
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function order()
     {
-        return $this->morphedByOne(Order::class, 'locationable');
+        return $this->morphedByMany(Order::class, 'locationable');
     }
+
+    /**
+     * A Location is morphed by many customers
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function customer()
+    {
+        return $this->morphedByMany(Order::class, 'locationable');
+    }
+
 }

@@ -21,10 +21,7 @@ class OrderSeeder extends Seeder
      $faker = Faker::create(); 
         for($i=0; $i <= 5; $i++){
             $order = Order::factory()->create(); 
-            $location = Location::factory()->create([
-                'locationable_id'=> $order->id,
-                'locationable_type' => Order::class, 
-            ]); 
+            $location = Location::factory()->create(); 
 
             $order->location()->save($location);
 

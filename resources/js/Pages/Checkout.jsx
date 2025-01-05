@@ -2,7 +2,7 @@ import LoadingIcon from "@/Components/common/LoadingIcon";
 import useCartStore from "@/Stores/useCartStore";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import axios from "axios";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
 import { CSSTransition } from "react-transition-group";
 import discountCodes from "@/utils/discountCodes";
@@ -13,18 +13,19 @@ export default function Checkout(props) {
     const { user } = usePage().props.auth;
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const { products, setProducts } = useCartStore();
     const { data, setData } = useForm({
         first_name: user?.first_name ?? "",
         last_name: user?.last_name ?? "",
         mobile: user?.mobile ?? "",
-        street_name: "",
+        street: "",
         state: "",
-        suburb: "",
+        city: "",
         postcode: "",
         discount: 0,
-        discountAmount: 0, 
+        discountAmount: 0,
     });
 
     const [code, setCode] = useState("");
@@ -39,7 +40,7 @@ export default function Checkout(props) {
                 item.cartItemId === cartItemId ? { ...item, quantity } : item,
             );
             return updatedCartItems;
-        }); 
+        });
     };
 
     const removeItem = (cartItemId) => {
@@ -63,19 +64,18 @@ export default function Checkout(props) {
     }, [cartItems]);
 
     function routeToCheckout() {
+        setCheckoutLoading(true);
         const total =
             cartItems.reduce(
                 (total, item) => total + item.price * item.quantity,
                 0,
             ) +
             cartItems.reduce(
-                (total, item) => (total + item.price * item.quantity) * 0.1,
+                (total, item) => total + item.price * item.quantity,
                 0,
-            ) -
-            data.discount;
-        
-            console.log(data); 
-            return
+            ) *
+                0.1 -
+            data.discountAmount;
 
         axios
             .post(
@@ -95,6 +95,9 @@ export default function Checkout(props) {
             .catch((error) => {
                 console.error(error);
                 setErrors(error.response.data.errors);
+            })
+            .finally(() => {
+                setCheckoutLoading(false);
             });
     }
 
@@ -105,25 +108,28 @@ export default function Checkout(props) {
         }));
     };
 
-    const handleDiscount = (data) => {
-        const total = cartItems
-            .reduce((total, item) => total +( item.price * item.quantity) * data, 0);
+    const handleDiscount = (discountData) => {
+        const total = cartItems.reduce(
+            (total, item) => total + item.price * item.quantity * discountData,
+            0,
+        );
         setData({
             ...data,
             discountAmount: total.toFixed(2),
-            discount: data,
+            discount: discountData,
         });
     };
 
-    const handleAddressSelect = (address) => {
+    const handleAddressSelect = (addressData) => {
+        const { suggestion, postalCode } = addressData;
         setData({
-            ...data, 
-            street_name: address.terms[0].value + ' ' + address.terms[1].value,
-            suburb: address.terms[2].value,
-            state: address.terms[3].value,
-            postcode: address.terms[4].value, 
-        })
-    }
+            ...data,
+            street: suggestion.terms[0].value + " " + suggestion.terms[1].value,
+            city: suggestion.terms[2].value,
+            state: suggestion.terms[3].value,
+            postcode: postalCode,
+        });
+    };
 
     function checkPromoCode() {
         setPromoLoading(true);
@@ -190,8 +196,11 @@ export default function Checkout(props) {
                         </div>
                     </div>
                     <p className="text-xl mt-8 mb-2">Address</p>
-                    <div className='relative'>
-                        <AddressSearch onAddressSelect={handleAddressSelect} errors={errors} />
+                    <div className="relative">
+                        <AddressSearch
+                            onAddressSelect={handleAddressSelect}
+                            errors={errors}
+                        />
                     </div>
                 </div>
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg mt-8">
@@ -316,7 +325,7 @@ export default function Checkout(props) {
                     </div>
                     <p className="font-bold font-roboto_mono text-lg">
                         ${" "}
-                        {data.discountAmount.toLocaleString(0, {
+                        {data.discountAmount?.toLocaleString(0, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                         })}
@@ -368,8 +377,13 @@ export default function Checkout(props) {
                     <p>Tax (10%)</p>
                     <p className="font-bold font-roboto_mono text-lg">
                         ${" "}
-                        {  (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1)
-                            .toFixed(2)}
+                        {(
+                            cartItems.reduce(
+                                (total, item) =>
+                                    total + item.price * item.quantity,
+                                0,
+                            ) * 0.1
+                        ).toFixed(2)}
                     </p>
                 </div>
                 <hr className="border-gray-500 border-dashed" />
@@ -383,7 +397,12 @@ export default function Checkout(props) {
                                     total + item.price * item.quantity,
                                 0,
                             ) +
-                            (cartItems.reduce((total, item) => total + item.price * item.quantity, 0) *0.1) -
+                            cartItems.reduce(
+                                (total, item) =>
+                                    total + item.price * item.quantity,
+                                0,
+                            ) *
+                                0.1 -
                             data.discountAmount
                         ).toLocaleString(undefined, {
                             minimumFractionDigits: 2,
@@ -394,9 +413,14 @@ export default function Checkout(props) {
                 <div className="w-full flex justify-center">
                     <button
                         onClick={() => routeToCheckout()}
-                        className="hover:bg-secondary mt-8 hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap w-2/3"
+                        className="hover:bg-secondary mt-8 hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap w-2/3 flex justify-center items-center space-x-1"
                     >
-                        CHECKOUT
+                        <p>CHECKOUT</p>
+                        {checkoutLoading && (
+                            <div>
+                                <LoadingIcon />
+                            </div>
+                        )}
                     </button>
                 </div>
             </div>

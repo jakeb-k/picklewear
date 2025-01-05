@@ -1,4 +1,4 @@
-import usePlacesAutocomplete from "use-places-autocomplete";
+import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 
 const AddressSearch = ({ onAddressSelect, errors }) => {
     const {
@@ -9,19 +9,38 @@ const AddressSearch = ({ onAddressSelect, errors }) => {
         clearSuggestions,
     } = usePlacesAutocomplete({
         requestOptions: {
-            // Restrict the results to Australia
-            componentRestrictions: { country: "au" },
+            componentRestrictions: { country: "au" }, // Restrict results to Australia
         },
+        debounce: 300,
     });
 
     const handleInputChange = (e) => {
         setValue(e.target.value);
     };
 
-    const handleSuggestionClick = async (suggestion) => { 
+    const handleSuggestionClick = async (suggestion) => {
         setValue(suggestion.description, false);
         clearSuggestions();
-        onAddressSelect(suggestion);
+
+        // Use the included script to get place details
+        const service = new google.maps.places.PlacesService(
+            document.createElement("div"),
+        );
+        service.getDetails(
+            { placeId: suggestion.place_id },
+            (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    const postalCode = result.address_components.find(
+                        (component) => component.types.includes("postal_code"),
+                    )?.long_name;
+                    onAddressSelect({
+                        suggestion, postalCode
+                    });
+                } else {
+                    console.error("Failed to retrieve place details:", status);
+                }
+            },
+        );
     };
 
     return (
@@ -45,10 +64,10 @@ const AddressSearch = ({ onAddressSelect, errors }) => {
                     {data.map((suggestion) => (
                         <div
                             key={suggestion.place_id}
-                            onClick={() =>{
-                                console.log(suggestion)
-                                handleSuggestionClick(suggestion)}
-                            }
+                            onClick={() => {
+                                console.log(suggestion);
+                                handleSuggestionClick(suggestion);
+                            }}
                             className="p-2 cursor-pointer hover:bg-gray-100"
                         >
                             {suggestion.description}

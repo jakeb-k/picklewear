@@ -10,12 +10,13 @@ class Order extends Model
     use HasFactory;
 
     protected $guarded = ['id']; 
+
     /**
      * The relationship for an orders location
      */
     public function location()
     {
-        return $this->morphOne(Location::class, 'locationable');
+        return $this->morphToMany(Location::class, 'locationable');
     }
 
     /**
@@ -23,7 +24,7 @@ class Order extends Model
      */
     public function images()
     {
-        return $this->morphMany(Image::class, 'imageable'); 
+        return $this->morphToMany(Image::class, 'imageable'); 
     }
 
     /**
