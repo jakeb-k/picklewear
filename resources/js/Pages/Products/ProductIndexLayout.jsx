@@ -12,7 +12,8 @@ export default function ProductIndexLayout(props) {
     const [loading, setLoading] = useState(true);
     const { favourites } = useFavouritesStore();
     const [sort, setSort] = useState(null);
-    const [filters, setFilters] = useState([]);
+    const [colorFilters, setColorFilters] = useState([]);
+    const [priceFilter, setPriceFilter] = useState(null); 
     const [productChunks, setChunks] = useState({});
     const [colorOptions, setColorOptions] = useState(null);
 
@@ -45,8 +46,8 @@ export default function ProductIndexLayout(props) {
         return colors;
     };
 
-    const updateFilters = (newFilter) => {
-        setFilters((prevFilters) => {
+    const updateColorFilters = (newFilter) => {
+        setColorFilters((prevFilters) => {
             const newFilterExists = prevFilters.some(
                 (prevFilter) => prevFilter.name == newFilter.name,
             );
@@ -62,7 +63,7 @@ export default function ProductIndexLayout(props) {
     };
 
     const removeFilter = (oldFilter) => {
-        setFilters((prevFilters) => {
+        setColorFilters((prevFilters) => {
             const updatedFilters = prevFilters.filter(
                 (prevFilter) => prevFilter.name != oldFilter.name,
             );
@@ -91,12 +92,18 @@ export default function ProductIndexLayout(props) {
     }, [sort]);
 
     useEffect(() => {
-        if (filters.length > 0) {
-            filterProducts();
+        if (colorFilters.length > 0) {
+            filterProductsByColor();
         } else {
             setChunks(chunkProducts(products));
         }
-    }, [filters]);
+    }, [colorFilters]);
+
+    useEffect(() => {
+        if(priceFilter){
+            filterByPrice()
+        }
+    })
 
     function sortProducts() {
         let sortedProducts = [];
@@ -150,8 +157,8 @@ export default function ProductIndexLayout(props) {
         setChunks(chunkProducts(sortedProducts));
     }
 
-    function filterProducts() {
-        let filterNames = filters.map((filter) => filter.name);
+    function filterProductsByColor() {
+        let filterNames = colorFilters.map((filter) => filter.name);
         let filteredProducts = [];
         products.map((product) => {
             product.options.map((option) => {
@@ -188,7 +195,7 @@ export default function ProductIndexLayout(props) {
             cursor: "pointer",
         }),
     };
-
+    console.log(colorFilters);
     const handleOnSelectChange = (selectedOption) => {
         setSort(selectedOption);
     };
@@ -253,7 +260,7 @@ export default function ProductIndexLayout(props) {
             <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
             <div className="flex justify-between px-16 mb-8">
                 <div className="flex flex-wrap">
-                    {filters.map((filter) => {
+                    {colorFilters.map((filter) => {
                         return (
                             <div className="px-2 py-0.5 mb-2 bg-white rounded-sm flex h-fit space-x-2 mr-3">
                                 <p className="font-oswald text-lg">
@@ -299,17 +306,18 @@ export default function ProductIndexLayout(props) {
             </div>
             {!loading && (
                 <main className="flex space-x-6 mx-16">
-                    <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%]">
+                    <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%] h-fit">
                         {/* COLOR FILTER */}
                         <ProductColorFilter
                             colorOptions={colorOptions}
-                            updateFilters={updateFilters}
-                            filters={filters.filter(
+                            updateFilters={updateColorFilters}
+                            colorFilters={colorFilters.filter(
                                 (filter) => filter.type == "color",
                             )}
                         />
                         <div className="bg-gray-400 h-[0.5px] my-4" />
                         <ProductPriceFilter
+                        updateFilters={() => console.log('penis')}
                             min={products.sort((a, b) => b.price - a.price)[products.length-1].price}
                             max={products.sort((a, b) => b.price - a.price)[0].price}
                         />

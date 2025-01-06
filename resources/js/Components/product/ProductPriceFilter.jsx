@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import MultiRangeSlider from "multi-range-slider-react";
 
 import { CSSTransition } from "react-transition-group";
@@ -11,10 +11,12 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
     const handleInput = (e) => {
         setMinValue(e.minValue);
         setMaxValue(e.maxValue);
-        updateFilters?.({ min: e.minValue, max: e.maxValue });
     };
-    console.log(minValue);
-
+    useEffect(() => {
+        if(minValue != min && maxValue != max){
+            updateFilters({name:'$' + minValue + '- $' + maxValue, value: {min: minValue, max: maxValue}, type: 'Price' });
+        }
+    }, [minValue, maxValue])
     return (
         <>
             <div className="flex justify-between items-center mb-4">
