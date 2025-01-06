@@ -1,14 +1,16 @@
 import { Head } from "@inertiajs/react";
 import Alert from "@/Components/common/Alert";
-import { useState } from "react";
-import MainProductCard from "@/Components/home/MainProductCard";
+import { useState, useEffect } from "react";
 import ProductCard from "@/Components/product/ProductCard";
+import useFavouritesStore from "@/Stores/useFavouritesStore";
 
 export default function ProductIndexLayout(props) {
     const [products, setProducts] = useState(props.products);
-    const category = props.category;
+    const [loading, setLoading] = useState(true);
+    const { favourites } = useFavouritesStore();
+    const [category, setCategory] = useState(props.category);
+    const [productChunks, setChunks] = useState({});
     const type = props.type;
-
     // Function to chunk products into groups of 3
     const chunkProducts = (products) => {
         const chunks = [];
@@ -18,17 +20,28 @@ export default function ProductIndexLayout(props) {
         return chunks;
     };
 
-    const productChunks = chunkProducts(products);
+    useEffect(() => {
+        if (category === "favourites") {
+            setProducts(favourites);
+            setChunks(chunkProducts(favourites));
+        } else {
+            setChunks(chunkProducts(products));
+        }
+        setLoading(false);
+    }, [category, favourites]);
 
     return (
         <div className="min-h-screen py-24">
             <div className="mx-24">
                 <Head
                     title={
-                        category +
-                        " / " +
-                        type.charAt(0).toUpperCase() +
-                        type.slice(1)
+                        category.charAt(0).toUpperCase() +
+                        category.slice(1) +
+                        (type
+                            ? " / " +
+                              type.charAt(0).toUpperCase() +
+                              type.slice(1)
+                            : "")
                     }
                 />
 
@@ -43,19 +56,23 @@ export default function ProductIndexLayout(props) {
                             Home{" "}
                         </a>
                         <a
-                            className={`${type == "" ? "" : "text-gray-400 hover:text-black duration-150 ease-in-out transition-all"}`}
+                            className={`${!type ? "" : "text-gray-400 hover:text-black duration-150 ease-in-out transition-all"}`}
                             href={route("products.index", category)}
                         >
                             {" / "}
-                            {category}
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
                         </a>
-                        {type != "" && (
+                        {type && (
                             <a
                                 className=""
-                                href={route("products.index", category)+ "?type=" + encodeURIComponent(type.toLowerCase())}
+                                href={
+                                    route("products.index", category) +
+                                    "?type=" +
+                                    encodeURIComponent(type.toLowerCase())
+                                }
                             >
                                 {" "}
-                               / {type.charAt(0).toUpperCase() + type.slice(1)}
+                                / {type.charAt(0).toUpperCase() + type.slice(1)}
                             </a>
                         )}
                     </p>
@@ -65,24 +82,28 @@ export default function ProductIndexLayout(props) {
                 </div>
             </div>
             <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
-            <main className="flex space-x-6 mr-16">
-                <section className="bg-white p-8 rounded-r-lg drop-shadow-lg w-[19.5%]"></section>
-                <section className="w-[80.5%] flex flex-wrap space-y-6">
-                    {productChunks.map((chunk, index) => (
-                        <div
-                            key={index}
-                            className="flex justify-start gap-6 w-full"
-                        >
-                            {chunk.map((product) => (
-                                <ProductCard
-                                    product={product}
-                                    key={product.id}
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </section>
-            </main>
+            {!loading && (
+                <main className="flex space-x-6 mr-16">
+                    <section className="bg-white p-8 rounded-r-lg drop-shadow-lg w-[19.5%]"></section>
+                    <section className="w-[80.5%] space-y-6">
+                        {productChunks.map((chunk, index) => (
+                            <div
+                                key={index}
+                                className="flex justify-start gap-[3%] w-full"
+                            >
+                                {chunk.map((product) => (
+                                    <div className='flex-1 max-w-[31.5%]'>
+                                        <ProductCard
+                                            product={product}
+                                            key={product.id}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </section>
+                </main>
+            )}
         </div>
     );
 }

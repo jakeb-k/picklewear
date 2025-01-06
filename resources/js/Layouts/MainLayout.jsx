@@ -98,10 +98,10 @@ export default function MainLayout({ children }) {
                         FREE SHIPPING STOREWIDE
                     </div>
                     <div className="flex absolute w-fit right-0 space-x-6 mr-12">
-                        <Link href={'/faqs'}>
+                        <Link href={"/faqs"}>
                             <i className="fa-regular fa-circle-question text-white text-lg hover:text-black "></i>
                         </Link>
-                        <Link href={'/faqs#contact'}>
+                        <Link href={"/faqs#contact"}>
                             <i className="fa-regular fa-envelope text-white text-lg hover:text-black"></i>
                         </Link>
                         <Link href={route("dashboard")}>
@@ -144,7 +144,9 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("mens")}
                             >
-                                <a href={route('products.index', 'mens')}>Mens</a>
+                                <a href={route("products.index", "mens")}>
+                                    Mens
+                                </a>
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -152,7 +154,9 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("womens")}
                             >
-                               <a href={route('products.index', 'womens')}>Womens </a> 
+                                <a href={route("products.index", "womens")}>
+                                    Womens{" "}
+                                </a>
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -160,7 +164,9 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("kids")}
                             >
-                                <a href={route('products.index', 'kids')}>Kids</a> 
+                                <a href={route("products.index", "kids")}>
+                                    Kids
+                                </a>
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
@@ -168,7 +174,9 @@ export default function MainLayout({ children }) {
                                 }`}
                                 onMouseEnter={() => setMenuType("gear")}
                             >
-                                <a href={route('products.index', 'gear')}>Gear</a>
+                                <a href={route("products.index", "gear")}>
+                                    Gear
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -176,32 +184,39 @@ export default function MainLayout({ children }) {
                         <div className="relative flex flex-row items-center">
                             <i
                                 onClick={handleQueryState}
-                                className="fa-solid fa-magnifying-glass text-2xl cursor-pointer absolute right-2"
+                                className="fa-solid fa-magnifying-glass text-2xl cursor-pointer absolute right-2 hover:text-white"
                             ></i>
                         </div>
-                        
+
+                        <Link href={route("products.index", "favourites")}>
+                            <i class="fa-regular fa-heart text-white text-2xl hover:text-main"></i>
+                        </Link>
                         {auth?.user ? (
                             <>
-                                {auth.user.is_admin ? (<Link href='/admin'>Admin</Link>) : ''}
-                                <Link
-                                    href={route("logout")}
-                                    method="post"
-                                    as="button"
-                                >
-                                    Logout
+                                {auth.user.is_admin ? (
+                                    <Link href="/admin">Admin</Link>
+                                ) : (
+                                    ""
+                                )}
+                                <Link href={route("login")}>
+                                    <i className="fa-solid fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
-                                <Link href={route("login")}>Favs</Link>
                             </>
                         ) : (
                             <>
                                 <Link href={route("login")}>
                                     <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
-                                <button onClick={() => setCartOpen(true)}>
-                                    <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
-                                </button>
                             </>
                         )}
+
+                        <button onClick={() => setCartOpen(true)}>
+                            <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
+                        </button>
+
+                        {auth?.user && (<Link href={route("logout")} method="post" as="button">
+                            <i class="fa-solid fa-right-from-bracket text-2xl text-white hover:text-main"></i>
+                        </Link>)}
                     </div>
                 </div>
                 <CSSTransition
