@@ -17,9 +17,9 @@ export default function ProductCard(props) {
     return (
         <div
             onClick={() => navigateToProduct(product.id)}
-            className="relative min-h-[350px] rounded-md bg-white hover:bg-gray-500/50 group z-20 cursor-pointer overflow-hidden transition-all duration-300 w-full"// Ensure the minimum width stays at 23%
+            className="relative min-h-[350px] rounded-md py-12 bg-white group z-20 cursor-pointer overflow-hidden transition-all duration-300 w-full flex flex-col justify-evenly mb-8"
         >
-            <div className="absolute inset-0 bg-gray-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+            <div className="absolute inset-0 bg-gray-300/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
             <i
                 onClick={(e) => {
                     e.stopPropagation();

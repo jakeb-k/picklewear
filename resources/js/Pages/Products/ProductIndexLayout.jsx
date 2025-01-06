@@ -4,14 +4,22 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/Components/product/ProductCard";
 import useFavouritesStore from "@/Stores/useFavouritesStore";
 import Select from "react-select";
+import tinycolor from "tinycolor2";
+import ProductColorFilter from "@/Components/product/ProductColorFilter";
 
 export default function ProductIndexLayout(props) {
     const [products, setProducts] = useState(props.products);
     const [loading, setLoading] = useState(true);
     const { favourites } = useFavouritesStore();
-    const [category, setCategory] = useState(props.category);
     const [sort, setSort] = useState(null);
+    const [filters, setFilters] = useState([
+        { name: "darkgray", type: "color" },
+        { name: "medium", type: "size" },
+    ]);
     const [productChunks, setChunks] = useState({});
+    const [colorOptions, setColorOptions] = useState(null);
+
+    const category = props.category;
     const type = props.type;
 
     // Function to chunk products into groups of 3
@@ -22,34 +30,73 @@ export default function ProductIndexLayout(props) {
         }
         return chunks;
     };
+    const getColors = (products) => {
+        const colors = [];
+        products.map((product) => {
+            let options = product.options.find(
+                (option) => option.type == "color",
+            );
+            if (options) {
+                options = options.values.split(".");
+                options.forEach((option) => {
+                    if (!colors.includes(option)) {
+                        colors.push(option);
+                    }
+                });
+            }
+        });
+        return colors;
+    };
+
+    const updateFilters = (newFilter) => {
+        setFilters((prevFilters) => {
+            const newFilterExists = prevFilters.some(
+                (prevFilter) => prevFilter.name == newFilter.name,
+            );
+            if (newFilterExists) {
+                const updatedFilters = prevFilters.filter(
+                    (prevFilter) => prevFilter.name != newFilter.name,
+                );
+                return [...updatedFilters];
+            } else {
+                return [...prevFilters, newFilter];
+            }
+        });
+    };
 
     useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
             setChunks(chunkProducts(favourites));
+            setColorOptions(getColors(favourites));
         } else {
             setChunks(chunkProducts(products));
+            setColorOptions(getColors(products));
         }
         setLoading(false);
     }, [category, favourites]);
 
     useEffect(() => {
-        setLoading(true); 
+        setLoading(true);
         if (sort) {
             sortProducts();
         }
-        setLoading(false)
+        setLoading(false);
     }, [sort]);
 
     function sortProducts() {
         let sortedProducts = [];
-    
+
         switch (sort.value) {
             case "priceAsc":
-                sortedProducts = [...products].sort((a, b) => a.price - b.price);
+                sortedProducts = [...products].sort(
+                    (a, b) => a.price - b.price,
+                );
                 break;
             case "priceDesc":
-                sortedProducts = [...products].sort((a, b) => b.price - a.price);
+                sortedProducts = [...products].sort(
+                    (a, b) => b.price - a.price,
+                );
                 break;
             case "popularity":
                 sortedProducts = [...products].sort(
@@ -57,14 +104,20 @@ export default function ProductIndexLayout(props) {
                 );
                 break;
             case "discount":
-                sortedProducts = [...products].sort((a, b) => b.discount - a.discount);
+                sortedProducts = [...products].sort(
+                    (a, b) => b.discount - a.discount,
+                );
                 break;
             case "arrivals":
                 sortedProducts = [...products].sort((a, b) => {
                     const now = new Date().getTime();
-                    const diffA = Math.abs(new Date(a.created_at).getTime() - now);
-                    const diffB = Math.abs(new Date(b.created_at).getTime() - now);
-    
+                    const diffA = Math.abs(
+                        new Date(a.created_at).getTime() - now,
+                    );
+                    const diffB = Math.abs(
+                        new Date(b.created_at).getTime() - now,
+                    );
+
                     return diffA - diffB;
                 });
                 break;
@@ -77,7 +130,7 @@ export default function ProductIndexLayout(props) {
                 console.error("Invalid sort option");
                 return;
         }
-    
+
         // Update the state with sorted products and re-chunk them
         setProducts(sortedProducts);
         setChunks(chunkProducts(sortedProducts));
@@ -183,19 +236,30 @@ export default function ProductIndexLayout(props) {
                 />
             </div>
             {!loading && (
-                <main className="flex space-x-6 mr-16">
-                    <section className="bg-white p-8 rounded-r-lg drop-shadow-lg w-[19.5%]"></section>
-                    <section className="w-[80.5%] space-y-6">
+                <main className="flex space-x-6 mx-16">
+                    <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%]">
+                        {/* COLOR FILTER */}
+                        <ProductColorFilter
+                            colorOptions={colorOptions}
+                            updateFilters={updateFilters}
+                            filters={filters.filter(
+                                (filter) => filter.type == "color",
+                            )}
+                        />
+                        <hr />
+                    </section>
+                    <section className="w-[75.5%] space-y-6">
                         {productChunks.map((chunk, index) => (
                             <div
                                 key={index}
                                 className="flex justify-start gap-[3%] w-full"
                             >
                                 {chunk.map((product) => (
-                                    <div  key={product.id} className="flex-1 max-w-[31.5%]">
-                                        <ProductCard
-                                            product={product}
-                                        />
+                                    <div
+                                        key={product.id}
+                                        className="flex-1 max-w-[31.5%]"
+                                    >
+                                        <ProductCard product={product} />
                                     </div>
                                 ))}
                             </div>
