@@ -93,7 +93,8 @@ export default function ProductIndexLayout(props) {
 
     useEffect(() => {
         if (colorFilters.length > 0) {
-            filterProductsByColor();
+            const filteredProducts = filterProductsByColor(products);
+            setChunks(chunkProducts(filteredProducts))
         } else {
             setChunks(chunkProducts(products));
         }
@@ -101,7 +102,8 @@ export default function ProductIndexLayout(props) {
 
     useEffect(() => {
         if (priceFilter) {
-            filterProductsByPrice();
+            const filteredProducts = filterProductsByPrice(products);
+            setChunks(chunkProducts(filteredProducts))
         }
     }, [priceFilter]);
 
@@ -157,7 +159,7 @@ export default function ProductIndexLayout(props) {
         setChunks(chunkProducts(sortedProducts));
     }
 
-    function filterProductsByColor() {
+    function filterProductsByColor(products, isFiltered = false) {
         let filterNames = colorFilters.map((filter) => filter.name);
         let filteredProducts = [];
         products.map((product) => {
@@ -169,18 +171,24 @@ export default function ProductIndexLayout(props) {
                 if (isFiltered) filteredProducts.push(product);
             });
         });
-        setChunks(chunkProducts(filteredProducts));
+        if (priceFilter && !isFiltered) {
+            filteredProducts = filterProductsByPrice(filteredProducts);
+        }
+        return filteredProducts;
     }
 
-    function filterProductsByPrice() {
+    function filterProductsByPrice(products, isFiltered = false) {
         let priceRange = priceFilter.value;
-        const filteredProducts = products.filter((product) => {
+        let filteredProducts = products.filter((product) => {
             return (
                 product.price >= priceRange.min &&
                 product.price <= priceRange.max
             );
         });
-        setChunks(chunkProducts(filteredProducts));
+        if (colorFilters.length > 0 && !isFiltered) {
+            filteredProducts = filterProductsByColor(filteredProducts, true);
+        }
+        return filteredProducts;
     }
 
     const customStyles = {
@@ -206,7 +214,7 @@ export default function ProductIndexLayout(props) {
             cursor: "pointer",
         }),
     };
-    
+
     const handleOnSelectChange = (selectedOption) => {
         setSort(selectedOption);
     };
@@ -292,24 +300,26 @@ export default function ProductIndexLayout(props) {
                             </div>
                         );
                     })}
-                    {priceFilter && (<div className="px-2 py-0.5 mb-2 bg-white rounded-sm flex h-fit space-x-2 mr-3">
-                        <p className="font-oswald text-lg">
-                            {priceFilter.type.charAt(0).toUpperCase() +
-                                priceFilter.type.slice(1)}
-                            :{" "}
-                            {priceFilter.name.charAt(0).toUpperCase() +
-                                priceFilter.name.slice(1)}
-                        </p>
-                        <button
-                            className="bg-gray-200 h=fit px-1 text-gray-600 hover:bg-gray-300 duration-150 transition-color ease-in-out"
-                            onClick={() => {
-                                setChunks(chunkProducts(products));
-                                setPriceFilter(null);
-                            }}
-                        >
-                            X
-                        </button>
-                    </div>)}
+                    {priceFilter && (
+                        <div className="px-2 py-0.5 mb-2 bg-white rounded-sm flex h-fit space-x-2 mr-3">
+                            <p className="font-oswald text-lg">
+                                {priceFilter.type.charAt(0).toUpperCase() +
+                                    priceFilter.type.slice(1)}
+                                :{" "}
+                                {priceFilter.name.charAt(0).toUpperCase() +
+                                    priceFilter.name.slice(1)}
+                            </p>
+                            <button
+                                className="bg-gray-200 h=fit px-1 text-gray-600 hover:bg-gray-300 duration-150 transition-color ease-in-out"
+                                onClick={() => {
+                                    setChunks(chunkProducts(products));
+                                    setPriceFilter(null);
+                                }}
+                            >
+                                X
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <div className="flex justify-end z-30 ">
                     <Select

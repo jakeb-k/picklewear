@@ -6,17 +6,14 @@ export default function ProductCard(props) {
     const productImg = product.images ? product.images[0] : null;
     const { addFavourite, removeFavourite, favourites } = useFavouritesStore();
 
-    const navigateToProduct = (id) => {
-        router.visit(route("products.show", id));
-    };
 
     function setFavourite(product) {
         favourites.some((fav) => fav.id == product.id) ? removeFavourite(product.id) :  addFavourite(product);
     }
 
     return (
-        <div
-            onClick={() => navigateToProduct(product.id)}
+        <a
+            href={route("products.show", product.id)}
             className="relative min-h-[350px] rounded-md py-12 pb-4 bg-white group z-20 cursor-pointer overflow-hidden transition-all duration-300 w-full flex flex-col justify-evenly mb-8"
         >
             <div className="absolute inset-0 bg-gray-300/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
@@ -37,6 +34,6 @@ export default function ProductCard(props) {
                 <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
                 <p className="text-center pb-2 mt-auto">${product.price}</p>
             </div>
-        </div>
+        </a>
     );
 }
