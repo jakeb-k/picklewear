@@ -60,6 +60,15 @@ export default function ProductIndexLayout(props) {
         });
     };
 
+    const removeFilter = (oldFilter) => {
+        setFilters((prevFilters) => {
+            const updatedFilters = prevFilters.filter(
+                (prevFilter) => prevFilter.name != oldFilter.name,
+            );
+            return [...updatedFilters];
+        });
+    };
+
     useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
@@ -139,7 +148,7 @@ export default function ProductIndexLayout(props) {
         setProducts(sortedProducts);
         setChunks(chunkProducts(sortedProducts));
     }
-    
+
     function filterProducts() {
         let filterNames = filters.map((filter) => filter.name);
         let filteredProducts = [];
@@ -149,7 +158,6 @@ export default function ProductIndexLayout(props) {
                 const isFiltered = options.some((option) =>
                     filterNames.includes(option),
                 );
-                console.log(isFiltered + '\n' + options)
                 if (isFiltered) filteredProducts.push(product);
             });
         });
@@ -230,29 +238,63 @@ export default function ProductIndexLayout(props) {
                             </a>
                         )}
                     </p>
-                    {!loading && (<p className="font-oswald text-3xl italic text-gray-500">
-                        {productChunks.reduce((count, group) => count + group.length, 0)} items found
-                    </p>)}
+                    {!loading && (
+                        <p className="font-oswald text-3xl italic text-gray-500">
+                            {productChunks.reduce(
+                                (count, group) => count + group.length,
+                                0,
+                            )}{" "}
+                            items found
+                        </p>
+                    )}
                 </div>
             </div>
             <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
-            <div className="flex justify-end pr-16 mb-8 z-50 ">
-                <Select
-                    name="sort"
-                    placeholder="Sort By..."
-                    options={[
-                        { value: "priceAsc", label: "Price - Low to High" },
-                        { value: "priceDesc", label: "Price - High to Low" },
-                        { value: "popularity", label: "Popularity" },
-                        { value: "discount", label: "Largest Discount" },
-                        { value: "arrivals", label: "New Arrivals" },
-                        { value: "delivery", label: "Delivery Speed" },
-                    ]}
-                    onChange={handleOnSelectChange}
-                    value={sort}
-                    styles={customStyles}
-                    isClearable={true}
-                />
+            <div className="flex justify-between px-16 mb-8">
+                <div className="flex flex-wrap">
+                    {filters.map((filter) => {
+                        return (
+                            <div className="px-2 py-0.5 mb-2 bg-white rounded-sm flex h-fit space-x-2 mr-3">
+                                <p className="font-oswald text-lg">
+                                    {filter.type.charAt(0).toUpperCase() +
+                                        filter.type.slice(1)}
+                                    :{" "}
+                                    {filter.name.charAt(0).toUpperCase() +
+                                        filter.name.slice(1)}
+                                </p>
+                                <button
+                                    className="bg-gray-200 h=fit px-1 text-gray-600 hover:bg-gray-300 duration-150 transition-color ease-in-out"
+                                    onClick={() => {
+                                        removeFilter(filter);
+                                    }}
+                                >
+                                    X
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div className="flex justify-end z-50 ">
+                    <Select
+                        name="sort"
+                        placeholder="Sort By..."
+                        options={[
+                            { value: "priceAsc", label: "Price - Low to High" },
+                            {
+                                value: "priceDesc",
+                                label: "Price - High to Low",
+                            },
+                            { value: "popularity", label: "Popularity" },
+                            { value: "discount", label: "Largest Discount" },
+                            { value: "arrivals", label: "New Arrivals" },
+                            { value: "delivery", label: "Delivery Speed" },
+                        ]}
+                        onChange={handleOnSelectChange}
+                        value={sort}
+                        styles={customStyles}
+                        isClearable={true}
+                    />
+                </div>
             </div>
             {!loading && (
                 <main className="flex space-x-6 mx-16">
