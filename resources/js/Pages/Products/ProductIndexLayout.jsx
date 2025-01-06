@@ -10,7 +10,7 @@ export default function ProductIndexLayout(props) {
     const [loading, setLoading] = useState(true);
     const { favourites } = useFavouritesStore();
     const [category, setCategory] = useState(props.category);
-    const [sort, setSort] = useState(null); 
+    const [sort, setSort] = useState(null);
     const [productChunks, setChunks] = useState({});
     const type = props.type;
 
@@ -33,11 +33,60 @@ export default function ProductIndexLayout(props) {
         setLoading(false);
     }, [category, favourites]);
 
+    useEffect(() => {
+        setLoading(true); 
+        if (sort) {
+            sortProducts();
+        }
+        setLoading(false)
+    }, [sort]);
+
+    function sortProducts() {
+        let sortedProducts = [];
     
+        switch (sort.value) {
+            case "priceAsc":
+                sortedProducts = [...products].sort((a, b) => a.price - b.price);
+                break;
+            case "priceDesc":
+                sortedProducts = [...products].sort((a, b) => b.price - a.price);
+                break;
+            case "popularity":
+                sortedProducts = [...products].sort(
+                    (a, b) => b.order_count - a.order_count,
+                );
+                break;
+            case "discount":
+                sortedProducts = [...products].sort((a, b) => b.discount - a.discount);
+                break;
+            case "arrivals":
+                sortedProducts = [...products].sort((a, b) => {
+                    const now = new Date().getTime();
+                    const diffA = Math.abs(new Date(a.created_at).getTime() - now);
+                    const diffB = Math.abs(new Date(b.created_at).getTime() - now);
+    
+                    return diffA - diffB;
+                });
+                break;
+            case "delivery":
+                sortedProducts = [...products].sort(
+                    (a, b) => a.delivery_date - b.delivery_date,
+                );
+                break;
+            default:
+                console.error("Invalid sort option");
+                return;
+        }
+    
+        // Update the state with sorted products and re-chunk them
+        setProducts(sortedProducts);
+        setChunks(chunkProducts(sortedProducts));
+    }
+
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            width: '18rem',
+            width: "18rem",
             cursor: "pointer",
             fontSize: "1rem", // Larger font size
             borderColor: state.isFocused ? "#6B7280" : "#6B7280", // gray-600 colour
@@ -54,14 +103,13 @@ export default function ProductIndexLayout(props) {
         menu: (provided) => ({
             ...provided,
             zIndex: 60, // Set z-index of the dropdown menu higher than z-50
-            cursor: "pointer", 
+            cursor: "pointer",
         }),
     };
-    
+
     const handleOnSelectChange = (selectedOption) => {
         setSort(selectedOption);
     };
-
 
     return (
         <div className="min-h-screen py-24">
@@ -119,7 +167,7 @@ export default function ProductIndexLayout(props) {
             <div className="flex justify-end pr-16 mb-8 z-50 ">
                 <Select
                     name="sort"
-                    placeholder='Sort By...'
+                    placeholder="Sort By..."
                     options={[
                         { value: "priceAsc", label: "Price - Low to High" },
                         { value: "priceDesc", label: "Price - High to Low" },
@@ -144,10 +192,9 @@ export default function ProductIndexLayout(props) {
                                 className="flex justify-start gap-[3%] w-full"
                             >
                                 {chunk.map((product) => (
-                                    <div className="flex-1 max-w-[31.5%]">
+                                    <div  key={product.id} className="flex-1 max-w-[31.5%]">
                                         <ProductCard
                                             product={product}
-                                            key={product.id}
                                         />
                                     </div>
                                 ))}

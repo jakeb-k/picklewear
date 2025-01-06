@@ -188,9 +188,11 @@ export default function MainLayout({ children }) {
                             ></i>
                         </div>
 
-                        <Link href={route("products.index", "favourites")}>
-                            <i class="fa-regular fa-heart text-white text-2xl hover:text-main"></i>
-                        </Link>
+                        {!auth?.user?.is_admin && (
+                            <Link href={route("products.index", "favourites")}>
+                                <i className="fa-regular fa-heart text-white text-2xl hover:text-main"></i>
+                            </Link>
+                        )}
                         {auth?.user ? (
                             <>
                                 {auth.user.is_admin ? (
@@ -209,14 +211,21 @@ export default function MainLayout({ children }) {
                                 </Link>
                             </>
                         )}
+                        {!auth?.user?.is_admin && (
+                            <button onClick={() => setCartOpen(true)}>
+                                <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
+                            </button>
+                        )}
 
-                        <button onClick={() => setCartOpen(true)}>
-                            <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
-                        </button>
-
-                        {auth?.user && (<Link href={route("logout")} method="post" as="button">
-                            <i class="fa-solid fa-right-from-bracket text-2xl text-white hover:text-main"></i>
-                        </Link>)}
+                        {auth?.user && (
+                            <Link
+                                href={route("logout")}
+                                method="post"
+                                as="button"
+                            >
+                                <i className="fa-solid fa-right-from-bracket text-2xl text-white hover:text-main"></i>
+                            </Link>
+                        )}
                     </div>
                 </div>
                 <CSSTransition

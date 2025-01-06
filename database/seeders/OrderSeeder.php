@@ -23,7 +23,7 @@ class OrderSeeder extends Seeder
             $order = Order::factory()->create(); 
             $location = Location::factory()->create(); 
 
-            $order->location()->save($location);
+            $order->locations()->save($location);
 
             $randomCount = $faker->numberBetween(1, 5);
             $order_items = OrderProduct::factory()->count($randomCount)->create([

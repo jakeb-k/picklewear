@@ -21,8 +21,13 @@ class ProductController extends Controller
      */
     public function index(Request $request, string $category)
     {   
-        // $category = 'Clothing';
+        $category = 'Clothing';
         $products = Product::where("type", $category)->get();
+
+        $products = $products->map(function ($product)  {
+            $product->order_count = $product->orders()->count(); 
+            return $product;
+        }); 
 
         return Inertia::render("Products/ProductIndexLayout", [
             "products" => $products->load(["options", "images"]),
