@@ -119,3 +119,23 @@ h2 {
 html {
   scroll-behavior: smooth;
 }
+input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  border:1px solid black; 
+  width: 16px;
+  height: 16px;
+  background: #FFD100; /* Tailwind 'blue-500' */
+  border-radius: 9999px;
+}
+
+input[type='range']::-moz-range-thumb {
+  border:1px solid black; 
+  width: 16px;
+  height: 16px;
+  background: #FFD100; /* Tailwind 'blue-500' */
+  border-radius: 9999px;
+}
+.multi-range-slider {
+  border:none;
+  box-shadow:none; 
+}

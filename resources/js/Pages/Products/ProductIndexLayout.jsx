@@ -5,6 +5,7 @@ import ProductCard from "@/Components/product/ProductCard";
 import useFavouritesStore from "@/Stores/useFavouritesStore";
 import Select from "react-select";
 import ProductColorFilter from "@/Components/product/ProductColorFilter";
+import ProductPriceFilter from "@/Components/product/ProductPriceFilter";
 
 export default function ProductIndexLayout(props) {
     const [products, setProducts] = useState(props.products);
@@ -274,7 +275,7 @@ export default function ProductIndexLayout(props) {
                         );
                     })}
                 </div>
-                <div className="flex justify-end z-50 ">
+                <div className="flex justify-end z-30 ">
                     <Select
                         name="sort"
                         placeholder="Sort By..."
@@ -307,7 +308,12 @@ export default function ProductIndexLayout(props) {
                                 (filter) => filter.type == "color",
                             )}
                         />
-                        <hr className="bg-gray-400 h-0.5 my-4" />
+                        <div className="bg-gray-400 h-[0.5px] my-4" />
+                        <ProductPriceFilter
+                            min={products.sort((a, b) => b.price - a.price)[products.length-1].price}
+                            max={products.sort((a, b) => b.price - a.price)[0].price}
+                        />
+                        <div className="bg-gray-400 h-[0.5px] my-4" />
                     </section>
                     <section className="w-[75.5%] space-y-6">
                         {productChunks.map((chunk, index) => (

@@ -43,7 +43,7 @@ export default function MainLayout({ children }) {
 
     const SearchBar = () => {
         return (
-            <div className="bg-gray-800/50 min-h-screen  fixed z-50 w-full pt-8">
+            <div className="bg-gray-800/50 min-h-screen fixed z-[99] w-full pt-8">
                 <div className="flex bg-white py-1 justify-center items-center">
                     <i
                         onClick={handleQueryState}
@@ -91,7 +91,7 @@ export default function MainLayout({ children }) {
                     setMenuType("");
                     setMenuOpen(false);
                 }}
-                className="fixed w-full z-30"
+                className="fixed w-full z-50"
             >
                 <div className="w-full bg-main text-secondary flex py-1">
                     <div className="font-bold  justify-center w-full text-center ml-12">
