@@ -13,7 +13,7 @@ export default function ProductIndexLayout(props) {
     const { favourites } = useFavouritesStore();
     const [sort, setSort] = useState(null);
     const [colorFilters, setColorFilters] = useState([]);
-    const [priceFilter, setPriceFilter] = useState(null); 
+    const [priceFilter, setPriceFilter] = useState(null);
     const [productChunks, setChunks] = useState({});
     const [colorOptions, setColorOptions] = useState(null);
 
@@ -100,10 +100,10 @@ export default function ProductIndexLayout(props) {
     }, [colorFilters]);
 
     useEffect(() => {
-        if(priceFilter){
-            filterByPrice()
+        if (priceFilter) {
+            filterProductsByPrice();
         }
-    })
+    }, [priceFilter]);
 
     function sortProducts() {
         let sortedProducts = [];
@@ -172,6 +172,17 @@ export default function ProductIndexLayout(props) {
         setChunks(chunkProducts(filteredProducts));
     }
 
+    function filterProductsByPrice() {
+        let priceRange = priceFilter.value;
+        const filteredProducts = products.filter((product) => {
+            return (
+                product.price >= priceRange.min &&
+                product.price <= priceRange.max
+            );
+        });
+        setChunks(chunkProducts(filteredProducts));
+    }
+
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
@@ -195,7 +206,7 @@ export default function ProductIndexLayout(props) {
             cursor: "pointer",
         }),
     };
-    console.log(colorFilters);
+    
     const handleOnSelectChange = (selectedOption) => {
         setSort(selectedOption);
     };
@@ -281,6 +292,24 @@ export default function ProductIndexLayout(props) {
                             </div>
                         );
                     })}
+                    {priceFilter && (<div className="px-2 py-0.5 mb-2 bg-white rounded-sm flex h-fit space-x-2 mr-3">
+                        <p className="font-oswald text-lg">
+                            {priceFilter.type.charAt(0).toUpperCase() +
+                                priceFilter.type.slice(1)}
+                            :{" "}
+                            {priceFilter.name.charAt(0).toUpperCase() +
+                                priceFilter.name.slice(1)}
+                        </p>
+                        <button
+                            className="bg-gray-200 h=fit px-1 text-gray-600 hover:bg-gray-300 duration-150 transition-color ease-in-out"
+                            onClick={() => {
+                                setChunks(chunkProducts(products));
+                                setPriceFilter(null);
+                            }}
+                        >
+                            X
+                        </button>
+                    </div>)}
                 </div>
                 <div className="flex justify-end z-30 ">
                     <Select
@@ -317,9 +346,16 @@ export default function ProductIndexLayout(props) {
                         />
                         <div className="bg-gray-400 h-[0.5px] my-4" />
                         <ProductPriceFilter
-                        updateFilters={() => console.log('penis')}
-                            min={products.sort((a, b) => b.price - a.price)[products.length-1].price}
-                            max={products.sort((a, b) => b.price - a.price)[0].price}
+                            updateFilters={setPriceFilter}
+                            min={
+                                products.sort((a, b) => b.price - a.price)[
+                                    products.length - 1
+                                ].price
+                            }
+                            max={
+                                products.sort((a, b) => b.price - a.price)[0]
+                                    .price
+                            }
                         />
                         <div className="bg-gray-400 h-[0.5px] my-4" />
                     </section>
