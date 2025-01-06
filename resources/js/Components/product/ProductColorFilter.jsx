@@ -5,7 +5,7 @@ import { CSSTransition } from "react-transition-group";
 export default function ProductColorFilter({ updateFilters, ...props }) {
     const colorOptions = props.colorOptions;
     const currentFilters = props.filters; 
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
 
     return (
         <>

@@ -167,7 +167,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.first_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-2 border-red-500" : ""}`}
                         />
                         <input
                             name="last_name"
@@ -177,7 +177,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.last_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-2 border-red-500" : ""}`}
                         />
                         <div className="relative">
                             <input
@@ -188,7 +188,7 @@ export default function Checkout(props) {
                                 required
                                 onChange={handleOnChange}
                                 value={data.mobile}
-                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${errors?.mobile ? "border-red-500" : ""}`}
+                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${errors?.mobile ? "border-2 border-red-500" : ""}`}
                             />
                             <p className="absolute left-0 top-0 flex flex-col justify-center px-2 h-full border-r border-gray-500">
                                 +61{" "}

@@ -183,7 +183,6 @@ export default function ProductIndexLayout(props) {
     const handleOnSelectChange = (selectedOption) => {
         setSort(selectedOption);
     };
-
     return (
         <div className="min-h-screen py-24">
             <div className="mx-24">
@@ -231,9 +230,9 @@ export default function ProductIndexLayout(props) {
                             </a>
                         )}
                     </p>
-                    <p className="font-oswald text-3xl italic text-gray-500">
-                        {products.length} items found
-                    </p>
+                    {!loading && (<p className="font-oswald text-3xl italic text-gray-500">
+                        {productChunks.reduce((count, group) => count + group.length, 0)} items found
+                    </p>)}
                 </div>
             </div>
             <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
