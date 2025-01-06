@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/Components/product/ProductCard";
 import useFavouritesStore from "@/Stores/useFavouritesStore";
 import Select from "react-select";
-import tinycolor from "tinycolor2";
 import ProductColorFilter from "@/Components/product/ProductColorFilter";
 
 export default function ProductIndexLayout(props) {
@@ -12,10 +11,7 @@ export default function ProductIndexLayout(props) {
     const [loading, setLoading] = useState(true);
     const { favourites } = useFavouritesStore();
     const [sort, setSort] = useState(null);
-    const [filters, setFilters] = useState([
-        { name: "darkgray", type: "color" },
-        { name: "medium", type: "size" },
-    ]);
+    const [filters, setFilters] = useState([]);
     const [productChunks, setChunks] = useState({});
     const [colorOptions, setColorOptions] = useState(null);
 
@@ -84,6 +80,14 @@ export default function ProductIndexLayout(props) {
         setLoading(false);
     }, [sort]);
 
+    useEffect(() => {
+        if (filters.length > 0) {
+            filterProducts();
+        } else {
+            setChunks(chunkProducts(products));
+        }
+    }, [filters]);
+
     function sortProducts() {
         let sortedProducts = [];
 
@@ -134,6 +138,22 @@ export default function ProductIndexLayout(props) {
         // Update the state with sorted products and re-chunk them
         setProducts(sortedProducts);
         setChunks(chunkProducts(sortedProducts));
+    }
+    
+    function filterProducts() {
+        let filterNames = filters.map((filter) => filter.name);
+        let filteredProducts = [];
+        products.map((product) => {
+            product.options.map((option) => {
+                let options = option.values.split(".");
+                const isFiltered = options.some((option) =>
+                    filterNames.includes(option),
+                );
+                console.log(isFiltered + '\n' + options)
+                if (isFiltered) filteredProducts.push(product);
+            });
+        });
+        setChunks(chunkProducts(filteredProducts));
     }
 
     const customStyles = {
@@ -246,7 +266,7 @@ export default function ProductIndexLayout(props) {
                                 (filter) => filter.type == "color",
                             )}
                         />
-                        <hr />
+                        <hr className="bg-gray-400 h-0.5 my-4" />
                     </section>
                     <section className="w-[75.5%] space-y-6">
                         {productChunks.map((chunk, index) => (
