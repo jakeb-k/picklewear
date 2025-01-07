@@ -95,8 +95,11 @@ export default function ProductIndexLayout(props) {
         if (colorFilters.length > 0) {
             const filteredProducts = filterProductsByColor(products);
             setChunks(chunkProducts(filteredProducts))
+        } else if(priceFilter) {
+            const filteredProducts = filterProductsByPrice(products);
+            setChunks(chunkProducts(filteredProducts));
         } else {
-            setChunks(chunkProducts(products));
+            setChunks(chunkProducts(products))
         }
     }, [colorFilters]);
 
@@ -104,6 +107,11 @@ export default function ProductIndexLayout(props) {
         if (priceFilter) {
             const filteredProducts = filterProductsByPrice(products);
             setChunks(chunkProducts(filteredProducts))
+        } else if (colorFilters.length > 0) { 
+            const filteredProducts = filterProductsByColor(products);
+            setChunks(chunkProducts(filteredProducts))
+        } else {
+            setChunks(chunkProducts(products))
         }
     }, [priceFilter]);
 
