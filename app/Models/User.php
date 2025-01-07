@@ -17,19 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $guarded = [
-        'id'
-    ];
+    protected $guarded = ["id"];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ["password", "remember_token"];
 
     /**
      * Get the attributes that should be cast.
@@ -39,34 +34,43 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            "email_verified_at" => "datetime",
+            "password" => "hashed",
         ];
+    }
+    
+    /**
+     * Variable that is added to model on access
+     *
+     * @var array
+     */
+    protected $appends = ['name'];
+
+    /**
+     * Accessor for the combined name attribute.
+     *
+     * @return string
+     */
+    protected function getNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
     }
 
     /**
      * The relationship for a users orders
-     * 
+     *
      */
     public function orders()
     {
-        return $this->hasMany(Order::class, 'user_id');
+        return $this->hasMany(Order::class, "user_id");
     }
+
 
     /**
-     * The relationship for a users location
+     * The relationship for an orders location
      */
-    public function location()
+    public function locations()
     {
-        return $this->morphOne(Location::class, 'locationable');
+        return $this->morphToMany(Location::class, 'locationable');
     }
-
-    /**
-     * The relationship for the favourites of a user
-     */
-    public function favourites()
-    {
-        return $this->belongsToMany(Product::class, 'favourites')->withTimestamps();
-    }
-
 }

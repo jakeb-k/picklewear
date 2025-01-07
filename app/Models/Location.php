@@ -9,8 +9,8 @@ class Location extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id']; 
-    protected $visible = ['street', 'city', 'state', 'postcode'];
+    protected $guarded = ["id"];
+    protected $visible = ["street", "city", "state", "postcode"];
 
     /**
      *A Location is morphed by many orders
@@ -19,7 +19,7 @@ class Location extends Model
      */
     public function order()
     {
-        return $this->morphedByMany(Order::class, 'locationable');
+        return $this->morphedByMany(Order::class, "locationable");
     }
 
     /**
@@ -29,7 +29,16 @@ class Location extends Model
      */
     public function customer()
     {
-        return $this->morphedByMany(Order::class, 'locationable');
+        return $this->morphedByMany(Customer::class, "locationable");
     }
 
+    /**
+     * A Location is morphed by many users
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function user()
+    {
+        return $this->morphedByMany(User::class, "locationable");
+    }
 }
