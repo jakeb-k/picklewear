@@ -86,18 +86,19 @@ export default function NavigationMenu(props) {
                                 rows[chunkIndex].push(key);
                                 return rows;
                             }, [])
-                            .map((row, rowIndex) => (
+                            .map((row, rowIndex) => 
+                 
                                 <div
                                     key={rowIndex}
                                     className="flex w-full justify-between"
                                 >
                                     {row.map((option) => (
-                                        <p key={option} className="w-[47.5%] line-link py-1">
+                                        <a key={option} href={route('products.index', type) + "?type=" + encodeURIComponent(option.toLowerCase())} className="w-[47.5%] line-link py-1">
                                             {option}
-                                        </p>
+                                        </a>
                                     ))}
                                 </div>
-                            ))}
+                            )}
                 </div>
             </div>
             <button className="p-12 ml-auto rounded-xl text-2xl bg-secondary hover:bg-main border-main transition-all duration-150 ease-in-out text-main hover:text-secondary">

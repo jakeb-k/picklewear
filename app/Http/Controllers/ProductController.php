@@ -19,12 +19,25 @@ class ProductController extends Controller
      * @param String $type
      * @return \Inertia\Response The Inertia response for the client-side renderer.
      */
-    public function index(string $type)
+    public function index(Request $request, string $category)
     {
-        $products = Product::where("type", $type)->get();
+        $category = "Clothing";
+        // Query products with images only
+        $products = Product::where("type", $category)
+            ->whereHas("images") // Ensure products have images
+            ->with(["options", "images"]) // Eager load options and images
+            ->get();
+
+        // Add order count to each product
+        $products = $products->map(function ($product) {
+            $product->order_count = $product->orders()->count();
+            return $product;
+        });
 
         return Inertia::render("Products/ProductIndexLayout", [
             "products" => $products,
+            "category" => $category,
+            "type" => $request->get("type"),
         ]);
     }
 
@@ -50,74 +63,81 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:100',
-                'type' => 'required',
-                'url' => 'required',
-                'delivery_date'=> 'numeric|required',
-                'price'=> 'numeric|required|min:0',
-                'discount'=> 'numeric|nullable|min:0|max:100',
-                'description'=> 'required',
-                'images'=> 'required|array|min:3',
-                'options'=> 'nullable|arary'
-
+                "name" => "required|string|max:100",
+                "type" => "required",
+                "url" => "required",
+                "delivery_date" => "numeric|required",
+                "price" => "numeric|required|min:0",
+                "discount" => "numeric|nullable|min:0|max:100",
+                "description" => "required",
+                "images" => "required|array|min:3",
+                "options" => "nullable|arary",
             ]);
-    
+
             DB::transaction(function () use ($request) {
                 $product = Product::create([
-                    'name' => $request->name, 
-                    'type' => $request->type,
-                    'url' => $request->url,
-                    'delivery_date'=> $request->delivery_date,
-                    'available' => true, 
-                    'price'=> $request->price,
-                    'discount'=> $request->discount,
-                    'description'=> $request->description,
+                    "name" => $request->name,
+                    "type" => $request->type,
+                    "url" => $request->url,
+                    "delivery_date" => $request->delivery_date,
+                    "available" => true,
+                    "price" => $request->price,
+                    "discount" => $request->discount,
+                    "description" => $request->description,
                 ]);
-            
-                $images = $request->file('images');
-            
+
+                $images = $request->file("images");
+
                 foreach ($images as $index => $imageData) {
                     Log::info($imageData);
-                    $fileName = time() . $index . '.' . $imageData->extension();
-            
-                    $folder = 'files/products/';
-                    $filePath = $imageData->storeAs($folder, $fileName, 'public');
-            
-                    $disk = config('filesystems.default');
+                    $fileName = time() . $index . "." . $imageData->extension();
+
+                    $folder = "files/products/";
+                    $filePath = $imageData->storeAs(
+                        $folder,
+                        $fileName,
+                        "public"
+                    );
+
+                    $disk = config("filesystems.default");
                     $path = Storage::disk($disk)->url($filePath);
-            
+
                     $image = Image::create([
-                        'file_name' => $imageData->getClientOriginalName(),
-                        'mime_type' => $imageData->getClientMimeType(),
-                        'file_path' => $path,
-                        'file_size' => $imageData->getSize(),
+                        "file_name" => $imageData->getClientOriginalName(),
+                        "mime_type" => $imageData->getClientMimeType(),
+                        "file_path" => $path,
+                        "file_size" => $imageData->getSize(),
                     ]);
-            
+
                     $product->images()->attach($image);
                 }
             }, 1);
-            
-            // foreach($options as $optionData){   
+
+            // foreach($options as $optionData){
             //     $values = collect($optionData)->pluck('values');
-                
+
             //     $option = ProductOption::create([
-            //         'values'=> implode('.', $values), 
-            //         'product_id' => $product->id, 
+            //         'values'=> implode('.', $values),
+            //         'product_id' => $product->id,
             //     ]);
-                
+
             // }
             // 'images'=> 'required|array|min:3',
             // 'options'=> 'nullable|arary'
 
             return response()->json([
-                'success'=> 'Your Product was updated',
-                'products' => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get()
-            ]); 
-
-        } catch(\Exception $e){
-            return response()->json([
-                'error'=> $e->getMessage()
-            ], 400); 
+                "success" => "Your Product was updated",
+                "products" => Product::with(["options", "images"])
+                    ->orderBy("updated_at", "desc")
+                    ->get(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    "error" => $e->getMessage(),
+                ],
+                400
+            );
         }
     }
 
@@ -130,37 +150,40 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        
-        try {   
+        try {
             $request->validate([
-                'images.*' => 'required|file|mimes:jpeg,png,jpg|max:2048',
-                'name' => 'required|string|max:100',
-                'type' => 'required',
-                'url' => 'required',
-                'delivery_date'=> 'numeric|required',
-                'price'=> 'numeric|required|min:0',
-                'discount'=> 'numeric|nullable|min:0|max:100',
-                'description'=> 'required'
+                "images.*" => "required|file|mimes:jpeg,png,jpg|max:2048",
+                "name" => "required|string|max:100",
+                "type" => "required",
+                "url" => "required",
+                "delivery_date" => "numeric|required",
+                "price" => "numeric|required|min:0",
+                "discount" => "numeric|nullable|min:0|max:100",
+                "description" => "required",
             ]);
             $product->update([
-                'name' => $request->name ,
-                'type' => $request->type,
-                'url' => $request->url,
-                'delivery_date'=> $request->delivery_date,
-                'price'=> $request->price,
-                'discount'=>$request->discount ,
-                'description'=> $request->description, 
-            ]); 
-    
-            return response()->json([
-                'success'=> 'Your Product was updated',
-                'products' => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get()
-            ]); 
+                "name" => $request->name,
+                "type" => $request->type,
+                "url" => $request->url,
+                "delivery_date" => $request->delivery_date,
+                "price" => $request->price,
+                "discount" => $request->discount,
+                "description" => $request->description,
+            ]);
 
-        } catch(\Exception $e){
             return response()->json([
-                'error'=> $e->getMessage()
-            ], 400); 
+                "success" => "Your Product was updated",
+                "products" => Product::with(["options", "images"])
+                    ->orderBy("updated_at", "desc")
+                    ->get(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    "error" => $e->getMessage(),
+                ],
+                400
+            );
         }
     }
 
@@ -214,7 +237,9 @@ class ProductController extends Controller
         $product->save();
 
         return response()->json([
-            "products" => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get(),
+            "products" => Product::with(["options", "images"])
+                ->orderBy("updated_at", "desc")
+                ->get(),
         ]);
     }
 
@@ -223,7 +248,9 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json([
-            "products" => Product::with(['options', 'images'])->orderBy('updated_at', 'desc')->get(),
+            "products" => Product::with(["options", "images"])
+                ->orderBy("updated_at", "desc")
+                ->get(),
         ]);
     }
 }

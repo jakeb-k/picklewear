@@ -5,7 +5,7 @@ export default function MainProductCard({ name, price, discount }) {
     return (
         <>
             <Link href={'#'}> 
-                <div className="bg-gray-100/90 rounded-msm overflow-hidden shadow-md shadow-grey-500 cursor-pointer hover:bg-white text-center">
+                <div className="bg-gray-100/90 rounded-md overflow-hidden shadow-md shadow-grey-500 cursor-pointer hover:bg-white text-center">
                     <img src={TestImage} />
                     <p>{name}</p>
                     {price && (<span>
