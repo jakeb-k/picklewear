@@ -33,7 +33,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user()->load(['locations']),
+                'user' => $request->user(),
                 'roles' => fn () => $request->user()?->roles->pluck('name'),
             ],
             'ziggy' => fn () => [

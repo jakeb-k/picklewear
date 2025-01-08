@@ -150,7 +150,9 @@ class StripeController extends Controller
 
         $order = Order::create([
             "status" => "Unpaid",
+            "code" => str_pad(Order::count(), 5, '0', STR_PAD_LEFT), 
             "total" => $request->total,
+            'expected_delivery_range' => max(array_column($cart, 'delivery_date')), 
             "session_id" => $session->id,
             "sent" => false,
             "user_id" => Auth::user()->id ?? null,

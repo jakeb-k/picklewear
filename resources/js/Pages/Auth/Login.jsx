@@ -96,7 +96,7 @@ export default function Login({ status, canResetPassword }) {
                                 Forgot your password?
                             </Link>
                         )}
-                        <div>
+                        <div className="flex">
                             <SecondaryButton onClick={(e) => {
                                 e.preventDefault();
                                 router.visit(route('register'))

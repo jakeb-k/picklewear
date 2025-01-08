@@ -309,10 +309,16 @@ export default function Checkout(props) {
                     <p>Subtotal</p>
                     <p className="font-bold font-roboto_mono text-lg">
                         ${" "}
-                        {cartItems.reduce(
-                            (total, item) => total + item.price * item.quantity,
-                            0,
-                        )}
+                        {cartItems
+                            .reduce(
+                                (total, item) =>
+                                    total + item.price * item.quantity,
+                                0,
+                            )
+                            .toLocaleString(0, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
                     </p>
                 </div>
                 <div className="flex justify-between mt-8">

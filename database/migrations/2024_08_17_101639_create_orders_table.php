@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->decimal('total'); 
             $table->string('status'); 
+            $table->string('code'); 
             $table->string('session_id')->nullable(); 
+            $table->integer('expected_delivery_range');
             $table->unsignedBigInteger('user_id')->nullable(); 
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
