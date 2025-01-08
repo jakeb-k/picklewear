@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 
-const AddressSearch = ({ onAddressSelect, errors }) => {
+const AddressSearch = ({ onAddressSelect, errors, initialLocation = undefined }) => {
     const {
         ready,
         value,
@@ -13,6 +14,12 @@ const AddressSearch = ({ onAddressSelect, errors }) => {
         },
         debounce: 300,
     });
+
+    useEffect(() => {
+        if(initialLocation){
+            setValue(initialLocation); 
+        }
+    },[initialLocation])
 
     const handleInputChange = (e) => {
         setValue(e.target.value);

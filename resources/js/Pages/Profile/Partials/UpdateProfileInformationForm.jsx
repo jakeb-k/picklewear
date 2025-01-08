@@ -5,11 +5,13 @@ import TextInput from "@/Components/common/TextInput";
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import AddressSearch from "@/Components/common/AddressSearch";
+import { useEffect, useState } from "react";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = "",
+    location,
 }) {
     const user = usePage().props.auth.user;
 
@@ -19,17 +21,25 @@ export default function UpdateProfileInformation({
             last_name: user.last_name,
             mobile: user.mobile,
             email: user.email,
-            street: user.locations[0]?.street,
-            city: user.locations[0]?.city,
-            state: user.locations[0]?.state,
-            postcode: user.locations[0]?.postcode,
+            street: location[0]?.street,
+            city: location[0]?.city,
+            state: location[0]?.state,
+            postcode: location[0]?.postcode,
         });
+    
+    const [initialLocation, setInitialLocation] = useState(null)
+
+    useEffect(() => {
+        if(location){
+            setInitialLocation( location[0]?.street + " " + location[0]?.city + " " + location[0]?.state + " " + location[0]?.postcode)
+        }
+    }, [])
 
     const submit = (e) => {
         e.preventDefault();
-
         patch(route("profile.update"));
     };
+
     const handleAddressSelect = (addressData) => {
         const { suggestion, postalCode } = addressData;
         setData({
@@ -130,10 +140,11 @@ export default function UpdateProfileInformation({
                     </div>
                 )}
                 <div className="relative">
-                <InputLabel  value="Address" />
+                    <InputLabel value="Address" />
                     <AddressSearch
                         onAddressSelect={handleAddressSelect}
                         errors={errors}
+                        initialLocation={initialLocation}
                     />
                 </div>
 

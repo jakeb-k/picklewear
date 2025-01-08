@@ -5,14 +5,9 @@ import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationFor
 import { Head } from "@inertiajs/react";
 import moment from "moment";
 
-export default function Edit({
-    auth,
-    mustVerifyEmail,
-    status,
-    orders
-}) {
+export default function Edit({ auth, mustVerifyEmail, status, orders, location }) {
     return (
-        <div className="py-24">
+        <div className="py-24 pb-8">
             <Head title="Profile" />
 
             <div className="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8 ">
@@ -27,10 +22,14 @@ export default function Edit({
                                 mustVerifyEmail={mustVerifyEmail}
                                 status={status}
                                 className=""
+                                location={location}
                             />
                         </div>
-                        <div id="show-scroll" className="p-4 sm:p-8 bg-white w-1/2 shadow sm:rounded-lg flex-1 h-[450px] overflow-y-scroll">
-                            <p className='text-lg'> Past Orders</p>
+                        <div
+                            id="show-scroll"
+                            className="p-4 sm:p-8 bg-white w-1/2 shadow sm:rounded-lg flex-1 h-[450px] overflow-y-scroll"
+                        >
+                            <p className="text-lg"> Past Orders</p>
                             <div className="flex flex-col space-y-6 mt-4">
                                 {orders.map((order) => {
                                     return (
@@ -58,7 +57,7 @@ export default function Edit({
                                             </p>
                                             <p className="font-roboto_mono text-right flex-1">
                                                 $
-                                                {(order.total).toLocaleString(0, {
+                                                {order.total.toLocaleString(0, {
                                                     minimumFractionDigits: 2,
                                                     maximumFractionDigits: 2,
                                                 })}
@@ -71,14 +70,12 @@ export default function Edit({
                         </div>
                     </div>
                     <div className="flex justify-between space-x-[2.5%]">
-                        <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex-1">
+                        <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg w-1/2">
                             <UpdatePasswordForm />
                         </div>
-
-                        <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex-1">
-                            <DeleteUserForm />
-                        </div>
                     </div>
+                    
+                    <DeleteUserForm className={"pt-16"} />
                 </div>
             </div>
         </div>
