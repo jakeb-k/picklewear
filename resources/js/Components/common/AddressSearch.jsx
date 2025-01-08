@@ -17,7 +17,7 @@ const AddressSearch = ({ onAddressSelect, errors, initialLocation = undefined })
 
     useEffect(() => {
         if(initialLocation){
-            setValue(initialLocation); 
+            setValue(initialLocation, false); 
         }
     },[initialLocation])
 

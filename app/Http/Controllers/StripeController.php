@@ -42,7 +42,6 @@ class StripeController extends Controller
                 "state" => "required|string|in:NSW,QLD,SA,TAS,VIC,WA,ACT,NT",
                 "postcode" => "required|numeric|digits:4",
                 "mobile" => ["required", 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
-                // Add other necessary validations based on cart structure
             ],
             [
                 "first_name.required" => "First name is required",

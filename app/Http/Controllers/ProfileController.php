@@ -44,6 +44,15 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        if($request->street){
+            $location = $request->user()->locations[0];
+            $location->street = $request->street; 
+            $location->city = $request->city; 
+            $location->state = $request->state; 
+            $location->postcode = $request->postcode; 
+            $location->save(); 
+        }
+
         return Redirect::route('profile.edit');
     }
 
