@@ -150,7 +150,7 @@ class StripeController extends Controller
 
         $order = Order::create([
             "status" => "Unpaid",
-            "code" => str_pad(Order::count(), 5, '0', STR_PAD_LEFT), 
+            "code" => 'ORD-'. str_pad(Order::count(), 5, '0', STR_PAD_LEFT), 
             "total" => $request->total,
             'expected_delivery_range' => max(array_column($cart, 'delivery_date')), 
             "session_id" => $session->id,
@@ -187,7 +187,9 @@ class StripeController extends Controller
                 throw new NotFoundHttpException();
             }
             $order = Order::where("session_id", $session->id)->first();
-
+            $customer = Customer::where('stripe_id', $session->id)->first(); 
+            $customer->email = $session->customer_details->email; 
+            $customer->save(); 
             if ($order->status == "Unpaid") {
                 $order->status = "Paid";
                 $order->save();
@@ -205,9 +207,13 @@ class StripeController extends Controller
             throw new NotFoundHttpException();
         }
     }
+    /**
+     * pretty sure this isnt working #fk stripe
+     *
+     * @return void
+     */
     public function webhook()
     {
-        Log::info("webhook is hit");
         // This is your Stripe CLI webhook secret for testing your endpoint locally.
         $endpoint_secret = env("STRIPE_WEBHOOK_SECRET");
 
@@ -223,9 +229,11 @@ class StripeController extends Controller
             );
         } catch (\UnexpectedValueException $e) {
             // Invalid payload
+            Log::info('UnexpectedValueException: '. $e->getMessage()); 
             return response("", 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
+            Log::info('SignatureVerificationException'. $e->getMessage()); 
             return response("", 400);
         }
 
@@ -233,7 +241,11 @@ class StripeController extends Controller
         switch ($event->type) {
             case "checkout.session.completed":
                 $session = $event->data->object;
-
+                $customer = Customer::where('stripe_id', $session->id); 
+                $customer->email = $session->customer_details->email; 
+                $customer->save(); 
+                Log::info($session->customer_details->email); 
+                Log::info('checkout completed'); 
                 $order = Order::where("session_id", $session->id)->first();
                 $order->status = "Paid";
                 $order->save();
@@ -243,6 +255,7 @@ class StripeController extends Controller
             default:
                 echo "Received unknown event type " . $event->type;
         }
+        Log::info('not hitting right place'); 
         return response("", 400);
     }
 }
