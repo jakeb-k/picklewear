@@ -26,14 +26,24 @@ export default function UpdateProfileInformation({
             state: location[0]?.state,
             postcode: location[0]?.postcode,
         });
-    
-    const [initialLocation, setInitialLocation] = useState(null)
+
+    const [initialLocation, setInitialLocation] = useState(null);
 
     useEffect(() => {
-        if(location){
-            setInitialLocation( location[0]?.street + " " + location[0]?.city + " " + location[0]?.state + " " + location[0]?.postcode)
+        if (location) {
+            setInitialLocation(
+                location[0]?.street +
+                    " " +
+                    location[0]?.city +
+                    " " +
+                    location[0]?.state +
+                    " " +
+                    location[0]?.postcode +
+                    ", " +
+                    "Australia",
+            );
         }
-    }, [])
+    }, []);
 
     const submit = (e) => {
         e.preventDefault();
@@ -101,20 +111,44 @@ export default function UpdateProfileInformation({
                     </div>
                 </div>
 
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                <div className="flex justify-between space-x-[2.5%]">
+                    <div className="flex-1">
+                        <InputLabel htmlFor="email" value="Email" />
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData("email", e.target.value)}
-                        required
-                        autoComplete="username"
-                    />
+                        <TextInput
+                            id="email"
+                            type="email"
+                            className="mt-1 block w-full"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            required
+                            autoComplete="email"
+                        />
 
-                    <InputError className="mt-2" message={errors.email} />
+                        <InputError className="mt-2" message={errors.email} />
+                    </div>
+                    <div className="flex-1">
+                        <InputLabel htmlFor="mobile" value="Mobile" />
+
+                        <div className='relative'>
+                            <TextInput
+                                id="mobile"
+                                type="text"
+                                className="mt-1 block w-full pl-12"
+                                value={data.mobile}
+                                onChange={(e) =>
+                                    setData("mobile", e.target.value)
+                                }
+                                required
+                                autoComplete="mobile"
+                            />
+
+                            <p className="absolute left-0 top-0 flex flex-col h-full justify-center px-2 border-r border-gray-500">
+                                +61{" "}
+                            </p>
+                        </div>
+                        <InputError className="mt-2" message={errors.email} />
+                    </div>
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => Hash::make('123456'), 
-            'mobile' => '0455555555',
+            'mobile' => '455555555',
         ]);
 
         $customer->locations()->save(Location::factory()->create()); 
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'j@j.com',
             'is_admin'=>true,
             'password'=> Hash::make('123456'), 
-            'mobile' => '0455555565', 
+            'mobile' => '455555565', 
         ]);
 
         $admin->assignRole(Role::create(['name'=> 'admin'])); 

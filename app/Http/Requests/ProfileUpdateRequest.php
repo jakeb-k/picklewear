@@ -24,6 +24,7 @@ class ProfileUpdateRequest extends FormRequest
             "city" => "nullable|string",
             "state" => "nullable|string|in:NSW,QLD,SA,TAS,VIC,WA,ACT,NT",
             "postcode" => "nullable|numeric|digits:4",
+            "mobile" => ["required", 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
         ];
     }
 }
