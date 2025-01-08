@@ -208,7 +208,7 @@ class StripeController extends Controller
         }
     }
     /**
-     * pretty sure this isnt working #fk stripe
+     * Hard to test locally - success works, so may not be even needed. 
      *
      * @return void
      */

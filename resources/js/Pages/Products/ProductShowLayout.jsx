@@ -22,12 +22,21 @@ export default function ProductShowLayout(props) {
     const [quantity, setQuantity] = useState(1);
     const [showAlert, setShowAlert] = useState(false);
 
-    const { addProduct, products } = useCartStore();
-
+    const { addProduct } = useCartStore();
+    
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
             ...product,
+            price: product.discount
+                ? (
+                      product.price -
+                      product.price * product.discount
+                  ).toLocaleString(0, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                  })
+                : product.price,
             color: selectedColor,
             size: selectedSize,
             quantity: quantity,
@@ -104,11 +113,22 @@ export default function ProductShowLayout(props) {
                 <div className="w-[45%] ml-auto flex flex-col justify-start">
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
-                        <span className="text-lg line-through">
-                            ${(product.price + product.price * 0.2).toFixed(2)}
-                        </span>
+                        {product.discount && (
+                            <span className="text-lg line-through">
+                                ${product.price.toFixed(2)}
+                            </span>
+                        )}
                         <span className="text-2xl font-bold ml-12">
-                            ${product.price}
+                            $
+                            {product.discount
+                                ? (
+                                      product.price -
+                                      product.price * product.discount
+                                  ).toLocaleString(0, {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                  })
+                                : product.price}
                         </span>
                     </p>
                     <div className="w-full my-4 border border-gray-400 mx-auto"></div>
@@ -179,7 +199,8 @@ export default function ProductShowLayout(props) {
                                   " and " +
                                   moment()
                                       .add(
-                                          parseInt(product.delivery_date) + 7 || 0,
+                                          parseInt(product.delivery_date) + 7 ||
+                                              0,
                                           "days",
                                       )
                                       .format("Do MMM YYYY")
