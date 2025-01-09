@@ -3,7 +3,6 @@ import moment from "moment";
 
 export default function OrdersTable(props) {
     const orders = props.orders;
-    console.log(orders)
     const processedData = orders.map((order) => {
         const code = order.id.toString().padStart(4, "0"); // Format order code
         const status = order.status;
