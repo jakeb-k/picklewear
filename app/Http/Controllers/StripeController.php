@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Stripe\Checkout\Session;
@@ -18,7 +19,9 @@ class StripeController extends Controller
 {
     public function checkoutShow()
     {
-        return Inertia::render("Checkout", []);
+        return Inertia::render("Checkout", [
+            'locations' => Auth::check() ? Auth::user()->locations : null, 
+        ]);
     }
     //Need to make a Stripe Web Hook to validate processed payment before
     //creating new order.
@@ -32,7 +35,7 @@ class StripeController extends Controller
                 "cart.*.name" => "required|string",
                 "cart.*.price" => "required|numeric|min:0.5",
                 "cart.*.quantity" => "required|integer|min:1",
-                "cart.*.color" => "required|string",
+                "cart.*.color" => "nullable|string",
                 "cart.*.size" => "required|string",
                 "first_name" => "required|string",
                 "last_name" => "required|string",
@@ -65,7 +68,7 @@ class StripeController extends Controller
         $products = [];
         foreach ($cart as $item) {
             $description = "{$item["description"]}";
-            $color = ucfirst($item["color"]);
+            $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null;
             $basePriceCents = intval($item["price"] * 100); // Convert base price to cents
             $discountValue = isset($request->discount) ? $request->discount : 0; // Default discount to 0 if not set
 
@@ -100,7 +103,7 @@ class StripeController extends Controller
                 "price" => $item["price"],
                 "quantity" => $item["quantity"],
                 "size" => $item["size"],
-                "color" => $item["color"],
+                "color" => $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null,
                 "options" => $item["options"] ?? [],
             ];
             $products[] = $productDetails;
@@ -137,14 +140,25 @@ class StripeController extends Controller
             "mobile" => $request->mobile,
             "address" => $request->address,
         ]);
+    
 
-        $customerLocation = Location::create([
-            "street" => $request->street,
-            "city" => $request->city,
-            "state" => $request->state,
-            "postcode" => $request->postcode,
-        ]);
-
+        $customerLocation = null;
+        if(Auth::user()){
+            
+            $user = User::find(Auth::user()->id);
+            $currentUserLocation = $user->locations[0]; 
+            if($currentUserLocation->street != $request->street){
+                $customerLocation = Location::create([
+                    "street" => $request->street,
+                    "city" => $request->city,
+                    "state" => $request->state,
+                    "postcode" => $request->postcode,
+                ]);
+                $user->locations()->sync([$customerLocation->id]); 
+            } else {
+                $customerLocation = $currentUserLocation; 
+            }
+        }
         $newCustomer->locations()->attach($customerLocation->id);
 
         $order = Order::create([

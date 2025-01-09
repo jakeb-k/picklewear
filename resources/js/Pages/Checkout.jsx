@@ -15,15 +15,16 @@ export default function Checkout(props) {
     const [loading, setLoading] = useState(true);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const [initialLocation, setInitialLocation] = useState(null);
     const { products, setProducts } = useCartStore();
     const { data, setData } = useForm({
         first_name: user?.first_name ?? "",
         last_name: user?.last_name ?? "",
         mobile: user?.mobile ?? "",
-        street: "",
-        state: "",
-        city: "",
-        postcode: "",
+        street: props.locations ? props.locations[0].street : "",
+        state: props.locations ? props.locations[0].state : "",
+        city: props.locations ? props.locations[0].city : "",
+        postcode: props.locations ? props.locations[0].postcode : "",
         discount: 0,
         discountAmount: 0,
     });
@@ -56,6 +57,19 @@ export default function Checkout(props) {
 
     useEffect(() => {
         setCartItems(products);
+        if (props.locations) {
+            setInitialLocation(
+                props.locations[0]?.street +
+                    " " +
+                    props.locations[0]?.city +
+                    " " +
+                    props.locations[0]?.state +
+                    " " +
+                    props.locations[0]?.postcode +
+                    ", " +
+                    "Australia",
+            );
+        }
         setLoading(false);
     }, []);
 
@@ -200,6 +214,7 @@ export default function Checkout(props) {
                         <AddressSearch
                             onAddressSelect={handleAddressSelect}
                             errors={errors}
+                            initialLocation={initialLocation}
                         />
                     </div>
                 </div>
