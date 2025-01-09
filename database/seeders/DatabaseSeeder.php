@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Location;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,13 +18,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'first_name' => 'Test ',
-            'last_name' => ' User',
+        $customer = User::factory()->create([
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'password' => Hash::make('123456'), 
-            'mobile' => '0455555555',
+            'mobile' => '455555555',
         ]);
+
+        $customer->locations()->save(Location::factory()->create()); 
 
         $admin = User::factory()->create([
             'first_name' => 'Jakey',
@@ -31,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'j@j.com',
             'is_admin'=>true,
             'password'=> Hash::make('123456'), 
-            'mobile' => '0455555565', 
+            'mobile' => '455555565', 
         ]);
 
         $admin->assignRole(Role::create(['name'=> 'admin'])); 

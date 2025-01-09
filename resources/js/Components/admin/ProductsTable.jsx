@@ -6,8 +6,10 @@ import Swal from "sweetalert2";
 
 export default function ProductsTable({ setEditItem, ...props }) {
     const [success, setSuccess] = useState(null);
-
+    const [search, setSearch] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
     const [products, setProducts] = useState(props.products);
+
     const [data, setData] = useState(
         products.map((product) => {
             const id = products.id;
@@ -36,12 +38,12 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 available,
                 route,
             };
-        })
+        }),
     );
 
     useEffect(() => {
         setData(
-            products.map((product) => {
+            props.products.map((product) => {
                 const id = product.id;
                 const image =
                     product.images.length > 0
@@ -57,7 +59,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 const available = product.available;
 
                 return {
-                    ...product, 
+                    ...product,
                     id,
                     image,
                     code,
@@ -69,9 +71,9 @@ export default function ProductsTable({ setEditItem, ...props }) {
                     available,
                     route,
                 };
-            })
+            }),
         );
-    }, [products]);
+    }, [props.products]);
 
     function setAvailability(product) {
         axios
@@ -224,7 +226,10 @@ export default function ProductsTable({ setEditItem, ...props }) {
                                 : "hover:bg-green-400 hover:text-white"
                         }`}
                     ></i>
-                    <i onClick={() => setEditItem(row)} className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"></i>
+                    <i
+                        onClick={() => setEditItem(row)}
+                        className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-pen-to-square hover:bg-gray-800 hover:text-white rounded-full p-2"
+                    ></i>
                     <i
                         onClick={() => deleteProduct(row)}
                         className="transition-all duration-150 ease-in-out cursor-pointer fa-solid fa-trash hover:bg-red-600 hover:text-white rounded-full 
@@ -238,6 +243,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     return (
         <div className="rounded-lg shadow-lg">
+            
             <DataTable
                 columns={columns}
                 data={data}

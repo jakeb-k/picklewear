@@ -20,6 +20,11 @@ class ProfileUpdateRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'mobile'=>  ['required', 'regex:/^(?:\+61|0)[4]\d{8}$/', 'numeric'], 
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            "street" => "nullable|string",
+            "city" => "nullable|string",
+            "state" => "nullable|string|in:NSW,QLD,SA,TAS,VIC,WA,ACT,NT",
+            "postcode" => "nullable|numeric|digits:4",
+            "mobile" => ["required", 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
         ];
     }
 }

@@ -167,7 +167,7 @@ class ProductController extends Controller
                 "url" => $request->url,
                 "delivery_date" => $request->delivery_date,
                 "price" => $request->price,
-                "discount" => $request->discount,
+                "discount" => $request->discount/100,
                 "description" => $request->description,
             ]);
 

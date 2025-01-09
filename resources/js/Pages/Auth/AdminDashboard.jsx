@@ -9,20 +9,56 @@ export default function AdminDashboard(props) {
     const [tab, setTab] = useState("products");
     const [editItem, setEditItem] = useState(null);
     const [products, setProducts] = useState(props.products);
+    const [orders, setOrders] = useState(props.orders);
+    const [search, setSearch] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
-    const [isCreating, setIsCreating] = useState(false); 
+    const [isCreating, setIsCreating] = useState(false);
+
     useEffect(() => {
         if (tab) {
             setEditItem(null);
         }
     }, [tab]);
 
+    useEffect(() => {
+        if (search != "") {
+            searchItems(tab);
+        } else {
+            setProducts(props.products);
+            setOrders(props.orders)
+        }
+    }, [search]);
+
+    const searchItems = (type) => {
+        const searchRegex = new RegExp(search, "i");
+
+        if (type == "products") {
+            setProducts(
+                props.products.filter(
+                    (product) =>
+                        searchRegex.test(product.type) ||
+                        searchRegex.test(product.name),
+                ),
+            );
+        } else {
+            setOrders(
+                props.orders.filter(
+                    (order) =>
+                        searchRegex.test(order.code) ||
+                        searchRegex.test(order.status),
+                ),
+            );
+        }
+    };
+    // console.log(products);
+
     const Alert = () => {
         return (
             <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary z-50">
                 <i className="fa-regular fa-circle-check text-main mt-1"></i>
                 <p className="tracking-wide ml-4 text-main font-oswald">
-                    Your product was {isCreating ? 'created' : 'updated'}.
+                    Your product was {isCreating ? "created" : "updated"}.
                 </p>
             </div>
         );
@@ -38,13 +74,16 @@ export default function AdminDashboard(props) {
             >
                 <Alert />
             </CSSTransition>
-            <div className="flex space-x-6 items-center ">
-                <div className="flex space-x-6 text-2xl">
+            <div className="flex justify-between">
+                <div className="flex space-x-6 text-2xl items-center ">
                     <h1 className="font-bold text-3xl mr-12">
                         Admin Dashboard
                     </h1>
                     <button
-                        onClick={() => setTab("products")}
+                        onClick={() => {
+                            setIsCreating(false);
+                            setTab("products");
+                        }}
                         className={`transition-all duration-150 ease-in-out  ${
                             tab == "products"
                                 ? "underline"
@@ -54,7 +93,10 @@ export default function AdminDashboard(props) {
                         Products
                     </button>
                     <button
-                        onClick={() => setTab("orders")}
+                        onClick={() => {
+                            setIsCreating(false);
+                            setTab("orders");
+                        }}
                         className={`transition-all duration-150 ease-in-out  ${
                             tab == "orders"
                                 ? "underline"
@@ -63,20 +105,41 @@ export default function AdminDashboard(props) {
                     >
                         Orders
                     </button>
+                    {!editItem && (
+                        <button
+                            onClick={() => {
+                                setEditItem(null);
+                                setTab("");
+                                setIsCreating(true);
+                            }}
+                            className="p-1 px-3 border-2 rounded-lg border-secondary text-lg font-bold transition-all duration-150 ease-in-out hover:bg-gray-400/50 mr-52"
+                        >
+                            CREATE
+                        </button>
+                    )}
                 </div>
-                {!editItem && (
-                    <button onClick={() =>{
-                        setEditItem(null)
-                        setTab('')
-                        setIsCreating(true)}} className="p-2 px-6 border-2 rounded-lg border-secondary text-lg font-bold transition-all duration-150 ease-in-out hover:bg-gray-400/50 mr-52">
-                        CREATE
-                    </button>
-                )}
+                <div className="flex justify-end">
+                    <div
+                        onMouseEnter={() => setIsSearching(true)}
+                        onMouseLeave={() => setIsSearching(false)}
+                        className={`p-1.5 h-fit mt-auto border border-gray-800 rounded-full hover:bg-gray-200 flex items-center ${isSearching || search != "" ? "w-48" : "w-8"} transition-all duration-150 ease-in-out`}
+                    >
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                        <input
+                            type="text"
+                            name="search"
+                            value={search}
+                            onFocus={() => setIsSearching(true)}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className={`h-3 border-none bg-gray-200 focus:ring-0 ${isSearching || search != "" ? "block w-[10em]" : "hidden"}`}
+                        />
+                    </div>
+                </div>
             </div>
             <Head title="Admin" />
             <hr className="border-gray-400 mt-3" />
             {tab == "products" && (
-                <div className="my-10 w-fit mx-auto min-h-[100vh]">
+                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
                     <ProductsTable
                         products={products}
                         setEditItem={(data) => {
@@ -87,8 +150,8 @@ export default function AdminDashboard(props) {
                 </div>
             )}
             {tab == "orders" && (
-                <div className="my-10 w-fit mx-auto min-h-[100vh]">
-                    <OrdersTable orders={props.orders} />
+                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
+                    <OrdersTable orders={orders} />
                 </div>
             )}
             {(editItem || isCreating) && (
@@ -100,9 +163,9 @@ export default function AdminDashboard(props) {
                         setTab("products");
                         setShowAlert(true);
                         setTimeout(() => {
-                            setShowAlert(false)
+                            setShowAlert(false);
                         }, 3000);
-                        setIsCreating(false) 
+                        setIsCreating(false);
                     }}
                 />
             )}

@@ -26,6 +26,8 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'orders' => Auth::user()->orders,
+            'location' => Auth::user()->locations, 
         ]);
     }
 
@@ -41,6 +43,15 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        if($request->street){
+            $location = $request->user()->locations[0];
+            $location->street = $request->street; 
+            $location->city = $request->city; 
+            $location->state = $request->state; 
+            $location->postcode = $request->postcode; 
+            $location->save(); 
+        }
 
         return Redirect::route('profile.edit');
     }

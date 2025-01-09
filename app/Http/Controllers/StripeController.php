@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Stripe\Checkout\Session;
@@ -18,7 +19,9 @@ class StripeController extends Controller
 {
     public function checkoutShow()
     {
-        return Inertia::render("Checkout", []);
+        return Inertia::render("Checkout", [
+            'locations' => Auth::check() ? Auth::user()->locations : null, 
+        ]);
     }
     //Need to make a Stripe Web Hook to validate processed payment before
     //creating new order.
@@ -32,7 +35,7 @@ class StripeController extends Controller
                 "cart.*.name" => "required|string",
                 "cart.*.price" => "required|numeric|min:0.5",
                 "cart.*.quantity" => "required|integer|min:1",
-                "cart.*.color" => "required|string",
+                "cart.*.color" => "nullable|string",
                 "cart.*.size" => "required|string",
                 "first_name" => "required|string",
                 "last_name" => "required|string",
@@ -42,7 +45,6 @@ class StripeController extends Controller
                 "state" => "required|string|in:NSW,QLD,SA,TAS,VIC,WA,ACT,NT",
                 "postcode" => "required|numeric|digits:4",
                 "mobile" => ["required", 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
-                // Add other necessary validations based on cart structure
             ],
             [
                 "first_name.required" => "First name is required",
@@ -66,7 +68,7 @@ class StripeController extends Controller
         $products = [];
         foreach ($cart as $item) {
             $description = "{$item["description"]}";
-            $color = ucfirst($item["color"]);
+            $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null;
             $basePriceCents = intval($item["price"] * 100); // Convert base price to cents
             $discountValue = isset($request->discount) ? $request->discount : 0; // Default discount to 0 if not set
 
@@ -101,7 +103,7 @@ class StripeController extends Controller
                 "price" => $item["price"],
                 "quantity" => $item["quantity"],
                 "size" => $item["size"],
-                "color" => $item["color"],
+                "color" => $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null,
                 "options" => $item["options"] ?? [],
             ];
             $products[] = $productDetails;
@@ -138,19 +140,32 @@ class StripeController extends Controller
             "mobile" => $request->mobile,
             "address" => $request->address,
         ]);
+    
 
-        $customerLocation = Location::create([
-            "street" => $request->street,
-            "city" => $request->city,
-            "state" => $request->state,
-            "postcode" => $request->postcode,
-        ]);
-
+        $customerLocation = null;
+        if(Auth::user()){
+            
+            $user = User::find(Auth::user()->id);
+            $currentUserLocation = $user->locations[0]; 
+            if($currentUserLocation->street != $request->street){
+                $customerLocation = Location::create([
+                    "street" => $request->street,
+                    "city" => $request->city,
+                    "state" => $request->state,
+                    "postcode" => $request->postcode,
+                ]);
+                $user->locations()->sync([$customerLocation->id]); 
+            } else {
+                $customerLocation = $currentUserLocation; 
+            }
+        }
         $newCustomer->locations()->attach($customerLocation->id);
 
         $order = Order::create([
             "status" => "Unpaid",
+            "code" => 'ORD-'. str_pad(Order::count(), 5, '0', STR_PAD_LEFT), 
             "total" => $request->total,
+            'expected_delivery_range' => max(array_column($cart, 'delivery_date')), 
             "session_id" => $session->id,
             "sent" => false,
             "user_id" => Auth::user()->id ?? null,
@@ -185,7 +200,9 @@ class StripeController extends Controller
                 throw new NotFoundHttpException();
             }
             $order = Order::where("session_id", $session->id)->first();
-
+            $customer = Customer::where('stripe_id', $session->id)->first(); 
+            $customer->email = $session->customer_details->email; 
+            $customer->save(); 
             if ($order->status == "Unpaid") {
                 $order->status = "Paid";
                 $order->save();
@@ -203,9 +220,13 @@ class StripeController extends Controller
             throw new NotFoundHttpException();
         }
     }
+    /**
+     * Hard to test locally - success works, so may not be even needed. 
+     *
+     * @return void
+     */
     public function webhook()
     {
-        Log::info("webhook is hit");
         // This is your Stripe CLI webhook secret for testing your endpoint locally.
         $endpoint_secret = env("STRIPE_WEBHOOK_SECRET");
 
@@ -221,9 +242,11 @@ class StripeController extends Controller
             );
         } catch (\UnexpectedValueException $e) {
             // Invalid payload
+            Log::info('UnexpectedValueException: '. $e->getMessage()); 
             return response("", 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
+            Log::info('SignatureVerificationException'. $e->getMessage()); 
             return response("", 400);
         }
 
@@ -231,7 +254,11 @@ class StripeController extends Controller
         switch ($event->type) {
             case "checkout.session.completed":
                 $session = $event->data->object;
-
+                $customer = Customer::where('stripe_id', $session->id); 
+                $customer->email = $session->customer_details->email; 
+                $customer->save(); 
+                Log::info($session->customer_details->email); 
+                Log::info('checkout completed'); 
                 $order = Order::where("session_id", $session->id)->first();
                 $order->status = "Paid";
                 $order->save();
@@ -241,6 +268,7 @@ class StripeController extends Controller
             default:
                 echo "Received unknown event type " . $event->type;
         }
+        Log::info('not hitting right place'); 
         return response("", 400);
     }
 }

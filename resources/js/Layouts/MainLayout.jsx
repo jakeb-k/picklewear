@@ -200,7 +200,7 @@ export default function MainLayout({ children }) {
                                 ) : (
                                     ""
                                 )}
-                                <Link href={route("login")}>
+                                <Link href={route("profile.edit")}>
                                     <i className="fa-solid fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
                             </>

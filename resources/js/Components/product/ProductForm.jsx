@@ -10,7 +10,7 @@ export default function ProductForm({
     ...props
 }) {
     const { product } = props;
-    const [images, setImages] = useState(product.images ?? []);
+    const [images, setImages] = useState(product?.images ?? []);
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
@@ -19,7 +19,7 @@ export default function ProductForm({
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount ?? 0,
         description: product?.description ?? "",
-        images: product.images,
+        images: product?.images ?? [],
     });
 
     const handleOnChange = (e) => {
@@ -400,7 +400,7 @@ export default function ProductForm({
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
                 images={images}
-                defaultImages={product.images}
+                defaultImages={product?.images}
                 setImages={setImages}
             />
             <div className="w-full flex justify-end">
