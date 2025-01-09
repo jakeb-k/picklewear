@@ -9,15 +9,49 @@ export default function AdminDashboard(props) {
     const [tab, setTab] = useState("products");
     const [editItem, setEditItem] = useState(null);
     const [products, setProducts] = useState(props.products);
-    const [search, setSearch] = useState(''); 
-    const [isSearching, setIsSearching] = useState(false)
+    const [orders, setOrders] = useState(props.orders);
+    const [search, setSearch] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+
     useEffect(() => {
         if (tab) {
             setEditItem(null);
         }
     }, [tab]);
+
+    useEffect(() => {
+        if (search != "") {
+            searchItems(tab);
+        } else {
+            setProducts(props.products);
+            setOrders(props.orders)
+        }
+    }, [search]);
+
+    const searchItems = (type) => {
+        const searchRegex = new RegExp(search, "i");
+
+        if (type == "products") {
+            setProducts(
+                props.products.filter(
+                    (product) =>
+                        searchRegex.test(product.type) ||
+                        searchRegex.test(product.name),
+                ),
+            );
+        } else {
+            setOrders(
+                props.orders.filter(
+                    (order) =>
+                        searchRegex.test(order.code) ||
+                        searchRegex.test(order.status),
+                ),
+            );
+        }
+    };
+    // console.log(products);
 
     const Alert = () => {
         return (
@@ -46,7 +80,10 @@ export default function AdminDashboard(props) {
                         Admin Dashboard
                     </h1>
                     <button
-                        onClick={() => setTab("products")}
+                        onClick={() => {
+                            setIsCreating(false);
+                            setTab("products");
+                        }}
                         className={`transition-all duration-150 ease-in-out  ${
                             tab == "products"
                                 ? "underline"
@@ -56,7 +93,10 @@ export default function AdminDashboard(props) {
                         Products
                     </button>
                     <button
-                        onClick={() => setTab("orders")}
+                        onClick={() => {
+                            setIsCreating(false);
+                            setTab("orders");
+                        }}
                         className={`transition-all duration-150 ease-in-out  ${
                             tab == "orders"
                                 ? "underline"
@@ -99,7 +139,7 @@ export default function AdminDashboard(props) {
             <Head title="Admin" />
             <hr className="border-gray-400 mt-3" />
             {tab == "products" && (
-                <div className="my-10 w-fit mx-auto min-h-[100vh]">
+                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
                     <ProductsTable
                         products={products}
                         setEditItem={(data) => {
@@ -110,8 +150,8 @@ export default function AdminDashboard(props) {
                 </div>
             )}
             {tab == "orders" && (
-                <div className="my-10 w-fit mx-auto min-h-[100vh]">
-                    <OrdersTable orders={props.orders} />
+                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
+                    <OrdersTable orders={orders} />
                 </div>
             )}
             {(editItem || isCreating) && (

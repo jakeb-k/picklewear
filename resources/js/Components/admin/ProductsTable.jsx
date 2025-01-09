@@ -9,6 +9,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
     const [search, setSearch] = useState("");
     const [isSearching, setIsSearching] = useState(false);
     const [products, setProducts] = useState(props.products);
+
     const [data, setData] = useState(
         products.map((product) => {
             const id = products.id;
@@ -42,7 +43,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     useEffect(() => {
         setData(
-            products.map((product) => {
+            props.products.map((product) => {
                 const id = product.id;
                 const image =
                     product.images.length > 0
@@ -72,7 +73,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 };
             }),
         );
-    }, [products]);
+    }, [props.products]);
 
     function setAvailability(product) {
         axios

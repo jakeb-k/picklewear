@@ -1,29 +1,62 @@
 import DataTable from "react-data-table-component";
 import moment from "moment";
+import { useEffect, useState } from "react";
 
 export default function OrdersTable(props) {
     const orders = props.orders;
-    const processedData = orders.map((order) => {
-        const code = order.id.toString().padStart(4, "0"); // Format order code
-        const status = order.status;
-        const userName = order.customer?.first_name + " " + order.customer?.last_name; // Full name
-        const mobile = order.customer?.mobile; // User email
-        const total = order.total; // Order total
-        const location = order.locations[0] ? Object.values(order.locations[0]).join(" ") : 'N/A';
-        const viewDetails = `/orders/${order.id}`; // Link to view order details
-        const createdAt = order.created_at; 
+    const [data, setData] = useState(
+        orders.map((order) => {
+            const code = order.id.toString().padStart(4, "0"); // Format order code
+            const status = order.status;
+            const userName =
+                order.customer?.first_name + " " + order.customer?.last_name; // Full name
+            const mobile = order.customer?.mobile; // User email
+            const total = order.total; // Order total
+            const location = order.locations[0]
+                ? Object.values(order.locations[0]).join(" ")
+                : "N/A";
+            const viewDetails = `/orders/${order.id}`; // Link to view order details
+            const createdAt = order.created_at;
 
-        return {
-            code,
-            status,
-            userName,
-            mobile,
-            total,
-            location,
-            viewDetails, 
-            createdAt, 
-        };
-    });
+            return {
+                code,
+                status,
+                userName,
+                mobile,
+                total,
+                location,
+                viewDetails,
+                createdAt,
+            };
+        }),
+    );
+
+    useEffect(() => {
+        setData(props.orders.map((order) => {
+            const code = order.code; // Format order code
+            const status = order.status;
+            const userName =
+                order.customer?.first_name + " " + order.customer?.last_name; // Full name
+            const mobile = order.customer?.mobile; // User email
+            const total = order.total; // Order total
+            const location = order.locations[0]
+                ? Object.values(order.locations[0]).join(" ")
+                : "N/A";
+            const viewDetails = `/orders/${order.id}`; // Link to view order details
+            const createdAt = order.created_at;
+
+            return {
+                code,
+                status,
+                userName,
+                mobile,
+                total,
+                location,
+                viewDetails,
+                createdAt,
+            };
+        }))
+    },[props.orders])
 
     const customStyles = {
         table: {
@@ -95,7 +128,7 @@ export default function OrdersTable(props) {
         },
         {
             name: "Mobile",
-            selector: (row) => '0'+ row.mobile,
+            selector: (row) => "0" + row.mobile,
             sortable: true,
             width: "200px",
         },
@@ -103,15 +136,19 @@ export default function OrdersTable(props) {
             name: "Location",
             selector: (row) => row.location ?? "",
             sortable: true,
-            cell: (row) => <p className="">{row.location ?? 'N/A'}</p>,
+            cell: (row) => <p className="">{row.location ?? "N/A"}</p>,
             width: "300px",
         },
-        
+
         {
             name: "Created At",
             selector: (row) => row.createdAt,
             sortable: true,
-            cell: (row) => <p className='text-center'>{moment(row.createdAt).format('DD/MM/YY')}</p>,
+            cell: (row) => (
+                <p className="text-center">
+                    {moment(row.createdAt).format("DD/MM/YY")}
+                </p>
+            ),
             width: "125px",
         },
         {
@@ -123,16 +160,21 @@ export default function OrdersTable(props) {
         },
         {
             name: "Actions",
-            selector: (row) => row.status == 'Delivered',
+            selector: (row) => row.status == "Delivered",
             sortable: true,
-            cell: (row) => 
-                (<div className="flex space-x-4 text-xl">
-                    <i onClick={() => {
-                        window.location.href = row.viewDetails; 
-                    }} className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"></i>
-                    <i className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == 'Delivered' ? 'hover:text-gray-800 hover:bg-white text-white bg-green-400 ' : 'hover:bg-green-400 hover:text-white '}`}></i>
+            cell: (row) => (
+                <div className="flex space-x-4 text-xl">
+                    <i
+                        onClick={() => {
+                            window.location.href = row.viewDetails;
+                        }}
+                        className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"
+                    ></i>
+                    <i
+                        className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == "Delivered" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
+                    ></i>
                 </div>
-                ),
+            ),
             width: "100px",
         },
     ];
@@ -141,7 +183,7 @@ export default function OrdersTable(props) {
         <div className="rounded-lg shadow-lg">
             <DataTable
                 columns={columns}
-                data={processedData}
+                data={data}
                 pagination
                 paginationPerPage={10}
                 customStyles={customStyles}
