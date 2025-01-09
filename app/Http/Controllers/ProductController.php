@@ -21,11 +21,20 @@ class ProductController extends Controller
      */
     public function index(Request $request, string $category)
     {
-        $category = "Clothing";
+        $type = $request->get("type");
         // Query products with images only
-        $products = Product::where("type", $category)
-            ->whereHas("images") // Ensure products have images
-            ->with(["options", "images"]) // Eager load options and images
+        $products = Product::with(["options", "images"]) // Eager load options and images
+            ->when(
+                $type,
+                function ($query, $type) use ($category) {
+                    // If $type is present, search with both category and type
+                    return $query->withAllTags([$category, $type]);
+                },
+                function ($query) use ($category) {
+                    // If $type is not present, search with category only
+                    return $query->withAllTags([$category]);
+                }
+            )
             ->get();
 
         // Add order count to each product
@@ -167,7 +176,7 @@ class ProductController extends Controller
                 "url" => $request->url,
                 "delivery_date" => $request->delivery_date,
                 "price" => $request->price,
-                "discount" => $request->discount/100,
+                "discount" => $request->discount / 100,
                 "description" => $request->description,
             ]);
 
