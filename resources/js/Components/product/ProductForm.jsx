@@ -30,6 +30,8 @@ export default function ProductForm({
         }));
     };
 
+    console.log(product.images)
+
     const handleOnSelectChange = (selectedOption) => {
         setData((prevData) => ({
             ...prevData,
@@ -191,7 +193,7 @@ export default function ProductForm({
                             <img
                                 src={
                                     file.file_path // If it's a default image, use its URL
-                                        ? `${window.location.origin}${file.file_path}`
+                                        ? file.file_path
                                         : URL.createObjectURL(file) // Otherwise, create an object URL
                                 }
                                 alt={file.file_name || `Uploaded ${index}`}
