@@ -97,6 +97,23 @@ export default function ProductForm({
         }
     }
 
+
+    const addColor = (color) => {
+        setColorOptions((prevData) => {
+            if(!prevData.some((data) => data == color[0])){
+                return [...prevData, color[0]];
+            } else {
+                return prevData
+            }
+        });
+    };
+
+    const removeColor = (color) => {
+        setColorOptions((prevData) => {
+            return prevData.filter((data) => data != color)
+        })
+    }
+
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
@@ -409,9 +426,9 @@ export default function ProductForm({
                 </div>
             </div>
             <hr className="border-gray-400 mb-6" />
-            <div className='flex items-center'>
+            <div className="flex items-center">
                 <p>Colors: </p>
-                <ColourSearch />
+                <ColourSearch addColor={addColor} />
             </div>
             <div className="flex flex-wrap w-full mt-3">
                 {colorOptions.length > 0 &&
@@ -427,7 +444,7 @@ export default function ProductForm({
                                 className={`rounded-full relative mr-8 p-2 w-12 h-12 border mb-2 transition-all border-black duration-150 ease-in-out cursor-pointer`}
                             >
                                 <button
-                                    onClick={() => {}}
+                                    onClick={() => removeColor(color)}
                                     className="border-2 rounded-full border-black flex flex-col text-center justify-center py-0.5 px-1 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out absolute -top-2 -right-5"
                                 >
                                     <i className="fa-solid fa-minus text-xs"></i>
