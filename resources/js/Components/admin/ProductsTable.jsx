@@ -1,5 +1,5 @@
 import DataTable from "react-data-table-component";
-import moment from "moment";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -48,12 +48,21 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 const image =
                     product.images.length > 0
                         ? product.images[0]
-                        : "/images/placeholder.jpg";
+                        : null;
                 const code = product.id.toString().padStart(4, "0"); // Format product code
                 const name = product.name;
                 const price = product.price;
-                const type = product.type;
-                const tags = product.tags ?? [];
+                const type =
+                    product.tags
+                        .find((tag) => (tag.type = "category"))
+                        .name.en.charAt(0)
+                        .toUpperCase() +
+                    product.tags
+                        .find((tag) => (tag.type = "category"))
+                        .name.en.slice(1);
+                const tags = product.tags?.map((tag) => {
+                    return tag.name.en.charAt(0).toUpperCase() + tag.name.en.slice(1)
+                }) ?? [];
                 const options = product.options;
                 const route = `/product/${product.id}`; // Link to view product details
                 const available = product.available;
@@ -170,8 +179,8 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     const columns = [
         {
-            name: "",
-            cell: (row) => <img src={row.image?.file_path} />,
+            name: "Image",
+            cell: (row) => <img src={row.image?.file_path ?? TestImage} />,
             width: "200px",
         },
         {
@@ -243,7 +252,6 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     return (
         <div className="rounded-lg shadow-lg">
-            
             <DataTable
                 columns={columns}
                 data={data}

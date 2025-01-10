@@ -106,6 +106,12 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Store a new product
+     *
+     * @param Request $request
+     * @return void
+     */
     public function store(Request $request)
     {
         try {

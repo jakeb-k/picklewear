@@ -23,7 +23,7 @@ export default function ProductForm({
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
-        type: { value: product?.type ?? "", label: product?.type },
+        type: { value: product?.tags.find((tag) => tag.type = 'category').name.en ?? "", label: product?.tags.find((tag) => tag.type = 'category').name.en },
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount ?? 0,
@@ -266,11 +266,10 @@ export default function ProductForm({
                         <Select
                             name="type"
                             options={[
-                                { value: "paddles", label: "Paddles" },
-                                { value: "accessories", label: "Accessories" },
-                                { value: "court", label: "Court" },
-                                { value: "kit", label: "Kit" },
-                                { value: "clothing", label: "Clothing" },
+                                { value: "mens", label: "Mens" },
+                                { value: "womens", label: "Womens" },
+                                { value: "kids", label: "Kids" },
+                                { value: "gear", label: "Gear" },
                             ]}
                             onChange={handleOnSelectChange}
                             value={data.type}
@@ -468,7 +467,7 @@ export default function ProductForm({
                     onClick={() => updateProduct(product)}
                     className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main"
                 >
-                    UPDATE
+                    { isCreating ? 'CREATE' : 'UPDATE'}
                 </button>
             </div>
         </div>
