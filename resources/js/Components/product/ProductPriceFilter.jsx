@@ -4,7 +4,7 @@ import MultiRangeSlider from "multi-range-slider-react";
 import { CSSTransition } from "react-transition-group";
 
 export default function ProductPriceFilter({ min, max, updateFilters }) {
-    const [minValue, setMinValue] = useState(10);
+    const [minValue, setMinValue] = useState(min);
     const [maxValue, setMaxValue] = useState(max);
     const [expanded, setExpanded] = useState(false);
 
@@ -12,11 +12,27 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
         setMinValue(e.minValue);
         setMaxValue(e.maxValue);
     };
+    
     useEffect(() => {
-        if(minValue != min && maxValue != max){
-            updateFilters({name:'$' + minValue + '- $' + maxValue, value: {min: minValue, max: maxValue}, type: 'Price' });
+        if (minValue != min || maxValue != max) {
+            updateFilters({
+                name:
+                    "$" +
+                    minValue.toLocaleString(0, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }) +
+                    "- $" +
+                    maxValue.toLocaleString(0, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }),
+                value: { min: minValue, max: maxValue },
+                type: "Price",
+            });
         }
-    }, [minValue, maxValue])
+    }, [minValue, maxValue]);
+
     return (
         <>
             <div className="flex justify-between items-center mb-4">
@@ -34,11 +50,23 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
             >
                 <div className="w-full max-w-md mx-auto">
                     <div className="flex justify-between">
-                        <p>Min: ${minValue}</p>
-                        <p>Max: ${maxValue}</p>
+                        <p>
+                            Min: $
+                            {minValue.toLocaleString(0, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
+                        </p>
+                        <p>
+                            Max: $
+                            {maxValue.toLocaleString(0, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
+                        </p>
                     </div>
                     <MultiRangeSlider
-                        min={10}
+                        min={min}
                         max={max}
                         step={0.01}
                         ruler={false} // Set to true if you want to display a ruler

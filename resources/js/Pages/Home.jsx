@@ -16,12 +16,12 @@ export default function Home() {
                 <h1 className='text-main text-5xl w-1/2'>Pickleball Gear That’s a <em className="underline">Real Dill!</em></h1>
                 <h3 className='text-main text-xl w-1/2 mt-6 font-sans'>Use code REALDILL to relish a 20% discount sitewide until September! Spend $75 or more, and we’ll throw in a free gift—now that's a deal worth grabbing!</h3>
                 <div className="mt-8 flex space-x-8">
-                    <button className="px-8 font-bold py-4 bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out">
+                    <a href={route('products.index', 'sale')} className="px-8 font-bold py-4 text-center bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out">
                         SALE
-                    </button>
-                    <button className="px-8 font-bold py-4 bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out">
+                    </a>
+                    <a href={route('products.index', 'popular')} className="px-8 font-bold py-4 text-center bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out">
                         POPULAR
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -30,24 +30,24 @@ export default function Home() {
             <h2 className='text-3xl text-secondary italic text-center'>Shop by Category</h2>
             <div className='flex justify-evenly space-x-4 mt-8'>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'gear'} />
                     <p className='ml-4 mt-2 text-lg'>Gear</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','gear')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'hats'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Hats</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','hats')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'tops'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Shirts</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','tops')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'bottoms'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Shorts</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','bottoms')+ "?tag=true"}>Shop Now</a>
                 </div>
             </div>
         </div>

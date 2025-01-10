@@ -41,15 +41,16 @@ export default function NavigationMenu(props) {
             "Wristbands",
         ],
         gear: [
-            "T-Shirts",
-            "Polos",
-            "Singlets",
-            "Hats",
             "Sunglasses",
-            "Shorts",
             "Socks",
-            "Hoodies",
+            "Headbands",
+            "Wristbands",
             "Accessories",
+            "Shorts",
+            "Covers",
+            "Bags",
+            "Sleeves",
+            "Ankle Braces"
         ],
     };
     const [type, setType] = useState(props.type);

@@ -21,18 +21,64 @@ class ProductController extends Controller
      */
     public function index(Request $request, string $category)
     {
-        $category = "Clothing";
-        // Query products with images only
-        $products = Product::where("type", $category)
-            ->whereHas("images") // Ensure products have images
-            ->with(["options", "images"]) // Eager load options and images
-            ->get();
-
-        // Add order count to each product
-        $products = $products->map(function ($product) {
-            $product->order_count = $product->orders()->count();
-            return $product;
-        });
+        $type = $request->get("type");
+        $fromHome = $request->get("tag");
+        $products = [];
+        switch ($category) {
+            case "favourites":
+                break;
+            case "sale":
+                $products = Product::with(["options", "images"])
+                    ->where("discount", "!=", null)
+                    ->orderBy("discount")
+                    ->limit(20)
+                    ->get();
+                break;
+            case "popular":
+                $products = Product::with(["options", "images"]) // Eager load options and images
+                    ->withCount("orders") // Add the count of related orders
+                    ->orderBy("orders_count", "desc") // Order by the count of orders
+                    ->limit(20)
+                    ->get();
+                break;
+            default:
+                if (!is_null($fromHome)) {
+                    $products = Product::with(["options", "images"]) // Eager load options and images
+                        ->whereHas("tags", function ($query) use ($category) {
+                            // Filter tags based on their type
+                            $query->where("type", $category);
+                        })
+                        ->get();
+                } else {
+                    // Query products with images only
+                    $products = Product::with(["options", "images"]) // Eager load options and images
+                        ->when(
+                            $type,
+                            function ($query, $type) use ($category) {
+                                // If $type is present, search with both category and type
+                                return $query->withAllTagsOfAnyType([
+                                    $category,
+                                    $type,
+                                ]);
+                            },
+                            function ($query) use ($category) {
+                                // If $type is not present, search with category only
+                                return $query->withAllTagsOfAnyType([
+                                    $category,
+                                ]);
+                            }
+                        )
+                        ->get();
+                }
+                break;
+        }
+        if ($category != "favourites") {
+            // Add order count to each product
+            $products = $products->map(function ($product) {
+                $product->order_count = $product->orders()->count();
+                return $product;
+            });
+        }
 
         return Inertia::render("Products/ProductIndexLayout", [
             "products" => $products,
@@ -45,7 +91,7 @@ class ProductController extends Controller
      * Shows a singular product
      *
      * @param Product $product
-     * @return \Inertia\Response The Inertia response for the client-side renderer.
+     * @return \Inertia\Response
      */
     public function show(Product $product)
     {
@@ -62,6 +108,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
+            dd($request->colors); 
             $request->validate([
                 "name" => "required|string|max:100",
                 "type" => "required",
@@ -89,7 +136,6 @@ class ProductController extends Controller
                 $images = $request->file("images");
 
                 foreach ($images as $index => $imageData) {
-                    Log::info($imageData);
                     $fileName = time() . $index . "." . $imageData->extension();
 
                     $folder = "files/products/";
@@ -167,9 +213,13 @@ class ProductController extends Controller
                 "url" => $request->url,
                 "delivery_date" => $request->delivery_date,
                 "price" => $request->price,
-                "discount" => $request->discount/100,
+                "discount" => $request->discount / 100,
                 "description" => $request->description,
             ]);
+            
+            $colorOption = ProductOption::find($request->colorOptionId); 
+            $colorOption->values = str_replace(",", ".", $request->colors);
+            $colorOption->save(); 
 
             return response()->json([
                 "success" => "Your Product was updated",

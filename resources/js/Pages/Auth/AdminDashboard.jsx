@@ -2,7 +2,7 @@ import OrdersTable from "@/Components/admin/OrdersTable";
 import ProductsTable from "@/Components/admin/ProductsTable";
 import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import ProductForm from "@/Components/product/ProductForm";
+import ProductForm from "@/Components/admin/ProductForm";
 import { CSSTransition } from "react-transition-group";
 
 export default function AdminDashboard(props) {

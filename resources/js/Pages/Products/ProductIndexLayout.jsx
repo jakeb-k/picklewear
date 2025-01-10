@@ -72,6 +72,18 @@ export default function ProductIndexLayout(props) {
     };
 
     useEffect(() => {
+        if(sessionStorage.getItem('crumbs')){
+            sessionStorage.removeItem('crumbs');
+        }
+        const crumbs = {
+            category: category,
+            type: type, 
+        }
+
+        sessionStorage.setItem('crumbs', JSON.stringify(crumbs)); 
+    }, [])
+    
+    useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
             setChunks(chunkProducts(favourites));
@@ -81,7 +93,7 @@ export default function ProductIndexLayout(props) {
             setColorOptions(getColors(products));
         }
         setLoading(false);
-    }, [category, favourites]);
+    }, [category, favourites, products]);
 
     useEffect(() => {
         setLoading(true);
@@ -94,24 +106,24 @@ export default function ProductIndexLayout(props) {
     useEffect(() => {
         if (colorFilters.length > 0) {
             const filteredProducts = filterProductsByColor(products);
-            setChunks(chunkProducts(filteredProducts))
-        } else if(priceFilter) {
+            setChunks(chunkProducts(filteredProducts));
+        } else if (priceFilter) {
             const filteredProducts = filterProductsByPrice(products);
             setChunks(chunkProducts(filteredProducts));
         } else {
-            setChunks(chunkProducts(products))
+            setChunks(chunkProducts(products));
         }
     }, [colorFilters]);
 
     useEffect(() => {
         if (priceFilter) {
             const filteredProducts = filterProductsByPrice(products);
-            setChunks(chunkProducts(filteredProducts))
-        } else if (colorFilters.length > 0) { 
+            setChunks(chunkProducts(filteredProducts));
+        } else if (colorFilters.length > 0) {
             const filteredProducts = filterProductsByColor(products);
-            setChunks(chunkProducts(filteredProducts))
+            setChunks(chunkProducts(filteredProducts));
         } else {
-            setChunks(chunkProducts(products))
+            setChunks(chunkProducts(products));
         }
     }, [priceFilter]);
 
@@ -329,71 +341,86 @@ export default function ProductIndexLayout(props) {
                         </div>
                     )}
                 </div>
-                <div className="flex justify-end z-30 ">
-                    <Select
-                        name="sort"
-                        placeholder="Sort By..."
-                        options={[
-                            { value: "priceAsc", label: "Price - Low to High" },
-                            {
-                                value: "priceDesc",
-                                label: "Price - High to Low",
-                            },
-                            { value: "popularity", label: "Popularity" },
-                            { value: "discount", label: "Largest Discount" },
-                            { value: "arrivals", label: "New Arrivals" },
-                            { value: "delivery", label: "Delivery Speed" },
-                        ]}
-                        onChange={handleOnSelectChange}
-                        value={sort}
-                        styles={customStyles}
-                        isClearable={true}
-                    />
-                </div>
+                {products.length > 0 && (
+                    <div className="flex justify-end z-30 ">
+                        <Select
+                            name="sort"
+                            placeholder="Sort By..."
+                            options={[
+                                {
+                                    value: "priceAsc",
+                                    label: "Price - Low to High",
+                                },
+                                {
+                                    value: "priceDesc",
+                                    label: "Price - High to Low",
+                                },
+                                { value: "popularity", label: "Popularity" },
+                                {
+                                    value: "discount",
+                                    label: "Largest Discount",
+                                },
+                                { value: "arrivals", label: "New Arrivals" },
+                                { value: "delivery", label: "Delivery Speed" },
+                            ]}
+                            onChange={handleOnSelectChange}
+                            value={sort}
+                            styles={customStyles}
+                            isClearable={true}
+                        />
+                    </div>
+                )}
             </div>
             {!loading && (
                 <main className="flex space-x-6 mx-16">
-                    <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%] h-fit">
-                        {/* COLOR FILTER */}
-                        <ProductColorFilter
-                            colorOptions={colorOptions}
-                            updateFilters={updateColorFilters}
-                            colorFilters={colorFilters.filter(
-                                (filter) => filter.type == "color",
-                            )}
-                        />
-                        <div className="bg-gray-400 h-[0.5px] my-4" />
-                        <ProductPriceFilter
-                            updateFilters={setPriceFilter}
-                            min={
-                                products.sort((a, b) => b.price - a.price)[
-                                    products.length - 1
-                                ].price
-                            }
-                            max={
-                                products.sort((a, b) => b.price - a.price)[0]
-                                    .price
-                            }
-                        />
-                        <div className="bg-gray-400 h-[0.5px] my-4" />
-                    </section>
-                    <section className="w-[75.5%] space-y-6">
-                        {productChunks.map((chunk, index) => (
-                            <div
-                                key={index}
-                                className="flex justify-start gap-[3%] w-full"
-                            >
-                                {chunk.map((product) => (
+                    {products.length > 0 ? (
+                        <>
+                            <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%] h-fit">
+                                {/* COLOR FILTER */}
+                                <ProductColorFilter
+                                    colorOptions={colorOptions}
+                                    updateFilters={updateColorFilters}
+                                    colorFilters={colorFilters.filter(
+                                        (filter) => filter.type == "color",
+                                    )}
+                                />
+                                <div className="bg-gray-400 h-[0.5px] my-4" />
+                                <ProductPriceFilter
+                                    updateFilters={setPriceFilter}
+                                    min={10}
+                                    max={
+                                        products.sort(
+                                            (a, b) => b.price - a.price,
+                                        )[0].price + 10
+                                    }
+                                />
+                                <div className="bg-gray-400 h-[0.5px] my-4" />
+                            </section>
+                            <section className="w-[75.5%] space-y-6">
+                                {productChunks.map((chunk, index) => (
                                     <div
-                                        key={product.id}
-                                        className="flex-1 max-w-[31.5%]"
+                                        key={index}
+                                        className="flex justify-start gap-[3%] w-full"
                                     >
-                                        <ProductCard product={product} />
+                                        {chunk.map((product) => (
+                                            <div
+                                                key={product.id}
+                                                className="flex-1 max-w-[31.5%]"
+                                            >
+                                                <ProductCard
+                                                    product={product}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
-                            </div>
-                        ))}
-                    </section>
+                            </section>
+                        </>
+                    ) : (
+                        <div className="text-center w-full text-2xl">
+                            No Products Found :(
+                        </div>
+                    )}
                 </main>
             )}
         </div>

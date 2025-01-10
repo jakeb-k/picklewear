@@ -3,6 +3,8 @@ import axios from "axios";
 import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
+import tinycolor from "tinycolor2";
+import ColourSearch from "./ColorSearch";
 
 export default function ProductForm({
     setProducts,
@@ -11,6 +13,13 @@ export default function ProductForm({
 }) {
     const { product } = props;
     const [images, setImages] = useState(product?.images ?? []);
+    const [colorOptions, setColorOptions] = useState(
+        product.options.some((option) => option.type == "color")
+            ? product.options
+                  .find((option) => option.type == "color")
+                  .values.split(".")
+            : [],
+    );
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
@@ -21,6 +30,12 @@ export default function ProductForm({
         description: product?.description ?? "",
         images: product?.images ?? [],
     });
+
+    useEffect(() => {
+        if (data.discount > 100) {
+            setData("discount", 100);
+        }
+    }, [data.discount]);
 
     const handleOnChange = (e) => {
         const { name, value } = e.target;
@@ -52,6 +67,7 @@ export default function ProductForm({
             }
         });
         formData.append("data", data);
+        formData.append("colors", colorOptions);
         if (isCreating) {
             axios
                 .post(route("product.store", product), formData, {
@@ -67,6 +83,7 @@ export default function ProductForm({
                 });
         } else {
             formData.append("_method", "PUT");
+            formData.append("colorOptionId", product.options.find((option) => option.type == "color").id)
             axios
                 .post(route("product.update", product), formData, {
                     headers: {
@@ -82,12 +99,28 @@ export default function ProductForm({
         }
     }
 
+
+    const addColor = (color) => {
+        setColorOptions((prevData) => {
+            if(!prevData.some((data) => data == color[0])){
+                return [...prevData, color[0]];
+            } else {
+                return prevData
+            }
+        });
+    };
+
+    const removeColor = (color) => {
+        setColorOptions((prevData) => {
+            return prevData.filter((data) => data != color)
+        })
+    }
+
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            fontSize: "1.25rem", // Larger font size
+            fontSize: "1rem", // Larger font size
             borderColor: state.isFocused ? "#6B7280" : "#6B7280", // gray-600 colour
-            padding: "0.25rem", // py-1 equivalent (1 rem = 16px, so 0.25rem = 4px)
             boxShadow: state.isFocused ? "0 0 0 1px #6B7280" : "none",
             "&:hover": {
                 borderColor: "#6B7280", // Ensure hover state matches the colour
@@ -98,12 +131,6 @@ export default function ProductForm({
             color: "#9CA3AF", // Optional: Gray-400 for placeholder text
         }),
     };
-
-    useEffect(() => {
-        if (data.discount > 100) {
-            setData("discount", 100);
-        }
-    }, [data.discount]);
 
     const ImageUploader = ({
         updateImages,
@@ -191,7 +218,7 @@ export default function ProductForm({
                             <img
                                 src={
                                     file.file_path // If it's a default image, use its URL
-                                        ? `${window.location.origin}${file.file_path}`
+                                        ? file.file_path
                                         : URL.createObjectURL(file) // Otherwise, create an object URL
                                 }
                                 alt={file.file_name || `Uploaded ${index}`}
@@ -199,9 +226,9 @@ export default function ProductForm({
                             />
                             <button
                                 onClick={() => handleRemove(index)}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm"
+                                className="absolute top-1 right-1 border-2 rounded-full border-black flex flex-col text-center justify-center py-1 px-1.5 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out "
                             >
-                                X
+                                <i className="fa-solid fa-minus text-xs"></i>
                             </button>
                         </div>
                     ))}
@@ -211,8 +238,8 @@ export default function ProductForm({
     };
 
     return (
-        <div className="min-w-[750px] w-[70%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6 space-y-8">
-            <div className="flex items-center space-x-[5%]">
+        <div className="min-w-[750px] w-[80%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6">
+            <div className="flex items-center space-x-[5%] mb-3">
                 <div className="flex-1">
                     <p className="flex items-center text-base">
                         Name:{" "}
@@ -223,7 +250,7 @@ export default function ProductForm({
                         type="text"
                         onChange={handleOnChange}
                         required
-                        className="rounded-md py-2 px-4 w-full text-xl"
+                        className="rounded-md py-1 px-2 w-full text-base"
                         placeholder="Enter the products name"
                         value={data.name}
                     />
@@ -253,7 +280,7 @@ export default function ProductForm({
                 </div>
             </div>
             {/* URL */}
-            <div className="w-full">
+            <div className="w-full mb-3">
                 <p className="flex items-center text-base">
                     URL: <span className="text-red-500 text-3xl italic">*</span>
                 </p>
@@ -262,66 +289,46 @@ export default function ProductForm({
                     type="text"
                     onChange={handleOnChange}
                     required
-                    className="rounded-md py-2 px-4 w-full text-sm"
+                    className="rounded-md py-1 px-2 w-full text-sm"
                     placeholder="Enter the products link"
                     value={data.url}
                 />
             </div>
             {/* TYPE, DELIVERY RANGE, DISCOUNT */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center justify-between w-3/5">
-                    <div className="w-[30%]">
-                        <p className="flex items-center text-sm text-nowrap">
-                            Delivery Range:{" "}
-                            <span className="text-red-500 text-3xl italic">
-                                *
-                            </span>
-                        </p>
-                        <div className="relative">
-                            <input
-                                name="delivery_date"
-                                type="number"
-                                min={0}
-                                onChange={handleOnChange}
-                                required
-                                className="rounded-md py-2 px-4 w-full text-xl "
-                                value={data.delivery_date}
-                                placeholder="7"
-                            />
-                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
-                                Days
-                            </p>
-                        </div>
-                    </div>
-                    <div className="w-[30%]">
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                    <div className="w-fit">
                         <p className="flex items-center text-base">
                             Price:{" "}
                             <span className="text-red-500 text-3xl italic">
                                 *
                             </span>
                         </p>
-                        <div className="relative">
+                        <div className="relative w-11/12">
                             <input
                                 name="price"
                                 type="number"
                                 min={0}
                                 onChange={handleOnChange}
                                 required
-                                className="rounded-md py-2 px-4 w-full text-xl max-w-44 pl-12"
+                                className="rounded-md py-1 px-2 w-full text-base max-w-44 pl-9"
                                 value={data.price}
                                 placeholder="0.00"
                             />
-                            <p className="bg-secondary text-main absolute left-0 top-0 h-full min-w-8 text-2xl flex flex-col justify-center items-center rounded-l-lg">
+                            <p className="bg-secondary text-main absolute left-0 top-0 h-full min-w-8 text-lg flex flex-col justify-center items-center rounded-l-lg">
                                 $
                             </p>
                         </div>
                     </div>
 
-                    <div className="w-[30%]">
-                        <p className="flex items-center text-base mb-2">
+                    <div className="w-fit mr-4">
+                        <p className="flex items-center text-base">
                             Discount:
+                            <span className="text-white text-3xl italic">
+                                *
+                            </span>
                         </p>
-                        <div className="relative">
+                        <div className="relative w-fit">
                             <input
                                 name="discount"
                                 type="number"
@@ -329,17 +336,40 @@ export default function ProductForm({
                                 max={100}
                                 onChange={handleOnChange}
                                 required
-                                className="rounded-md py-2 px-4 w-full text-xl"
+                                className="rounded-md py-1 px-2 text-base pr-4"
                                 value={data.discount}
                             />
-                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-xl px-2 flex flex-col justify-center items-center rounded-r-lg">
+                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-lg px-2 flex flex-col justify-center items-center rounded-r-lg">
                                 %
                             </p>
                         </div>
                     </div>
+                    <div className="w-fit">
+                        <p className="flex items-center text-sm text-nowrap">
+                            Delivery Range:{" "}
+                            <span className="text-red-500 text-3xl italic">
+                                *
+                            </span>
+                        </p>
+                        <div className="relative w-1/2">
+                            <input
+                                name="delivery_date"
+                                type="number"
+                                min={0}
+                                onChange={handleOnChange}
+                                required
+                                className="rounded-md py-1 px-2 w-full text-base"
+                                value={data.delivery_date}
+                                placeholder="7"
+                            />
+                            <p className="bg-secondary text-main absolute right-0 top-0 h-full min-w-8 text-base px-1 flex flex-col justify-center items-center rounded-r-lg">
+                                Days
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div className="w-[40%]">
-                    <div className="flex text-nowrap pl-8 text-left">
+                <div className="w-[50%]">
+                    <div className="flex text-nowrap text-left">
                         <p className="text-base pt-4">
                             Total Price:{" "}
                             <b>
@@ -357,7 +387,7 @@ export default function ProductForm({
                             {(data.price * (data.discount / 100)).toFixed(2)})
                         </p>
                     </div>
-                    <div className="flex text-nowrap pl-8">
+                    <div className="flex text-nowrap">
                         <p className="text-base pt-4">
                             Will Arrive Between: <br />
                             <b>
@@ -380,7 +410,7 @@ export default function ProductForm({
                 </div>
             </div>
 
-            <div className="flex items-center space-x-[5%]">
+            <div className="flex items-center space-x-[5%] mb-3">
                 <div className="flex-1">
                     <p className="flex items-center text-base">
                         Description:{" "}
@@ -391,19 +421,49 @@ export default function ProductForm({
                         type="text"
                         onChange={handleOnChange}
                         required
-                        className="rounded-md py-2 px-4 w-full text-base min-h-40"
+                        className="rounded-md py-1 px-2 w-full text-base min-h-40"
                         placeholder="Enter the products description"
                         value={data.description}
                     />
                 </div>
             </div>
+            <hr className="border-gray-400 mb-6" />
+            <div className="flex items-center">
+                <p>Colors: </p>
+                <ColourSearch addColor={addColor} />
+            </div>
+            <div className="flex flex-wrap w-full mt-3">
+                {colorOptions.length > 0 &&
+                    colorOptions.map((color, index) => {
+                        let hex = tinycolor(color);
+                        return (
+                            <div
+                                title={color}
+                                key={index}
+                                style={{
+                                    backgroundColor: hex.toHexString(),
+                                }}
+                                className={`rounded-full relative mr-8 p-2 w-12 h-12 border mb-2 transition-all border-black duration-150 ease-in-out cursor-pointer`}
+                            >
+                                <button
+                                    onClick={() => removeColor(color)}
+                                    className="border-2 rounded-full border-black flex flex-col text-center justify-center py-0.5 px-1 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out absolute -top-2 -right-5"
+                                >
+                                    <i className="fa-solid fa-minus text-xs"></i>
+                                </button>
+                            </div>
+                        );
+                    })}
+            </div>
+            <hr className="border-gray-400 my-6" />
+
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
                 images={images}
                 defaultImages={product?.images}
                 setImages={setImages}
             />
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-end mt-6">
                 <button
                     onClick={() => updateProduct(product)}
                     className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main"
