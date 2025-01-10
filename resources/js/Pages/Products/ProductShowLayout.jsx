@@ -21,9 +21,11 @@ export default function ProductShowLayout(props) {
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [quantity, setQuantity] = useState(1);
     const [showAlert, setShowAlert] = useState(false);
-
+    const [crumbs, setCrumbs] = useState(
+        JSON.parse(sessionStorage.getItem("crumbs")) ?? null,
+    );
     const { addProduct } = useCartStore();
-    
+
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
@@ -83,8 +85,45 @@ export default function ProductShowLayout(props) {
             >
                 <Alert />
             </CSSTransition>
+            {crumbs && (
+                <div className="flex mt-12 justify-between items-center">
+                    <p className="font-oswald text-3xl">
+                        <a
+                            className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
+                            href={route("index")}
+                        >
+                            Home{" "}
+                        </a>
+                        <a
+                            className={`${!crumbs.type ? "" : "text-gray-400 hover:text-black duration-150 ease-in-out transition-all"}`}
+                            href={route("products.index", crumbs.category)}
+                        >
+                            {" / "}
+                            {crumbs.category.charAt(0).toUpperCase() +
+                                crumbs.category.slice(1)}
+                        </a>
+                        {crumbs.type && (
+                            <a
+                                className=""
+                                href={
+                                    route("products.index", crumbs.category) +
+                                    "?type=" +
+                                    encodeURIComponent(
+                                        crumbs.type.toLowerCase(),
+                                    )
+                                }
+                            >
+                                {" "}
+                                /{" "}
+                                {crumbs.type.charAt(0).toUpperCase() +
+                                    crumbs.type.slice(1)}
+                            </a>
+                        )}
+                    </p>
+                </div>
+            )}
 
-            <div className="flex mt-20">
+            <div className="flex ">
                 <div className="flex justify-between items-center w-[47.5%] ">
                     <div className="w-[20%] space-y-8">
                         {images.map((image) => {

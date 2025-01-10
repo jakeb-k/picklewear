@@ -72,6 +72,18 @@ export default function ProductIndexLayout(props) {
     };
 
     useEffect(() => {
+        if(sessionStorage.getItem('crumbs')){
+            sessionStorage.removeItem('crumbs');
+        }
+        const crumbs = {
+            category: category,
+            type: type, 
+        }
+
+        sessionStorage.setItem('crumbs', JSON.stringify(crumbs)); 
+    }, [])
+
+    useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
             setChunks(chunkProducts(favourites));
