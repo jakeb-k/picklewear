@@ -30,22 +30,18 @@ export default function Footer() {
 
     const clothing = [
         "Hats",
-        "Shirts",
-        "Shorts",
-        "Hoodies",
-        "Polos",
-        "Glasses",
+        "Tops",
+        "Bottoms",
+        "Gear",
     ];
-    const gear = [
-        "Gloves",
-        "Balls",
-        "Glasses",
-        "Socks",
-        "Wristbands",
-        "Headbands",
-    ];
+
     const help = ["Shipping", "Returns", "Privacy", "Contact"];
-    const account = ["Track Order", "Favourites", "My Details"];
+    const account = 
+    [
+        {name: "Past Orders", route: route('profile.edit')},
+        {name: "Favourites", route: route('products.index', 'favourites')},
+        {name: "My Details", route: route('profile.edit')},
+    ];
 
     function subscribe() {
         setLoading(true);
@@ -122,8 +118,8 @@ export default function Footer() {
                             {account.map((cat, index) => {
                                 return (
                                     <p key={index} className="">
-                                        <a className="hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
-                                            {cat}
+                                        <a href={cat.route} className="hover:font-bold cursor-pointer w-fit hover:underline transition-all duration-150 ease-in-out">
+                                            {cat.name}
                                         </a>
                                     </p>
                                 );
