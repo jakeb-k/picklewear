@@ -95,7 +95,7 @@ export default function ProductShowLayout(props) {
                             Home{" "}
                         </a>
                         <a
-                            className={`${!crumbs.type ? "" : "text-gray-400 hover:text-black duration-150 ease-in-out transition-all"}`}
+                            className='text-gray-400 hover:text-black duration-150 ease-in-out transition-all'
                             href={route("products.index", crumbs.category)}
                         >
                             {" / "}
@@ -123,7 +123,7 @@ export default function ProductShowLayout(props) {
                 </div>
             )}
 
-            <div className="flex ">
+            <div className={`flex ${!crumbs ? 'mt-12' : ''}`} >
                 <div className="flex justify-between items-center w-[47.5%] ">
                     <div className="w-[20%] space-y-8">
                         {images.map((image) => {
@@ -157,7 +157,7 @@ export default function ProductShowLayout(props) {
                                 ${product.price.toFixed(2)}
                             </span>
                         )}
-                        <span className="text-2xl font-bold ml-12">
+                        <span className={`text-2xl font-bold ${product.discount ? 'ml-12' : ''}`}>
                             $
                             {product.discount
                                 ? (

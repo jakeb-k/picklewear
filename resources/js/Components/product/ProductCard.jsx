@@ -6,9 +6,10 @@ export default function ProductCard(props) {
     const productImg = product.images ? product.images[0] : null;
     const { addFavourite, removeFavourite, favourites } = useFavouritesStore();
 
-
     function setFavourite(product) {
-        favourites.some((fav) => fav.id == product.id) ? removeFavourite(product.id) :  addFavourite(product);
+        favourites.some((fav) => fav.id == product.id)
+            ? removeFavourite(product.id)
+            : addFavourite(product);
     }
 
     return (
@@ -20,11 +21,9 @@ export default function ProductCard(props) {
             <i
                 onClick={(e) => {
                     e.stopPropagation();
-                    setFavourite(product)
+                    setFavourite(product);
                 }}
-                className={
-                    `text-3xl top-2 right-4 ${favourites.some((fav) => fav.id == product.id) ? 'fa-solid': 'fa-regular' } fa-heart absolute hover:text-main transition-all duration-150 ease-in-out z-30 pointer-events-auto`
-                }
+                className={`text-3xl top-2 right-4 ${favourites.some((fav) => fav.id == product.id) ? "fa-solid" : "fa-regular"} fa-heart absolute hover:text-main transition-all duration-150 ease-in-out z-30 pointer-events-auto`}
             />
             <img
                 src={productImg?.file_path ? productImg.file_path : TestImage}
@@ -32,7 +31,31 @@ export default function ProductCard(props) {
             />
             <div className="flex flex-col justify-center bg-white px-2 h-24">
                 <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
-                <p className="text-center pb-2 mt-auto">${product.price}</p>
+                <div className="flex justify-center mt-auto font-roboto_mono">
+                    <p
+                        className={`text-center pb-2 mt-auto ${product.discount > 0 ? "line-through text-base" : ""}`}
+                    >
+                        $
+                        {product.price.toLocaleString(0, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}
+                    </p>
+                    {product.discount > 0 && (
+                        <p
+                            className={`text-center pb-2 mt-auto ml-4 font-bold`}
+                        >
+                            $
+                            {(
+                                product.price -
+                                product.price * product.discount
+                            ).toLocaleString(0, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
+                        </p>
+                    )}
+                </div>
             </div>
         </a>
     );
