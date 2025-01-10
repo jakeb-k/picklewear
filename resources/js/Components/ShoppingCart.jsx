@@ -35,27 +35,16 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
         setProducts(cartItems);
         handleCartClose();
     };
+    
     useEffect(() => {
         setCartItems(products);
         setLoading(false);
     }, []);
+
     useEffect(() => {
         setProducts(cartItems);
     }, [cartItems]);
 
-    // function routeToCheckout() {
-    //     axios.post(route('checkout'), { cart: cartItems }, {
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //     }).then((response) => {
-    //         const checkoutUrl = response.data.url;
-    //         // Redirect the browser to the Stripe checkout page
-    //         window.location.href = checkoutUrl;
-    //     }).catch((error) => {
-    //         console.error(error);
-    //     });
-    // }
 
     return (
         <div ref={ref} className="fixed flex w-full min-h-screen z-[999]">

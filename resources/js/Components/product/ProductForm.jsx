@@ -3,6 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
+import tinycolor from "tinycolor2";
 
 export default function ProductForm({
     setProducts,
@@ -11,6 +12,13 @@ export default function ProductForm({
 }) {
     const { product } = props;
     const [images, setImages] = useState(product?.images ?? []);
+    const [colorOptions, setColorOptions] = useState(
+        product.options.some((option) => option.type == "color")
+            ? product.options
+                  .find((option) => option.type == "color")
+                  .values.split(".")
+            : [],
+    );
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
@@ -29,8 +37,6 @@ export default function ProductForm({
             [name]: value,
         }));
     };
-
-    console.log(product.images)
 
     const handleOnSelectChange = (selectedOption) => {
         setData((prevData) => ({
@@ -213,8 +219,8 @@ export default function ProductForm({
     };
 
     return (
-        <div className="min-w-[750px] w-[70%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6 space-y-8">
-            <div className="flex items-center space-x-[5%]">
+        <div className="min-w-[750px] w-[70%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6">
+            <div className="flex items-center space-x-[5%] mb-6">
                 <div className="flex-1">
                     <p className="flex items-center text-base">
                         Name:{" "}
@@ -255,7 +261,7 @@ export default function ProductForm({
                 </div>
             </div>
             {/* URL */}
-            <div className="w-full">
+            <div className="w-full mb-6">
                 <p className="flex items-center text-base">
                     URL: <span className="text-red-500 text-3xl italic">*</span>
                 </p>
@@ -270,7 +276,7 @@ export default function ProductForm({
                 />
             </div>
             {/* TYPE, DELIVERY RANGE, DISCOUNT */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center justify-between w-3/5">
                     <div className="w-[30%]">
                         <p className="flex items-center text-sm text-nowrap">
@@ -382,7 +388,7 @@ export default function ProductForm({
                 </div>
             </div>
 
-            <div className="flex items-center space-x-[5%]">
+            <div className="flex items-center space-x-[5%] mb-6">
                 <div className="flex-1">
                     <p className="flex items-center text-base">
                         Description:{" "}
@@ -399,6 +405,37 @@ export default function ProductForm({
                     />
                 </div>
             </div>
+            <hr className="border-gray-400 mb-6" />
+            <p>Colors</p>
+            <div className="flex flex-wrap w-full mt-3">
+                {colorOptions.length > 0 &&
+                    colorOptions.map((color, index) => {
+                        let hex = tinycolor(color);
+                        return (
+                            <div
+                                key={index}
+                                style={{
+                                    backgroundColor: hex.toHexString(),
+                                }}
+                                className={`rounded-full relative mr-8 p-2 w-12 h-12 border mb-2 transition-all border-black duration-150 ease-in-out cursor-pointer`}
+                            >
+                                <button
+                                    onClick={() => {}}
+                                    className="border-2 rounded-full border-black flex flex-col text-center justify-center py-0.5 px-1 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out absolute -top-2 -right-5"
+                                >
+                                    <i className="fa-solid fa-minus text-xs"></i>
+                                </button>
+                            </div>
+                        );
+                    })}
+                <div
+                    className={`rounded-full relative mr-6 w-12 h-12 border-[3.25px] border-dotted transition-all border-black duration-150 ease-in-out cursor-pointer text-3xl flex flex-col justify-center text-center hover:bg-gray-200`}
+                >
+                   +
+                </div>
+            </div>
+            <hr className="border-gray-400 my-6" />
+
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
                 images={images}
