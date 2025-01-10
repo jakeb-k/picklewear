@@ -181,27 +181,27 @@ export default function ProductsTable({ setEditItem, ...props }) {
         {
             name: "Image",
             cell: (row) => <img src={row.image?.file_path ?? TestImage} />,
-            width: "200px",
+            width: "25%",
         },
         {
             name: "Code",
             selector: (row) => row.code,
             cell: (row) => <p>#{row.code}</p>,
             sortable: true,
-            width: "100px",
+            width: "7.5%",
         },
         {
             name: "Name",
             selector: (row) => row.name,
             cell: (row) => <p>{row.name}</p>,
             sortable: true,
-            width: "175px",
+            width: "15%",
         },
         {
             name: "Price",
             selector: (row) => row.price,
             sortable: true,
-            width: "100px",
+            width: "7.5%",
             cell: (row) => (
                 <p className="text-right">${row.price?.toFixed(2)}</p>
             ),
@@ -210,14 +210,14 @@ export default function ProductsTable({ setEditItem, ...props }) {
             name: "Type",
             selector: (row) => row.type,
             sortable: true,
-            width: "125px",
+            width: "7.5%",
         },
         {
             name: "Tags",
             selector: (row) => row.tags.join(", "),
             sortable: false,
             cell: (row) => <p>{row.tags.join(", ")}</p>,
-            width: "100px",
+            width: "10%",
         },
         {
             name: "Actions",
@@ -246,7 +246,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
                     ></i>
                 </div>
             ),
-            width: "250px",
+            width: "37.5%",
         },
     ];
 
