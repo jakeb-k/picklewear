@@ -387,15 +387,11 @@ export default function ProductIndexLayout(props) {
                                 <div className="bg-gray-400 h-[0.5px] my-4" />
                                 <ProductPriceFilter
                                     updateFilters={setPriceFilter}
-                                    min={
-                                        products.sort(
-                                            (a, b) => b.price - a.price,
-                                        )[products.length - 1].price
-                                    }
+                                    min={10}
                                     max={
                                         products.sort(
                                             (a, b) => b.price - a.price,
-                                        )[0].price
+                                        )[0].price + 10
                                     }
                                 />
                                 <div className="bg-gray-400 h-[0.5px] my-4" />
