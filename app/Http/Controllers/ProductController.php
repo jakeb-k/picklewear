@@ -108,6 +108,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
+            dd($request->colors); 
             $request->validate([
                 "name" => "required|string|max:100",
                 "type" => "required",
@@ -135,7 +136,6 @@ class ProductController extends Controller
                 $images = $request->file("images");
 
                 foreach ($images as $index => $imageData) {
-                    Log::info($imageData);
                     $fileName = time() . $index . "." . $imageData->extension();
 
                     $folder = "files/products/";
@@ -216,6 +216,10 @@ class ProductController extends Controller
                 "discount" => $request->discount / 100,
                 "description" => $request->description,
             ]);
+            
+            $colorOption = ProductOption::find($request->colorOptionId); 
+            $colorOption->values = str_replace(",", ".", $request->colors);
+            $colorOption->save(); 
 
             return response()->json([
                 "success" => "Your Product was updated",

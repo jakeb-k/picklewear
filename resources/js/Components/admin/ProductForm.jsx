@@ -67,6 +67,7 @@ export default function ProductForm({
             }
         });
         formData.append("data", data);
+        formData.append("colors", colorOptions);
         if (isCreating) {
             axios
                 .post(route("product.store", product), formData, {
@@ -82,6 +83,7 @@ export default function ProductForm({
                 });
         } else {
             formData.append("_method", "PUT");
+            formData.append("colorOptionId", product.options.find((option) => option.type == "color").id)
             axios
                 .post(route("product.update", product), formData, {
                     headers: {
