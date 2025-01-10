@@ -14,7 +14,7 @@ export default function ProductForm({
     const { product } = props;
     const [images, setImages] = useState(product?.images ?? []);
     const [colorOptions, setColorOptions] = useState(
-        product.options.some((option) => option.type == "color")
+        product?.options?.some((option) => option.type == "color")
             ? product.options
                   .find((option) => option.type == "color")
                   .values.split(".")
