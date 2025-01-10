@@ -4,6 +4,7 @@ import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
 import Select from "react-select";
 import tinycolor from "tinycolor2";
+import ColourSearch from "./ColorSearch";
 
 export default function ProductForm({
     setProducts,
@@ -409,7 +410,7 @@ export default function ProductForm({
                 </div>
             </div>
             <hr className="border-gray-400 mb-6" />
-            <p>Colors</p>
+            <p>Colors: </p>
             <div className="flex flex-wrap w-full mt-3">
                 {colorOptions.length > 0 &&
                     colorOptions.map((color, index) => {
@@ -437,6 +438,7 @@ export default function ProductForm({
                     +
                 </div>
             </div>
+            <ColourSearch />
             <hr className="border-gray-400 my-6" />
 
             <ImageUploader
