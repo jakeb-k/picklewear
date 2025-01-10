@@ -97,7 +97,7 @@ class ProductController extends Controller
     {
         $related_items = Product::where("type", $product->type)
             ->whereHas("images")
-            ->withAnyTags($product->tags->pluck('name')->toArray())
+            ->withAnyTags($product->tags->pluck("name")->toArray())
             ->limit(6)
             ->get();
         return Inertia::render("Products/ProductShowLayout", [
@@ -140,10 +140,10 @@ class ProductController extends Controller
                 ]);
 
                 $colorOption = ProductOption::create([
-                    'type' => 'color',
-                    'values' => str_replace(",", ".", $request->colors), 
-                    'product_id' => $product->id, 
-                ]); 
+                    "type" => "color",
+                    "values" => str_replace(",", ".", $request->colors),
+                    "product_id" => $product->id,
+                ]);
 
                 $images = $request->file("images");
 
@@ -216,10 +216,10 @@ class ProductController extends Controller
                 "discount" => $request->discount / 100,
                 "description" => $request->description,
             ]);
-            
-            $colorOption = ProductOption::find($request->colorOptionId); 
+
+            $colorOption = ProductOption::find($request->colorOptionId);
             $colorOption->values = str_replace(",", ".", $request->colors);
-            $colorOption->save(); 
+            $colorOption->save();
 
             return response()->json([
                 "success" => "Your Product was updated",
@@ -244,15 +244,13 @@ class ProductController extends Controller
      */
     public function getBestsellers()
     {
-        $bestsellers = Product::where("type", "Clothing")
-            ->orderBy("price", "DESC")
+        $bestsellers = Product::with(["options", "images"]) // Eager load options and images
+            ->withCount("orders") // Add the count of related orders
+            ->whereHas("images") // Only include products that have images
+            ->orderBy("orders_count", "desc") // Order by the count of orders
             ->limit(10)
             ->get();
-        $bestsellers->each(function ($product) {
-            if ($product->images()->exists()) {
-                $product->load("images");
-            }
-        });
+
         return response()->json([
             "bestsellers" => $bestsellers,
         ]);

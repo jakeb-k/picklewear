@@ -20,16 +20,18 @@ export default function ProductForm({
                   .values.split(".")
             : [],
     );
+    
     const { data, setData } = useForm({
         name: product?.name ?? "",
         price: product?.price ?? "",
-        type: { value: product?.tags.find((tag) => tag.type = 'category').name.en ?? "", label: product?.tags.find((tag) => tag.type = 'category').name.en },
+        type: { value: product?.tags.find((tag) => tag.type == 'category').name.en ?? "", label: product?.tags.find((tag) => tag.type == 'category').name.en.charAt(0).toUpperCase() + product?.tags.find((tag) => tag.type == 'category').name.en.slice(1)},
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount ?? 0,
         description: product?.description ?? "",
         images: product?.images ?? [],
     });
+
 
     useEffect(() => {
         if (data.discount > 100) {

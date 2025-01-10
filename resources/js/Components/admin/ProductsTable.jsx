@@ -46,9 +46,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
             props.products.map((product) => {
                 const id = product.id;
                 const image =
-                    product.images.length > 0
-                        ? product.images[0]
-                        : null;
+                    product.images.length > 0 ? product.images[0] : null;
                 const code = product.id.toString().padStart(4, "0"); // Format product code
                 const name = product.name;
                 const price = product.price;
@@ -60,9 +58,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
                     product.tags
                         .find((tag) => (tag.type = "category"))
                         .name.en.slice(1);
-                const tags = product.tags?.map((tag) => {
-                    return tag.name.en.charAt(0).toUpperCase() + tag.name.en.slice(1)
-                }) ?? [];
+                const tags = product.tags ?? [];
                 const options = product.options;
                 const route = `/product/${product.id}`; // Link to view product details
                 const available = product.available;
@@ -214,9 +210,27 @@ export default function ProductsTable({ setEditItem, ...props }) {
         },
         {
             name: "Tags",
-            selector: (row) => row.tags.join(", "),
+            selector: (row) =>
+                row.tags.map((tag) => {
+                    return (
+                        tag.name.en.charAt(0).toUpperCase() +
+                        tag.name.en.slice(1) +
+                        " ,"
+                    );
+                }),
             sortable: false,
-            cell: (row) => <p>{row.tags.join(", ")}</p>,
+            cell: (row) => (
+                <p>
+                    {row.tags.map((tag, index) => {
+                        const isLast = index === row.tags.length - 1;
+                        return (
+                            tag.name.en.charAt(0).toUpperCase() +
+                            tag.name.en.slice(1) +
+                            (isLast ? "" : ", ")
+                        );
+                    })}
+                </p>
+            ),
             width: "10%",
         },
         {
