@@ -22,20 +22,32 @@ class ProductController extends Controller
     public function index(Request $request, string $category)
     {
         $type = $request->get("type");
-        // Query products with images only
-        $products = Product::with(["options", "images"]) // Eager load options and images
-            ->when(
-                $type,
-                function ($query, $type) use ($category) {
-                    // If $type is present, search with both category and type
-                    return $query->withAllTags([$category, $type]);
-                },
-                function ($query) use ($category) {
-                    // If $type is not present, search with category only
-                    return $query->withAllTags([$category]);
-                }
-            )
-            ->get();
+        $fromHome = $request->get("tag");
+        $products = [];
+
+        if (!is_null($fromHome)) {
+            $products = Product::with(["options", "images"]) // Eager load options and images
+                ->whereHas("tags", function ($query) use ($category) {
+                    // Filter tags based on their type
+                    $query->where("type", $category);
+                })
+                ->get();
+        } else {
+            // Query products with images only
+            $products = Product::with(["options", "images"]) // Eager load options and images
+                ->when(
+                    $type,
+                    function ($query, $type) use ($category) {
+                        // If $type is present, search with both category and type
+                        return $query->withAllTagsOfAnyType([$category, $type]);
+                    },
+                    function ($query) use ($category) {
+                        // If $type is not present, search with category only
+                        return $query->withAllTagsOfAnyType([$category]);
+                    }
+                )
+                ->get();
+        } // Query products with images only
 
         // Add order count to each product
         $products = $products->map(function ($product) {
@@ -54,7 +66,7 @@ class ProductController extends Controller
      * Shows a singular product
      *
      * @param Product $product
-     * @return \Inertia\Response The Inertia response for the client-side renderer.
+     * @return \Inertia\Response
      */
     public function show(Product $product)
     {

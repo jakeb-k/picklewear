@@ -30,24 +30,24 @@ export default function Home() {
             <h2 className='text-3xl text-secondary italic text-center'>Shop by Category</h2>
             <div className='flex justify-evenly space-x-4 mt-8'>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'gear'} />
                     <p className='ml-4 mt-2 text-lg'>Gear</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','gear')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'hats'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Hats</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','hats')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'tops'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Shirts</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','tops')+ "?tag=true"}>Shop Now</a>
                 </div>
                 <div>
-                    <MainProductCard />
+                    <MainProductCard type={'bottoms'} />
                     <p className='text-left ml-4 mt-2 text-lg'>Shorts</p>
-                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={'#'}>Shop Now</a>
+                    <a className='underline text-base ml-4 hover:text-gray-600/90' href={route('products.index','bottoms')+ "?tag=true"}>Shop Now</a>
                 </div>
             </div>
         </div>
