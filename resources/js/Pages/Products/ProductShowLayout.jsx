@@ -104,7 +104,7 @@ export default function ProductShowLayout(props) {
                         </a>
                         {crumbs.type && (
                             <a
-                                className=""
+                                className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
                                 href={
                                     route("products.index", crumbs.category) +
                                     "?type=" +
