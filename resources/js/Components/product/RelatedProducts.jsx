@@ -57,7 +57,10 @@ const RelatedItems = (props) => {
                                 />
                                 <div className="relative h-full bg-white px-2">
                                     <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
-                                    <p className='text-center pb-2'>${product.price}</p>
+                                    <p className='text-center pb-2'>${product.price.toLocaleString(0, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}</p>
                                 </div>
                             </div>
                         );
