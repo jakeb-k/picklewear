@@ -209,7 +209,6 @@ export default function ProductForm({
                                 onClick={() => handleRemove(index)}
                                 className="absolute top-1 right-1 border-2 rounded-full border-black flex flex-col text-center justify-center py-1 px-1.5 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out "
                             >
-                                
                                 <i className="fa-solid fa-minus text-xs"></i>
                             </button>
                         </div>
@@ -328,7 +327,7 @@ export default function ProductForm({
                     </div>
                     <div className="w-fit">
                         <p className="flex items-center text-sm text-nowrap">
-                            <p>Delivery Range: </p>
+                            Delivery Range:{" "}
                             <span className="text-red-500 text-3xl italic">
                                 *
                             </span>
@@ -410,13 +409,17 @@ export default function ProductForm({
                 </div>
             </div>
             <hr className="border-gray-400 mb-6" />
-            <p>Colors: </p>
+            <div className='flex items-center'>
+                <p>Colors: </p>
+                <ColourSearch />
+            </div>
             <div className="flex flex-wrap w-full mt-3">
                 {colorOptions.length > 0 &&
                     colorOptions.map((color, index) => {
                         let hex = tinycolor(color);
                         return (
                             <div
+                                title={color}
                                 key={index}
                                 style={{
                                     backgroundColor: hex.toHexString(),
@@ -432,13 +435,7 @@ export default function ProductForm({
                             </div>
                         );
                     })}
-                <div
-                    className={`rounded-full relative mr-6 w-12 h-12 border-[3.25px] border-dotted transition-all border-black duration-150 ease-in-out cursor-pointer text-3xl flex flex-col justify-center text-center hover:bg-gray-200`}
-                >
-                    +
-                </div>
             </div>
-            <ColourSearch />
             <hr className="border-gray-400 my-6" />
 
             <ImageUploader
@@ -447,7 +444,7 @@ export default function ProductForm({
                 defaultImages={product?.images}
                 setImages={setImages}
             />
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-end mt-6">
                 <button
                     onClick={() => updateProduct(product)}
                     className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main"
