@@ -82,7 +82,7 @@ export default function ProductIndexLayout(props) {
 
         sessionStorage.setItem('crumbs', JSON.stringify(crumbs)); 
     }, [])
-
+    
     useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
@@ -93,7 +93,7 @@ export default function ProductIndexLayout(props) {
             setColorOptions(getColors(products));
         }
         setLoading(false);
-    }, [category, favourites]);
+    }, [category, favourites, products]);
 
     useEffect(() => {
         setLoading(true);
