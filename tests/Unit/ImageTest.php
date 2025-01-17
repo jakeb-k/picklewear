@@ -2,31 +2,34 @@
 
 namespace Tests\Unit;
 
-use App\Models\Customer;
-use App\Models\Location;
-use App\Models\Order;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Image;
+use App\Models\Product;
 use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ImageTest extends TestCase
 {
-    use RefreshDatabase; 
+    use RefreshDatabase;
 
-    public Customer $customer;
-
-    public $orders;
-
-    public Location $location;
+    public Product $product;
+    public Image $image;
 
     protected function setUp(): void
     {
         parent::setUp(); // Always call the parent setUp method
-        $this->customer = Customer::factory()->create();
-        $this->orders = Order::factory(3)->create([
-            'customer_id' => $this->customer->id
-        ]);
-        $this->location = Location::factory()->create();
-        $this->customer->locations()->attach($this->location->id); 
+        $this->product = Product::factory()->create();
+        $this->image = Image::factory()->create();
+
+        $this->image->products()->attach($this->product->id);
+    }
+
+    #[Test]
+    public function image_can_morph_to_a_product(): void
+    {
+        $this->assertEquals(
+            $this->product->id,
+            $this->image->products()->first()->id
+        );
     }
 }

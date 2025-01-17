@@ -7,11 +7,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class UserTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     */
-    public function test_example(): void
+    protected function setUp(): void
     {
-        $this->assertTrue(true);
+        parent::setUp(); // Always call the parent setUp method
     }
 }
