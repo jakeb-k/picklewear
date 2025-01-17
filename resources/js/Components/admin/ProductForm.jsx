@@ -20,18 +20,30 @@ export default function ProductForm({
                   .values.split(".")
             : [],
     );
-    
+    const [tags, setTags] = useState(product.tags);
     const { data, setData } = useForm({
         name: product?.name ?? "",
+        
         price: product?.price ?? "",
-        type: { value: product?.tags.find((tag) => tag.type == 'category').name.en ?? "", label: product?.tags.find((tag) => tag.type == 'category').name.en.charAt(0).toUpperCase() + product?.tags.find((tag) => tag.type == 'category').name.en.slice(1)},
+        type: {
+            value:
+                product?.tags.find((tag) => tag.type == "category").name.en ??
+                "",
+            label:
+                product?.tags
+                    .find((tag) => tag.type == "category")
+                    .name.en.charAt(0)
+                    .toUpperCase() +
+                product?.tags
+                    .find((tag) => tag.type == "category")
+                    .name.en.slice(1),
+        },
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount ?? 0,
         description: product?.description ?? "",
         images: product?.images ?? [],
     });
-
 
     useEffect(() => {
         if (data.discount > 100) {
@@ -85,7 +97,10 @@ export default function ProductForm({
                 });
         } else {
             formData.append("_method", "PUT");
-            formData.append("colorOptionId", product.options.find((option) => option.type == "color").id)
+            formData.append(
+                "colorOptionId",
+                product.options.find((option) => option.type == "color").id,
+            );
             axios
                 .post(route("product.update", product), formData, {
                     headers: {
@@ -101,22 +116,21 @@ export default function ProductForm({
         }
     }
 
-
     const addColor = (color) => {
         setColorOptions((prevData) => {
-            if(!prevData.some((data) => data == color[0])){
+            if (!prevData.some((data) => data == color[0])) {
                 return [...prevData, color[0]];
             } else {
-                return prevData
+                return prevData;
             }
         });
     };
 
     const removeColor = (color) => {
         setColorOptions((prevData) => {
-            return prevData.filter((data) => data != color)
-        })
-    }
+            return prevData.filter((data) => data != color);
+        });
+    };
 
     const customStyles = {
         control: (provided, state) => ({
@@ -457,6 +471,15 @@ export default function ProductForm({
                     })}
             </div>
             <hr className="border-gray-400 my-6" />
+            <p>Tags</p>
+            <Select
+                name="type"
+                
+                onChange={handleOnSelectChange}
+                value={data.type}
+                styles={customStyles}
+            />
+            <hr />
 
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
@@ -469,7 +492,7 @@ export default function ProductForm({
                     onClick={() => updateProduct(product)}
                     className="p-2 px-10 border-2 rounded-lg border-secondary bg-main text-lg font-bold transition-all duration-150 ease-in-out hover:bg-secondary hover:text-main"
                 >
-                    { isCreating ? 'CREATE' : 'UPDATE'}
+                    {isCreating ? "CREATE" : "UPDATE"}
                 </button>
             </div>
         </div>
