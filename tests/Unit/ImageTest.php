@@ -2,15 +2,31 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use App\Models\Customer;
+use App\Models\Location;
+use App\Models\Order;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class ImageTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     */
-    public function test_example(): void
+    use RefreshDatabase; 
+
+    public Customer $customer;
+
+    public $orders;
+
+    public Location $location;
+
+    protected function setUp(): void
     {
-        $this->assertTrue(true);
+        parent::setUp(); // Always call the parent setUp method
+        $this->customer = Customer::factory()->create();
+        $this->orders = Order::factory(3)->create([
+            'customer_id' => $this->customer->id
+        ]);
+        $this->location = Location::factory()->create();
+        $this->customer->locations()->attach($this->location->id); 
     }
 }
