@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class LocationTest extends TestCase
 {
