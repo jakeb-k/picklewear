@@ -25,6 +25,12 @@ const ColorSearch = ({addColor}) => {
                 <input
                     type="text"
                     value={query}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && filteredColors.length > 0) {
+                            addColor(filteredColors);
+                            setQuery("");
+                        }
+                    }}
                     onChange={handleSearch}
                     placeholder="Search colour names..."
                     className="rounded-md py-1 px-2 w-full text-base pr-8 focus:ring-secondary focus:border-secondary"
@@ -33,8 +39,9 @@ const ColorSearch = ({addColor}) => {
                 <button onClick={() => {
                     if(filteredColors.length > 0){
                         addColor(filteredColors)
+                        setQuery("")
                     }
-                }} className="bg-secondary text-main hover:bg-main hover:text-secondary transition-all duration-150 ease-in-out absolute right-0 top-0 h-full min-w-8 text-lg flex flex-col justify-center items-center rounded-r-md border-2 border-secondary cursor-pointer">
+                }} className={` text-main  transition-all duration-150 ease-in-out absolute right-0 top-0 h-full min-w-8 text-lg flex flex-col justify-center items-center rounded-r-md border-2 border-secondary ${filteredColors.length > 0 ? 'bg-secondary hover:bg-main hover:text-secondary cursor-pointer' : 'bg-secondary/50 cursor-not-allowed'}`}>
                     +
                 </button>
             </div>

@@ -9,11 +9,12 @@ class ProductOption extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id']; 
     /**
      * The relationship for the options of a product
      */
     public function product()
     {
-        return $this->belongsToMany(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

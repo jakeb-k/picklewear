@@ -50,10 +50,10 @@ class DatabaseSeeder extends Seeder
         $products = Product::all();
 
         $tags = [
-            "mens" => Tag::findOrCreateFromString("mens"),
-            "womens" => Tag::findOrCreateFromString("womens"),
-            "kids" => Tag::findOrCreateFromString("kids"),
-            "gear" => Tag::findOrCreateFromString("gear"),
+            "mens" => Tag::findOrCreateFromString("mens", 'category'),
+            "womens" => Tag::findOrCreateFromString("womens", 'category'),
+            "kids" => Tag::findOrCreateFromString("kids", 'category'),
+            "gear" => Tag::findOrCreateFromString("gear", 'category'),
         ];
 
         $typeTags = [

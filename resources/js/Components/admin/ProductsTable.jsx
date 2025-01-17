@@ -1,5 +1,5 @@
 import DataTable from "react-data-table-component";
-import moment from "moment";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -46,13 +46,18 @@ export default function ProductsTable({ setEditItem, ...props }) {
             props.products.map((product) => {
                 const id = product.id;
                 const image =
-                    product.images.length > 0
-                        ? product.images[0]
-                        : "/images/placeholder.jpg";
+                    product.images.length > 0 ? product.images[0] : null;
                 const code = product.id.toString().padStart(4, "0"); // Format product code
                 const name = product.name;
                 const price = product.price;
-                const type = product.type;
+                const type =
+                    product.tags
+                        .find((tag) => (tag.type = "category"))
+                        .name.en.charAt(0)
+                        .toUpperCase() +
+                    product.tags
+                        .find((tag) => (tag.type = "category"))
+                        .name.en.slice(1);
                 const tags = product.tags ?? [];
                 const options = product.options;
                 const route = `/product/${product.id}`; // Link to view product details
@@ -170,29 +175,29 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     const columns = [
         {
-            name: "",
-            cell: (row) => <img src={row.image?.file_path} />,
-            width: "200px",
+            name: "Image",
+            cell: (row) => <img src={row.image?.file_path ?? TestImage} />,
+            width: "25%",
         },
         {
             name: "Code",
             selector: (row) => row.code,
             cell: (row) => <p>#{row.code}</p>,
             sortable: true,
-            width: "100px",
+            width: "7.5%",
         },
         {
             name: "Name",
             selector: (row) => row.name,
             cell: (row) => <p>{row.name}</p>,
             sortable: true,
-            width: "175px",
+            width: "15%",
         },
         {
             name: "Price",
             selector: (row) => row.price,
             sortable: true,
-            width: "100px",
+            width: "7.5%",
             cell: (row) => (
                 <p className="text-right">${row.price?.toFixed(2)}</p>
             ),
@@ -201,14 +206,32 @@ export default function ProductsTable({ setEditItem, ...props }) {
             name: "Type",
             selector: (row) => row.type,
             sortable: true,
-            width: "125px",
+            width: "7.5%",
         },
         {
             name: "Tags",
-            selector: (row) => row.tags.join(", "),
+            selector: (row) =>
+                row.tags.map((tag) => {
+                    return (
+                        tag.name.en.charAt(0).toUpperCase() +
+                        tag.name.en.slice(1) +
+                        " ,"
+                    );
+                }),
             sortable: false,
-            cell: (row) => <p>{row.tags.join(", ")}</p>,
-            width: "100px",
+            cell: (row) => (
+                <p>
+                    {row.tags.map((tag, index) => {
+                        const isLast = index === row.tags.length - 1;
+                        return (
+                            tag.name.en.charAt(0).toUpperCase() +
+                            tag.name.en.slice(1) +
+                            (isLast ? "" : ", ")
+                        );
+                    })}
+                </p>
+            ),
+            width: "10%",
         },
         {
             name: "Actions",
@@ -237,13 +260,12 @@ export default function ProductsTable({ setEditItem, ...props }) {
                     ></i>
                 </div>
             ),
-            width: "250px",
+            width: "37.5%",
         },
     ];
 
     return (
         <div className="rounded-lg shadow-lg">
-            
             <DataTable
                 columns={columns}
                 data={data}
