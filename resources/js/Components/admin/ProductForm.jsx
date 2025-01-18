@@ -20,23 +20,25 @@ export default function ProductForm({
                   .values.split(".")
             : [],
     );
-    const [tags, setTags] = useState(product.tags);
+    const [tags, setTags] = useState(product?.tags ?? []);
     const { data, setData } = useForm({
         name: product?.name ?? "",
-        
+
         price: product?.price ?? "",
         type: {
             value:
-                product?.tags.find((tag) => tag.type == "category").name.en ??
-                "",
-            label:
-                product?.tags
-                    .find((tag) => tag.type == "category")
-                    .name.en.charAt(0)
-                    .toUpperCase() +
-                product?.tags
-                    .find((tag) => tag.type == "category")
-                    .name.en.slice(1),
+                product?.tags?.find((tag) => tag.type === "category")?.name
+                    ?.en || "",
+            label: product?.tags?.find((tag) => tag.type === "category")?.name
+                ?.en
+                ? product.tags
+                      .find((tag) => tag.type === "category")
+                      .name.en.charAt(0)
+                      .toUpperCase() +
+                  product.tags
+                      .find((tag) => tag.type === "category")
+                      .name.en.slice(1)
+                : "",
         },
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
@@ -474,9 +476,8 @@ export default function ProductForm({
             <p>Tags</p>
             <Select
                 name="type"
-                
                 onChange={handleOnSelectChange}
-                value={data.type}
+                value={data.tags}
                 styles={customStyles}
             />
             <hr />

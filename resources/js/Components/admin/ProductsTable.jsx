@@ -50,14 +50,10 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 const code = product.id.toString().padStart(4, "0"); // Format product code
                 const name = product.name;
                 const price = product.price;
-                const type =
-                    product.tags
-                        .find((tag) => (tag.type = "category"))
-                        .name.en.charAt(0)
-                        .toUpperCase() +
-                    product.tags
-                        .find((tag) => (tag.type = "category"))
-                        .name.en.slice(1);
+                const categoryTag = product?.tags?.find((tag) => tag.type === "category");
+                const type = categoryTag && categoryTag.name && categoryTag.name.en
+                    ? categoryTag.name.en.charAt(0).toUpperCase() + categoryTag.name.en.slice(1)
+                    : null; 
                 const tags = product.tags ?? [];
                 const options = product.options;
                 const route = `/product/${product.id}`; // Link to view product details
@@ -211,11 +207,12 @@ export default function ProductsTable({ setEditItem, ...props }) {
         {
             name: "Tags",
             selector: (row) =>
-                row.tags.map((tag) => {
+                row.tags?.map((tag) => {
                     return (
+                        row.tags ? 
                         tag.name.en.charAt(0).toUpperCase() +
                         tag.name.en.slice(1) +
-                        " ,"
+                        " ," : ''
                     );
                 }),
             sortable: false,

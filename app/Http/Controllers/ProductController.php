@@ -145,7 +145,7 @@ class ProductController extends Controller
                     "product_id" => $product->id,
                 ]);
 
-                $images = $request->file("images");
+                $images = $request->input("images");
 
                 foreach ($images as $index => $imageData) {
                     $fileName = time() . $index . "." . $imageData->extension();
@@ -169,7 +169,7 @@ class ProductController extends Controller
 
                     $product->images()->attach($image);
                 }
-            }, 1);
+            });
 
             return response()->json([
                 "success" => "Your Product was updated",
