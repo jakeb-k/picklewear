@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('session_id')->nullable(); 
             $table->integer('expected_delivery_range');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');;
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
+            
             $table->timestamps();
         });
     }

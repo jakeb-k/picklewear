@@ -24,7 +24,7 @@ return new class extends Migration
         });
 
         Schema::table('orders', function(Blueprint $table){
-            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers');
         });
     }
