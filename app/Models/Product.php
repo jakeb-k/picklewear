@@ -38,14 +38,5 @@ class Product extends Model
         return $this->hasMany(ProductOption::class, 'product_id');
     }
 
-    /**
-     * The relationship for a users location
-     */
-    public function location()
-    {
-        return $this->morphOne(Location::class, 'locationable');
-    }
-
-
     
 }
