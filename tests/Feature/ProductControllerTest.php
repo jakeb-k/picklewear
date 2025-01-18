@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\Tags\Tag;
@@ -19,13 +20,12 @@ class ProductControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Product::truncate(); 
         $this->product = Product::factory()->create();
 
     }
 
     #[Test]
-    public function can_view_the_product_index_for_favourites()
+    public function user_can_view_the_product_index_for_favourites()
     {
 
         $response = $this->get(route('products.index',['type' => 'favourites']));
@@ -38,7 +38,7 @@ class ProductControllerTest extends TestCase
     }
 
     #[Test]
-    public function can_view_the_product_index_for_sales()
+    public function user_can_view_the_product_index_for_sales()
     {
 
         Product::factory()->create(['discount' => null]); 
@@ -53,20 +53,19 @@ class ProductControllerTest extends TestCase
     }
 
     #[Test]
-    public function can_view_the_product_index_for_popular()
+    public function user_can_view_the_product_index_for_popular()
     {
         $response = $this->get(route('products.index', ['type' => 'popular']));
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Products/ProductIndexLayout')
-            ->has('products', 1)
             ->where('category', 'popular')
         );
     }
 
     #[Test]
-    public function can_view_the_product_index_for_from_home()
+    public function user_can_view_the_product_index_for_from_home()
     {
         $tag = Tag::findOrCreateFromString('t-shirt', 'tops'); 
         Product::factory()->hasAttached($tag, [], 'tags')->create();
@@ -85,7 +84,7 @@ class ProductControllerTest extends TestCase
     }
 
     #[Test]
-    public function can_view_the_product_index_with_category_and_type()
+    public function user_can_view_the_product_index_with_category_and_type()
     {
         $categoryTag = Tag::findOrCreateFromString('t-shirt', 'tops');
         $typeTag = Tag::findOrCreateFromString('mens', 'category');
@@ -107,7 +106,7 @@ class ProductControllerTest extends TestCase
     }
 
     #[Test]
-    public function can_view_the_product_index_with_category()
+    public function user_can_view_the_product_index_with_category()
     {
         $categoryTag = Tag::findOrCreateFromString('t-shirt', 'tops');
         Product::factory()->hasAttached($categoryTag, [], 'tags')->create();

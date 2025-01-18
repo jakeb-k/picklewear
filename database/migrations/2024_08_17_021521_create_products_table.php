@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('url');
-            $table->string('type'); 
+            $table->string('type')->nullable(); 
             $table->integer('delivery_date'); 
             $table->float('price');
             $table->float('discount')->nullable();

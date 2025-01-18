@@ -144,7 +144,6 @@ class StripeController extends Controller
 
         $customerLocation = null;
         if(Auth::user()){
-            
             $user = User::find(Auth::user()->id);
             $currentUserLocation = $user->locations[0]; 
             if($currentUserLocation->street != $request->street){
@@ -158,6 +157,13 @@ class StripeController extends Controller
             } else {
                 $customerLocation = $currentUserLocation; 
             }
+        } else {
+            $customerLocation = Location::create([
+                "street" => $request->street,
+                "city" => $request->city,
+                "state" => $request->state,
+                "postcode" => $request->postcode,
+            ]);
         }
         $newCustomer->locations()->attach($customerLocation->id);
 
@@ -167,6 +173,7 @@ class StripeController extends Controller
             "total" => $request->total,
             'expected_delivery_range' => max(array_column($cart, 'delivery_date')), 
             "session_id" => $session->id,
+            'customer_id' => $newCustomer->id, 
             "sent" => false,
             "user_id" => Auth::user()->id ?? null,
         ]);
@@ -225,50 +232,50 @@ class StripeController extends Controller
      *
      * @return void
      */
-    public function webhook()
-    {
-        // This is your Stripe CLI webhook secret for testing your endpoint locally.
-        $endpoint_secret = env("STRIPE_WEBHOOK_SECRET");
+    // public function webhook()
+    // {
+    //     // This is your Stripe CLI webhook secret for testing your endpoint locally.
+    //     $endpoint_secret = env("STRIPE_WEBHOOK_SECRET");
 
-        $payload = @file_get_contents("php://input");
-        $sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
-        $event = null;
+    //     $payload = @file_get_contents("php://input");
+    //     $sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
+    //     $event = null;
 
-        try {
-            $event = \Stripe\Webhook::constructEvent(
-                $payload,
-                $sig_header,
-                $endpoint_secret
-            );
-        } catch (\UnexpectedValueException $e) {
-            // Invalid payload
-            Log::info('UnexpectedValueException: '. $e->getMessage()); 
-            return response("", 400);
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            // Invalid signature
-            Log::info('SignatureVerificationException'. $e->getMessage()); 
-            return response("", 400);
-        }
+    //     try {
+    //         $event = \Stripe\Webhook::constructEvent(
+    //             $payload,
+    //             $sig_header,
+    //             $endpoint_secret
+    //         );
+    //     } catch (\UnexpectedValueException $e) {
+    //         // Invalid payload
+    //         Log::info('UnexpectedValueException: '. $e->getMessage()); 
+    //         return response("", 400);
+    //     } catch (\Stripe\Exception\SignatureVerificationException $e) {
+    //         // Invalid signature
+    //         Log::info('SignatureVerificationException'. $e->getMessage()); 
+    //         return response("", 400);
+    //     }
 
-        // Handle the event
-        switch ($event->type) {
-            case "checkout.session.completed":
-                $session = $event->data->object;
-                $customer = Customer::where('stripe_id', $session->id); 
-                $customer->email = $session->customer_details->email; 
-                $customer->save(); 
-                Log::info($session->customer_details->email); 
-                Log::info('checkout completed'); 
-                $order = Order::where("session_id", $session->id)->first();
-                $order->status = "Paid";
-                $order->save();
-                return response("", 200);
+    //     // Handle the event
+    //     switch ($event->type) {
+    //         case "checkout.session.completed":
+    //             $session = $event->data->object;
+    //             $customer = Customer::where('stripe_id', $session->id); 
+    //             $customer->email = $session->customer_details->email; 
+    //             $customer->save(); 
+    //             Log::info($session->customer_details->email); 
+    //             Log::info('checkout completed'); 
+    //             $order = Order::where("session_id", $session->id)->first();
+    //             $order->status = "Paid";
+    //             $order->save();
+    //             return response("", 200);
 
-            // ... handle other event types
-            default:
-                echo "Received unknown event type " . $event->type;
-        }
-        Log::info('not hitting right place'); 
-        return response("", 400);
-    }
+    //         // ... handle other event types
+    //         default:
+    //             echo "Received unknown event type " . $event->type;
+    //     }
+    //     Log::info('not hitting right place'); 
+    //     return response("", 400);
+    // }
 }
