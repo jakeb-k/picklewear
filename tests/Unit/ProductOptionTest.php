@@ -25,6 +25,6 @@ class ProductOptionTest extends TestCase
     #[Test]
     public function a_product_option_belongs_to_a_product():void
     {
-        $this->assertEquals($this->productOption->id, $this->product->options()->first()->id);
+        $this->assertEquals($this->product->id, $this->productOption->product->id);
     }
 }

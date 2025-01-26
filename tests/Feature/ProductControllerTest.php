@@ -167,7 +167,7 @@ class ProductControllerTest extends TestCase
             "images" => $images,
         ])); 
 
-        dd($response->json()); 
+        // dd($response->json()); 
         $response->assertStatus(200)
         ->assertJsonStructure(['success','products']);
 
