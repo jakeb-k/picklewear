@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SendContactMail;
 use App\Models\SubscriberEmail;
 use App\Models\User;
 use App\Notifications\NewSubscriberEmail;
+use App\Notifications\ServiceContactNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class MailController extends Controller
@@ -16,7 +15,7 @@ class MailController extends Controller
 
     public function __construct()
     {
-        $this->admin = User::where("is_admin", true)->first();
+        $this->admin = User::role('admin')->first(); 
     }
 
     /**
@@ -40,7 +39,8 @@ class MailController extends Controller
         ]);
 
         try {
-            Mail::to($this->admin)->send(new SendContactMail($request->all()));
+
+            $this->admin->notify(new ServiceContactNotification($request->all()));
 
             return response()->json([
                 "success" => true,

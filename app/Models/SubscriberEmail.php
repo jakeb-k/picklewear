@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubscriberEmail extends Model
 {
-    protected $guarded = []; 
+    protected $guarded = ['id']; 
     
     use HasFactory;
 }
