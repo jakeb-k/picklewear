@@ -145,7 +145,7 @@ class ProductController extends Controller
                     "product_id" => $product->id,
                 ]);
 
-                $images = $request->input("images");
+                $images = $request->file("images");
 
                 foreach ($images as $index => $imageData) {
                     $fileName = time() . $index . "." . $imageData->extension();
@@ -217,9 +217,39 @@ class ProductController extends Controller
                 "description" => $request->description,
             ]);
 
-            $colorOption = ProductOption::find($request->colorOptionId);
-            $colorOption->values = str_replace(",", ".", $request->colors);
-            $colorOption->save();
+            if($request->colors) {
+                $colorOption = ProductOption::find($request->colorOptionId);
+                $colorOption->values = str_replace(",", ".", $request->colors);
+                $colorOption->save();
+            }
+            $images = $request->file("images");
+
+            $newImages = [];
+             
+            foreach ($images as $index => $imageData) {
+                $fileName = time() . $index . "." . $imageData->extension();
+            
+                $folder = "files/products/";
+                $filePath = $imageData->storeAs(
+                    $folder,
+                    $fileName,
+                    "public"
+                );
+            
+                $disk = config("filesystems.default");
+                $path = Storage::disk($disk)->url($filePath);
+            
+                $image = Image::create([
+                    "file_name" => $imageData->getClientOriginalName(),
+                    "mime_type" => $imageData->getClientMimeType(),
+                    "file_path" => $path,
+                    "file_size" => $imageData->getSize(),
+                ]);
+            
+                $newImages[] = $image->id; // Add the image ID to the array
+            }
+            
+            $product->images()->sync($newImages);
 
             return response()->json([
                 "success" => "Your Product was updated",
@@ -259,6 +289,8 @@ class ProductController extends Controller
     /**
      * User enters a query and it gets matched against name and type of the item
      *
+     * @todo Search by tags
+     * 
      * @param String $query
      * @return \Illuminate\Http\JsonResponse
      */
