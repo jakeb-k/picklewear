@@ -20,12 +20,11 @@ return new class extends Migration
             $table->string('stripe_id')->nullable()->index();
             $table->string('pm_type')->nullable();
             $table->string('pm_last_four', 4)->nullable();
-            $table->timestamp('trial_ends_at')->nullable();
             $table->timestamps();
         });
 
         Schema::table('orders', function(Blueprint $table){
-            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers');
         });
     }

@@ -18,7 +18,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'mobile'=>  ['required', 'regex:/^(?:\+61|0)[4]\d{8}$/', 'numeric'], 
+            'mobile'=>  ['required', 'regex:/^(?:\+61|0)4\d{8}$/', 'numeric'], 
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             "street" => "nullable|string",
             "city" => "nullable|string",

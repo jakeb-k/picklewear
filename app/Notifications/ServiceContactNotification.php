@@ -6,19 +6,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\HtmlString;
 
-class NewSubscriberEmail extends Notification
+class ServiceContactNotification extends Notification
 {
     use Queueable;
 
-    protected $email;
+    protected array $data;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($email)
+    public function __construct(array $data)
     {
-        $this->email = $email;
+        $this->data = $data;
     }
 
     /**
@@ -34,12 +34,14 @@ class NewSubscriberEmail extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail($notifiable)
     {
+        // Log::info($this->data);
+
         return (new MailMessage())
-            ->subject("Welcome to Picklewear Mail List")
-            ->greeting("Hello!")
-            ->view("mail.newsub", ["email" => $this->email]);
+            ->from($this->data["email"], $this->data["first_name"])
+            ->subject("You have a new Enquiry")
+            ->view("mail.contact", ["data" => $this->data]);
     }
 
     // /**
