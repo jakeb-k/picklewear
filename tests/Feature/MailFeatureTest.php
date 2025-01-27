@@ -50,7 +50,11 @@ class MailFeatureTest extends TestCase
 
         Notification::assertSentTo(
             [$this->user], // Pass the actual user model, not a new instance
-            ServiceContactNotification::class
+            ServiceContactNotification::class,
+            function ($notification, $channels, $notifiable) {
+                $notification->toMail($notifiable); 
+                return true;
+            }
         );
     }
 
@@ -94,6 +98,7 @@ class MailFeatureTest extends TestCase
             new AnonymousNotifiable, // Use AnonymousNotifiable for Notification::route()
             NewSubscriberEmail::class,
             function ($notification, $channels, $notifiable) {
+                $notification->toMail($notifiable); 
                 return $notifiable->routes['mail'] === 'subscriber@example.com'; // Ensure the email matches
             }
         );
