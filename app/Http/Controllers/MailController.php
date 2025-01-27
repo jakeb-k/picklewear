@@ -15,7 +15,7 @@ class MailController extends Controller
 
     public function __construct()
     {
-        $this->admin = User::role('admin')->first(); 
+        $this->admin = User::role("admin")->first();
     }
 
     /**
@@ -26,33 +26,25 @@ class MailController extends Controller
      */
     public function sendContactEmail(Request $request)
     {
-        $request->validate([
-            "first_name" => "required|string|max:50",
-            "last_name" => "nullable|string|max:50",
-            "email" => "required|email",
-            "message" => "required|string",
-        ],[
-            'first_name.required' => 'First name is required',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email is not a valid email',
-            'message.required' => 'Message is required'
+        $request->validate(
+            [
+                "first_name" => "required|string|max:50",
+                "last_name" => "nullable|string|max:50",
+                "email" => "required|email",
+                "message" => "required|string",
+            ],
+            [
+                "first_name.required" => "First name is required",
+                "email.required" => "Email is required",
+                "email.email" => "Email is not a valid email",
+                "message.required" => "Message is required",
+            ]
+        );
+        $this->admin->notify(new ServiceContactNotification($request->all()));
+
+        return response()->json([
+            "success" => true,
         ]);
-
-        try {
-
-            $this->admin->notify(new ServiceContactNotification($request->all()));
-
-            return response()->json([
-                "success" => true,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "error" => $e->getMessage(),
-                ],
-                400
-            );
-        }
     }
 
     /**
@@ -63,20 +55,25 @@ class MailController extends Controller
      */
     public function subscribe(Request $request)
     {
-        $request->validate([
-            'email'=> 'required|email|unique:subscriber_emails'
-        ],[
-            'email.unique' => 'This email is already taken',
-            'email.required' => 'An email is required'
-        ]);
+        $request->validate(
+            [
+                "email" => "required|email|unique:subscriber_emails",
+            ],
+            [
+                "email.unique" => "This email is already taken",
+                "email.required" => "An email is required",
+            ]
+        );
 
         SubscriberEmail::create([
-            "email" => $request->email
+            "email" => $request->email,
         ]);
-        Notification::route('mail', $request->email)->notify(new NewSubscriberEmail($request->email));
+        Notification::route("mail", $request->email)->notify(
+            new NewSubscriberEmail($request->email)
+        );
 
         return response()->json([
-            'success'=> "This didn't fail",
+            "success" => "This didn't fail",
         ]);
     }
 
@@ -88,13 +85,12 @@ class MailController extends Controller
      */
     public function unsubscribe(Request $request)
     {
-        $email = $request->query('email');
-        $unsub = SubscriberEmail::where('email', urldecode($email))->first();
+        $email = $request->query("email");
+        $unsub = SubscriberEmail::where("email", urldecode($email))->first();
         if ($unsub) {
             $unsub->delete();
         }
 
-        return view('mail.unsub'); 
-
+        return view("mail.unsub");
     }
 }
