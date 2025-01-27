@@ -27,9 +27,9 @@ export default function ProductForm({
         price: product?.price ?? "",
         type: {
             value:
-                product?.tags?.find((tag) => tag.type === "category")?.name
+                product?.tags?.find((tag) => tag.type == "category")?.name
                     ?.en || "",
-            label: product?.tags?.find((tag) => tag.type === "category")?.name
+            label: product?.tags?.find((tag) => tag.type == "category")?.name
                 ?.en
                 ? product.tags
                       .find((tag) => tag.type === "category")
@@ -67,6 +67,7 @@ export default function ProductForm({
             type: selectedOption,
         }));
     };
+    console.log(product.tags); 
 
     function updateProduct(product) {
         //Create new form data object to put files in

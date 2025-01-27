@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\ProductOption;
@@ -112,79 +113,54 @@ class ProductController extends Controller
      * @param Request $request
      * @return void
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        try {
-            $request->validate([
-                "name" => "required|string|max:100",
-                "type" => "required",
-                "url" => "required",
-                "delivery_date" => "numeric|required",
-                "price" => "numeric|required|min:0",
-                "discount" => "numeric|nullable|min:0|max:100",
-                "description" => "required",
-                "images" => "required|array|min:3",
-                "options" => "nullable|arary",
+        DB::transaction(function () use ($request) {
+            $product = Product::create([
+                "name" => $request->name,
+                "type" => ucfirst($request->type),
+                "url" => $request->url,
+                "delivery_date" => $request->delivery_date,
+                "available" => true,
+                "price" => $request->price,
+                "discount" => $request->discount / 100,
+                "description" => $request->description,
             ]);
 
-            DB::transaction(function () use ($request) {
-                $product = Product::create([
-                    "name" => $request->name,
-                    "type" => ucfirst($request->type),
-                    "url" => $request->url,
-                    "delivery_date" => $request->delivery_date,
-                    "available" => true,
-                    "price" => $request->price,
-                    "discount" => $request->discount / 100,
-                    "description" => $request->description,
-                ]);
-
-                $colorOption = ProductOption::create([
-                    "type" => "color",
-                    "values" => str_replace(",", ".", $request->colors),
-                    "product_id" => $product->id,
-                ]);
-
-                $images = $request->file("images");
-
-                foreach ($images as $index => $imageData) {
-                    $fileName = time() . $index . "." . $imageData->extension();
-
-                    $folder = "files/products/";
-                    $filePath = $imageData->storeAs(
-                        $folder,
-                        $fileName,
-                        "public"
-                    );
-
-                    $disk = config("filesystems.default");
-                    $path = Storage::disk($disk)->url($filePath);
-
-                    $image = Image::create([
-                        "file_name" => $imageData->getClientOriginalName(),
-                        "mime_type" => $imageData->getClientMimeType(),
-                        "file_path" => $path,
-                        "file_size" => $imageData->getSize(),
-                    ]);
-
-                    $product->images()->attach($image);
-                }
-            });
-
-            return response()->json([
-                "success" => "Your Product was updated",
-                "products" => Product::with(["options", "images"])
-                    ->orderBy("updated_at", "desc")
-                    ->get(),
+            $colorOption = ProductOption::create([
+                "type" => "color",
+                "values" => str_replace(",", ".", $request->colors),
+                "product_id" => $product->id,
             ]);
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "error" => $e->getMessage(),
-                ],
-                400
-            );
-        }
+
+            $images = $request->file("images");
+
+            foreach ($images as $index => $imageData) {
+                $fileName = time() . $index . "." . $imageData->extension();
+
+                $folder = "files/products/";
+                $filePath = $imageData->storeAs($folder, $fileName, "public");
+
+                $disk = config("filesystems.default");
+                $path = Storage::disk($disk)->url($filePath);
+
+                $image = Image::create([
+                    "file_name" => $imageData->getClientOriginalName(),
+                    "mime_type" => $imageData->getClientMimeType(),
+                    "file_path" => $path,
+                    "file_size" => $imageData->getSize(),
+                ]);
+
+                $product->images()->attach($image);
+            }
+        });
+
+        return response()->json([
+            "success" => "Your Product was updated",
+            "products" => Product::with(["options", "images"])
+                ->orderBy("updated_at", "desc")
+                ->get(),
+        ]);
     }
 
     /**
@@ -194,77 +170,54 @@ class ProductController extends Controller
      * @param Product $product
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        try {
-            $request->validate([
-                "images.*" => "required|file|mimes:jpeg,png,jpg|max:2048",
-                "name" => "required|string|max:100",
-                "type" => "required",
-                "url" => "required",
-                "delivery_date" => "numeric|required",
-                "price" => "numeric|required|min:0",
-                "discount" => "numeric|nullable|min:0|max:100",
-                "description" => "required",
-            ]);
-            $product->update([
-                "name" => $request->name,
-                "type" => $request->type,
-                "url" => $request->url,
-                "delivery_date" => $request->delivery_date,
-                "price" => $request->price,
-                "discount" => $request->discount / 100,
-                "description" => $request->description,
-            ]);
+        $product->update([
+            "name" => $request->name,
+            "type" => $request->type,
+            "url" => $request->url,
+            "delivery_date" => $request->delivery_date,
+            "price" => $request->price,
+            "discount" => $request->discount / 100,
+            "description" => $request->description,
+        ]);
 
-            if($request->colors) {
-                $colorOption = ProductOption::find($request->colorOptionId);
-                $colorOption->values = str_replace(",", ".", $request->colors);
-                $colorOption->save();
-            }
-            $images = $request->file("images");
-
-            $newImages = [];
-             
-            foreach ($images as $index => $imageData) {
-                $fileName = time() . $index . "." . $imageData->extension();
-            
-                $folder = "files/products/";
-                $filePath = $imageData->storeAs(
-                    $folder,
-                    $fileName,
-                    "public"
-                );
-            
-                $disk = config("filesystems.default");
-                $path = Storage::disk($disk)->url($filePath);
-            
-                $image = Image::create([
-                    "file_name" => $imageData->getClientOriginalName(),
-                    "mime_type" => $imageData->getClientMimeType(),
-                    "file_path" => $path,
-                    "file_size" => $imageData->getSize(),
-                ]);
-            
-                $newImages[] = $image->id; // Add the image ID to the array
-            }
-            
-            $product->images()->sync($newImages);
-
-            return response()->json([
-                "success" => "Your Product was updated",
-                "products" => Product::with(["options", "images"])
-                    ->orderBy("updated_at", "desc")
-                    ->get(),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "error" => $e->getMessage(),
-                ],
-                400
-            );
+        if ($request->colors) {
+            $colorOption = ProductOption::find($request->colorOptionId);
+            $colorOption->values = str_replace(",", ".", $request->colors);
+            $colorOption->save();
         }
+        $images = $request->file("images");
+
+        $newImages = [];
+
+        foreach ($images as $index => $imageData) {
+            $fileName = time() . $index . "." . $imageData->extension();
+
+            $folder = "files/products/";
+            $filePath = $imageData->storeAs($folder, $fileName, "public");
+
+            $disk = config("filesystems.default");
+            $path = Storage::disk($disk)->url($filePath);
+
+            $image = Image::create([
+                "file_name" => $imageData->getClientOriginalName(),
+                "mime_type" => $imageData->getClientMimeType(),
+                "file_path" => $path,
+                "file_size" => $imageData->getSize(),
+            ]);
+
+            $newImages[] = $image->id; // Add the image ID to the array
+        }
+
+        $product->images()->sync($newImages);
+
+        return response()->json([
+            "success" => "Your Product was updated",
+            "products" => Product::with(["options", "images"])
+                ->orderBy("updated_at", "desc")
+                ->get(),
+        ]);
     }
 
     /**
@@ -290,7 +243,7 @@ class ProductController extends Controller
      * User enters a query and it gets matched against name and type of the item
      *
      * @todo Search by tags
-     * 
+     *
      * @param String $query
      * @return \Illuminate\Http\JsonResponse
      */

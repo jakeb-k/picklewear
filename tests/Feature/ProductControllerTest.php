@@ -255,6 +255,45 @@ class ProductControllerTest extends TestCase
     }
 
     #[Test]
+    public function user_can_only_update_a_product_with_valid_values()
+    {
+        $this->actingAs($this->user);
+        $images = [
+            UploadedFile::fake()->image("image1.jpg"),
+            UploadedFile::fake()->image("image2.png"),
+            UploadedFile::fake()->image("image3.png"),
+        ];
+
+        $product = Product::factory()->create();
+        $colorOption = ProductOption::factory()->create([
+            "type" => "color",
+            "product_id" => $product->id,
+        ]);
+
+        $response = $this->putJson(route("product.update", $product), [
+            "name" => "Updated Product",
+            "type" => "womens",
+            "url" => "https://google.com",
+            "delivery_date" => "13",
+            "price" => "invalid price",
+            "discount" => 20,
+            "description" => "This is an updated description",
+            "images" => $images,
+            "colors" => "red,blue,green",
+            "colorOptionId" => $colorOption->id,
+        ]);
+
+        $response->assertStatus(422)->assertJson([
+            "message" => "The price must be a numeric value.",
+            "errors" => [
+                "price" => [
+                    0 => "The price must be a numeric value.",
+                ],
+            ],
+        ]);
+    }
+
+    #[Test]
     public function user_can_get_bestsellers()
     {
         $products = Product::factory(12)
@@ -314,20 +353,19 @@ class ProductControllerTest extends TestCase
         ]);
     }
 
-    #[Test] 
+    #[Test]
     public function admin_can_delete_a_product()
     {
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson(route('product.destroy', $product));
+        $response = $this->deleteJson(route("product.destroy", $product));
 
-        $response->assertStatus(200)
-        ->assertJson([
-            'products' => []
+        $response->assertStatus(200)->assertJson([
+            "products" => [],
         ]);
 
-        $this->assertSoftDeleted('products', [
-            'id' => $product->id
-        ]); 
+        $this->assertSoftDeleted("products", [
+            "id" => $product->id,
+        ]);
     }
 }
