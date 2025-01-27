@@ -204,7 +204,7 @@ class StripeController extends Controller
         try {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
             if (!$session) {
-                throw new NotFoundHttpException();
+                throw new NotFoundHttpException('Stripe session not found');
             }
             $order = Order::where("session_id", $session->id)->first();
             $customer = Customer::where('stripe_id', $session->id)->first(); 

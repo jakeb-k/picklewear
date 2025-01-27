@@ -129,7 +129,7 @@ class OrderControllerTest extends TestCase
         Auth::logout();
         $response = $this->get(route("orders.show", $this->order->id));
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     #[Test]
@@ -140,7 +140,7 @@ class OrderControllerTest extends TestCase
         $this->actingAs($anotherUser);
         $response = $this->get(route("orders.show", $this->order->id));
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
     }
 
     protected function tearDown(): void

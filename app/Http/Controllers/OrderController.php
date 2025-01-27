@@ -7,6 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderController extends Controller
@@ -38,6 +39,6 @@ class OrderController extends Controller
                 ]),
             ]);
         }
-        throw new NotFoundHttpException(); 
+        throw new HttpException(403, 'Unauthorized action.');
     }
 }
