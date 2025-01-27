@@ -19,6 +19,12 @@ class MailController extends Controller
         $this->admin = User::where("is_admin", true)->first();
     }
 
+    /**
+     * send a message to the admin user
+     *
+     * @param Request $request
+     * @return void
+     */
     public function sendContactEmail(Request $request)
     {
         $request->validate([
