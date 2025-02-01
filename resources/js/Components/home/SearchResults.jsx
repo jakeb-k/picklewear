@@ -43,7 +43,7 @@ export default function SearchResults({ query }) {
                    <div className="absolute inset-0 bg-gray-200/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
                        <img className='w-full' src={product.images[0]?.file_path} />
                        <p className='font-bold z-30'>{product.name}</p>
-                       <p className='mt-auto z-30'>${product.price}</p>
+                       <p className='mt-auto z-30 font-roboto_mono'>${product.price}</p>
                    </a>
                ))}
                                 

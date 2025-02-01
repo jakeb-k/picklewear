@@ -66,10 +66,12 @@ const RelatedItems = (props) => {
                                 </p>
                                 <p className="text-center pb-2">
                                     $
-                                    {product.price.toLocaleString(0, {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                    })}
+                                    <span className="font-roboto_mono">
+                                        {product.price.toLocaleString(0, {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                        })}
+                                    </span>
                                 </p>
                             </div>
                         </div>

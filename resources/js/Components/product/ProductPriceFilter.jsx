@@ -12,7 +12,7 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
         setMinValue(e.minValue);
         setMaxValue(e.maxValue);
     };
-    
+
     useEffect(() => {
         if (minValue != min || maxValue != max) {
             updateFilters({
@@ -51,18 +51,22 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
                 <div className="w-full max-w-md mx-auto">
                     <div className="flex justify-between">
                         <p>
-                            Min: $
-                            {minValue.toLocaleString(0, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}
+                            Min: ${" "}
+                            <span className='font-roboto-mono'>
+                                {minValue.toLocaleString(0, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                            </span>
                         </p>
                         <p>
+                            <span className='font-roboto-mono'>
+                                {maxValue.toLocaleString(0, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                            </span>
                             Max: $
-                            {maxValue.toLocaleString(0, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}
                         </p>
                     </div>
                     <MultiRangeSlider

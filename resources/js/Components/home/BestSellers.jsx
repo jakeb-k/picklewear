@@ -77,7 +77,7 @@ const BestSellers = () => {
                                 />
                                 <div className="px-2 absolute bottom-2 text-center w-full">
                                     <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
-                                    <p className='text-center pb-2'>${product.price}</p>
+                                    <p className='text-center pb-2 font-roboto_mono'>${product.price}</p>
                                 </div>
                             </div>
                         );

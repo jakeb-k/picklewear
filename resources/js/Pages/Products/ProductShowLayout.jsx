@@ -35,7 +35,7 @@ export default function ProductShowLayout(props) {
             price: product.discount
                 ? (
                       product.price -
-                      product.price * product.discount
+                      product.price * (product.discount/100)
                   ).toLocaleString(0, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -164,7 +164,7 @@ export default function ProductShowLayout(props) {
                             {product.discount
                                 ? (
                                       product.price -
-                                      product.price * product.discount
+                                      product.price * (product.discount/100)
                                   ).toLocaleString(0, {
                                       minimumFractionDigits: 2,
                                       maximumFractionDigits: 2,
