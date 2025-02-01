@@ -9,6 +9,12 @@ import NavigationMenu from "@/Components/home/NavigationMenu";
 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
+    const [promos, setPromos] = useState([
+        "AUSTRALIAS BEST PICKLEBALL SHOP",
+        "FREE SHIPPING STOREWIDE",
+        "SPEND $100 AND GET 10% OFF",
+        "USE CODE SECRETPICKLES FOR 5% OFF",
+    ]);
     const { data, setData } = useForm({
         query: "",
     });
@@ -38,8 +44,6 @@ export default function MainLayout({ children }) {
     const routeToHome = () => {
         router.visit(route("index"));
     };
-
-    //add carusel for query input when doing the top carusel
 
     const SearchBar = () => {
         return (
@@ -93,9 +97,16 @@ export default function MainLayout({ children }) {
                 }}
                 className="fixed w-full z-50"
             >
-                <div className="w-full bg-main text-secondary flex py-1">
-                    <div className="font-bold  justify-center w-full text-center ml-12">
-                        FREE SHIPPING STOREWIDE
+                <div className="w-full bg-main text-secondary flex h-7">
+                    <div className="mx-auto w-[400px] overflow-x-hidden">
+
+                            <div
+                                className=" text-nowrap promo-message  animate-scroll space-x-[300px] relative flex flex-row justify-start items-center "
+                            >
+                                {promos.map((promo, index) => (
+                                    <p className="font-bold text-lg">{promo}</p>
+                                ))}
+                            </div>
                     </div>
                     <div className="flex absolute w-fit right-0 space-x-6 mr-12">
                         <Link href={"/faqs"}>

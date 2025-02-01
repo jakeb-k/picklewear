@@ -21,6 +21,8 @@ class OrderController extends Controller
      */
     public function show(Request $request, Order $order)
     {
+        
+        \Stripe\Stripe::setApiKey(config("stripe.sk"));
         $sessionId = $request->query("session_id");
         if ($sessionId) {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);

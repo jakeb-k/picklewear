@@ -42,7 +42,7 @@ class OrderPurchasedEmail extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject("Welcome to Picklewear Mail List")
+            ->subject("Smashing News! Your Pickleball Order (".$this->order->code.") is Confirmed!")
             ->greeting("Hello!")
             ->view("mail.order_purchased", [
                 "order" => $this->order,

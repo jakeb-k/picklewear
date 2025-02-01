@@ -54,6 +54,11 @@
             margin-right:20px; 
             border-radius:8px; 
         }
+        .flex {
+            display:flex;
+            flex-direction:row; 
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -83,7 +88,10 @@
                 <div>
                     <p><strong>Product:</strong> {{ $product->name }}</p>
                     <p><strong>Price:</strong> ${{ $product->price }}</p>
-                    <p><strong>Quantity:</strong> {{ $product->pivot->quantity }}</p>
+                    <div class='flex'>
+                        <p style="margin-right:10px;"><strong>Quantity:</strong> {{ $product->pivot->quantity }}</p>
+                        <p><strong>Color:</strong> {{ $product->pivot->color ?? "-" }}</p>
+                    </div>
                     <p><strong>Subtotal:</strong> ${{ $product->pivot->quantity * $product->price }}</p>
                 </div>
             </section>

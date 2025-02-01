@@ -57,9 +57,9 @@ Route::post('/contact/email', [MailController::class, 'sendContactEmail'])->name
 Route::get('/unsubscribe', [MailController::class, 'unsubscribe'])->name('unsubscribe.email');
 Route::post('/email/subscribe', [MailController::class, 'subscribe' ])->name('subscribe.email');
 
-Route::get('/preview-email', function () {
-    $notification = new OrderPurchasedEmail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com'); // Pass required data
-    return $notification->toMail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com')->render(); 
-});
+// Route::get('/preview-email', function () {
+//     $notification = new OrderPurchasedEmail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com'); // Pass required data
+//     return $notification->toMail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com')->render(); 
+// });
 
 require __DIR__.'/auth.php';

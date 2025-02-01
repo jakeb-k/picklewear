@@ -232,19 +232,13 @@ class StripeController extends Controller
                     $customer->email
                 )
             );
-            return Inertia::render("Products/OrderShowLayout", [
-                "order" => $order->load([
-                    "locations",
-                    "customer",
-                    "user",
-                    "products.images",
-                ]),
-            ]);
+            return to_route("orders.show", ['order' => $order->id, 'session_id' => $sessionId]);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             throw new NotFoundHttpException();
         }
     }
+    
     /**
      * Hard to test locally - success works, so may not be even needed.
      *
