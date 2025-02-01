@@ -11,7 +11,7 @@ export default function MainLayout({ children }) {
     const { auth } = usePage().props;
     const [promos, setPromos] = useState([
         "AUSTRALIAS BEST PICKLEBALL SHOP",
-        "FREE SHIPPING STOREWIDE",
+        "FREE SHIPPING STOREWIDE!",
         "SPEND $100 AND GET 10% OFF",
         "USE CODE SECRETPICKLES FOR 5% OFF",
     ]);
@@ -245,7 +245,7 @@ export default function MainLayout({ children }) {
                     classNames="fade"
                     unmountOnExit
                 >
-                    <NavigationMenu type={menuType} />
+                    <NavigationMenu type={menuType} closeMenu={() => setMenuOpen(false)} />
                 </CSSTransition>
             </div>
             <div>{children}</div>
