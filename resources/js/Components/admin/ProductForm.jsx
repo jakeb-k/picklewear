@@ -42,7 +42,7 @@ export default function ProductForm({
         },
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
-        discount: product?.discount ?? 0,
+        discount: product?.discount * 100 ?? 0,
         description: product?.description ?? "",
         images: product?.images ?? [],
     });

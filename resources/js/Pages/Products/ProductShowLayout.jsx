@@ -10,8 +10,6 @@ import { CSSTransition } from "react-transition-group";
 export default function ProductShowLayout(props) {
     const product = props.product;
     const relatedItems = props.relatedItems;
-    console.log(relatedItems); 
-    console.log(product); 
     const colors =
         props.product.options
             .find((option) => option.type === "color")
@@ -35,7 +33,7 @@ export default function ProductShowLayout(props) {
             price: product.discount
                 ? (
                       product.price -
-                      product.price * (product.discount/100)
+                      product.price * (product.discount)
                   ).toLocaleString(0, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -164,7 +162,7 @@ export default function ProductShowLayout(props) {
                             {product.discount
                                 ? (
                                       product.price -
-                                      product.price * (product.discount/100)
+                                      product.price * (product.discount)
                                   ).toLocaleString(0, {
                                       minimumFractionDigits: 2,
                                       maximumFractionDigits: 2,

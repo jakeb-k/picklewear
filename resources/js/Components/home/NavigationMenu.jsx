@@ -75,11 +75,46 @@ export default function NavigationMenu({ closeMenu, ...props }) {
                 <div className="w-[12.5%] mr-24">
                     <h3 className="font-bold mb-2">Shop By Price</h3>
                     <ul className="text-secondary text-xl space-y-4">
-                        <li className="bold line-link">On Sale</li>
-                        <li className="line-link">$20 or Under</li>
-                        <li className="line-link">$30 or Under</li>
-                        <li className="line-link">$40 or Under</li>
-                        <li className="line-link">Bundle Deals</li>
+                        <a
+                            href={
+                                route("products.index", type) +
+                                "?type=" +"sale"
+                            }
+                        >
+                            <li className="bold line-link">On Sale</li>
+                        </a>
+                        <a
+                            href={
+                                route("products.index", type) +
+                                "?type=" + "sale20"
+                            }
+                        >
+                            <li className="line-link">$20 or Under</li>
+                        </a>
+                        <a
+                            href={
+                                route("products.index", type) +
+                                "?type=" + "sale30"
+                            }
+                        >
+                            <li className="line-link">$30 or Under</li>
+                        </a>
+                        <a
+                            href={
+                                route("products.index", type) +
+                                "?type=" + "sale40"
+                            }
+                        >
+                            <li className="line-link">$40 or Under</li>
+                        </a>
+                        <a
+                            href={
+                                route("products.index", type) +
+                                "?type=" + "sale50"
+                            }
+                        >
+                            <li className="line-link">$50 or Under</li>
+                        </a>
                     </ul>
                 </div>
                 <div className="w-[40%]">

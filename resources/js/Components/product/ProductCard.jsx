@@ -48,7 +48,7 @@ export default function ProductCard(props) {
                             $
                             {(
                                 product.price -
-                                product.price * (product.discount/100)
+                                product.price * (product.discount)
                             ).toLocaleString(0, {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
