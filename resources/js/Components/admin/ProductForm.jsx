@@ -2,6 +2,7 @@ import { useForm } from "@inertiajs/react";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
+import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
 import tinycolor from "tinycolor2";
 import ColourSearch from "./ColorSearch";
@@ -20,7 +21,13 @@ export default function ProductForm({
                   .values.split(".")
             : [],
     );
-    const [tags, setTags] = useState(product?.tags ?? []);
+
+    const [tags, setTags] = useState(product?.tags.map((tag) => {
+        return {
+            label: tag.name.en, 
+            value: tag.id, 
+        }
+    }) ?? []);
     const { data, setData } = useForm({
         name: product?.name ?? "",
 
@@ -40,9 +47,24 @@ export default function ProductForm({
                       .name.en.slice(1)
                 : "",
         },
+        type: {
+            value:
+                product?.tags?.find((tag) => tag.type == "type")?.name
+                    ?.en || "",
+            label: product?.tags?.find((tag) => tag.type == "type")?.name
+                ?.en
+                ? product.tags
+                      .find((tag) => tag.type === "type")
+                      .name.en.charAt(0)
+                      .toUpperCase() +
+                  product.tags
+                      .find((tag) => tag.type === "type")
+                      .name.en.slice(1)
+                : "",
+        },
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
-        discount: product?.discount ?? 0,
+        discount: product?.discount * 100 ?? 0,
         description: product?.description ?? "",
         images: product?.images ?? [],
     });
@@ -67,7 +89,6 @@ export default function ProductForm({
             type: selectedOption,
         }));
     };
-    console.log(product.tags); 
 
     function updateProduct(product) {
         //Create new form data object to put files in
@@ -100,10 +121,12 @@ export default function ProductForm({
                 });
         } else {
             formData.append("_method", "PUT");
-            formData.append(
-                "colorOptionId",
-                product.options.find((option) => option.type == "color").id,
-            );
+            if (product.options.find((option) => option.type == "color")) {
+                formData.append(
+                    "colorOptionId",
+                    product.options.find((option) => option.type == "color").id,
+                );
+            }
             axios
                 .post(route("product.update", product), formData, {
                     headers: {
@@ -274,8 +297,8 @@ export default function ProductForm({
                         value={data.name}
                     />
                 </div>
-                <div className="flex-1">
-                    <div className="text-base">
+                <div className="flex-1 flex justify-between">
+                    <div className="text-base w-[47.5%]">
                         <p className="flex items-center">
                             Type
                             <span className="text-red-500 text-3xl italic">
@@ -292,6 +315,26 @@ export default function ProductForm({
                             ]}
                             onChange={handleOnSelectChange}
                             value={data.type}
+                            styles={customStyles}
+                        />
+                    </div>
+                    <div className="text-base w-[47.5%]">
+                        <p className="flex items-center">
+                            Category
+                            <span className="text-red-500 text-3xl italic">
+                                *
+                            </span>
+                        </p>
+                        <Select
+                            name="type"
+                            options={[
+                                { value: "mens", label: "Mens" },
+                                { value: "womens", label: "Womens" },
+                                { value: "kids", label: "Kids" },
+                                { value: "gear", label: "Gear" },
+                            ]}
+                            onChange={handleOnSelectChange}
+                            value={data.category}
                             styles={customStyles}
                         />
                     </div>
@@ -474,15 +517,6 @@ export default function ProductForm({
                     })}
             </div>
             <hr className="border-gray-400 my-6" />
-            <p>Tags</p>
-            <Select
-                name="type"
-                onChange={handleOnSelectChange}
-                value={data.tags}
-                styles={customStyles}
-            />
-            <hr />
-
             <ImageUploader
                 updateImages={(data) => setData("images", data)}
                 images={images}

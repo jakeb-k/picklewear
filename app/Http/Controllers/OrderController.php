@@ -12,8 +12,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderController extends Controller
 {
+    /**
+     * Check user is authorised then display the order details.
+     *
+     * @param Request $request
+     * @param Order $order
+     * @return void
+     */
     public function show(Request $request, Order $order)
     {
+        
+        \Stripe\Stripe::setApiKey(config("stripe.sk"));
         $sessionId = $request->query("session_id");
         if ($sessionId) {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
@@ -38,6 +47,16 @@ class OrderController extends Controller
                     "products.images",
                 ]),
             ]);
+        } elseif(Auth::user()->role === 'admin') {
+            return Inertia::render("Products/OrderShowLayout", [
+                "order" => $order->load([
+                    "locations",
+                    "customer",
+                    "user",
+                    "products.images",
+                ]),
+            ]);
+
         }
         throw new HttpException(403, 'Unauthorized action.');
     }

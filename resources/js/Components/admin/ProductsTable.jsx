@@ -195,7 +195,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
             sortable: true,
             width: "7.5%",
             cell: (row) => (
-                <p className="text-right">${row.price?.toFixed(2)}</p>
+                <p className="text-right font-roboto_mono">${row.price?.toFixed(2)}</p>
             ),
         },
         {

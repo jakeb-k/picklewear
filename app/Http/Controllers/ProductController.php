@@ -51,25 +51,74 @@ class ProductController extends Controller
                         })
                         ->get();
                 } else {
-                    // Query products with images only
-                    $products = Product::with(["options", "images"]) // Eager load options and images
-                        ->when(
-                            $type,
-                            function ($query, $type) use ($category) {
-                                // If $type is present, search with both category and type
-                                return $query->withAllTagsOfAnyType([
-                                    $category,
+                    if (str_contains($type, "sale")) {
+                        $matches = [];
+                        preg_match("/([a-zA-Z]+)(\d+)/", $type, $matches);
+                        $amount = null;
+                        // Eager load products with images
+                        if (isset($matches[2])) {
+                            $amount = $matches[2];
+                            $products = Product::with(["options", "images"]) // Eager load options and images
+                                ->when(
                                     $type,
-                                ]);
-                            },
-                            function ($query) use ($category) {
-                                // If $type is not present, search with category only
-                                return $query->withAllTagsOfAnyType([
-                                    $category,
-                                ]);
-                            }
-                        )
-                        ->get();
+                                    function ($query, $type) use ($category) {
+                                        // If $type is present, search with both category and type
+                                        return $query->withAllTagsOfAnyType([
+                                            $category,
+                                            $type,
+                                        ]);
+                                    },
+                                    function ($query) use ($category) {
+                                        // If $type is not present, search with category only
+                                        return $query->withAllTagsOfAnyType([
+                                            $category,
+                                        ]);
+                                    }
+                                )
+                                ->where("price", "<=", intval($amount))
+                                ->get();
+                        } else {
+                            $products = Product::with(["options", "images"]) // Eager load options and images
+                                ->when(
+                                    $type,
+                                    function ($query, $type) use ($category) {
+                                        // If $type is present, search with both category and type
+                                        return $query->withAllTagsOfAnyType([
+                                            $category,
+                                            $type,
+                                        ]);
+                                    },
+                                    function ($query) use ($category) {
+                                        // If $type is not present, search with category only
+                                        return $query->withAllTagsOfAnyType([
+                                            $category,
+                                        ]);
+                                    }
+                                )
+                                ->where("discount", ">", 0)
+                                ->get();
+                        }
+                    } else {
+                        // Eager load products with images
+                        $products = Product::with(["options", "images"]) // Eager load options and images
+                            ->when(
+                                $type,
+                                function ($query, $type) use ($category) {
+                                    // If $type is present, search with both category and type
+                                    return $query->withAllTagsOfAnyType([
+                                        $category,
+                                        $type,
+                                    ]);
+                                },
+                                function ($query) use ($category) {
+                                    // If $type is not present, search with category only
+                                    return $query->withAllTagsOfAnyType([
+                                        $category,
+                                    ]);
+                                }
+                            )
+                            ->get();
+                    }
                 }
                 break;
         }
@@ -96,9 +145,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $related_items = Product::where("type", $product->type)
-            ->whereHas("images")
-            ->withAnyTags($product->tags->pluck("name")->toArray())
+        $related_items = Product::withAllTags($product->tags)
             ->limit(6)
             ->get();
         return Inertia::render("Products/ProductShowLayout", [
@@ -182,39 +229,47 @@ class ProductController extends Controller
             "description" => $request->description,
         ]);
 
-        if ($request->colors) {
+        if ($request->colorOptionId) {
             $colorOption = ProductOption::find($request->colorOptionId);
             $colorOption->values = str_replace(",", ".", $request->colors);
             $colorOption->save();
+        } else {
+            $colorOption = ProductOption::create([
+                "product_id" => $product->id,
+                "values" => str_replace(",", ".", $request->colors),
+                "type" => "color",
+            ]);
         }
         $images = $request->file("images");
 
         $newImages = [];
 
-        foreach ($images as $index => $imageData) {
-            $fileName = time() . $index . "." . $imageData->extension();
+        if (!is_null($images)) {
+            foreach ($images as $index => $imageData) {
+                $fileName = time() . $index . "." . $imageData->extension();
 
-            $folder = "files/products/";
-            $filePath = $imageData->storeAs($folder, $fileName, "public");
+                $folder = "files/products/";
+                $filePath = $imageData->storeAs($folder, $fileName, "public");
 
-            $disk = config("filesystems.default");
-            $path = Storage::disk($disk)->url($filePath);
+                $disk = config("filesystems.default");
+                $path = Storage::disk($disk)->url($filePath);
 
-            $image = Image::create([
-                "file_name" => $imageData->getClientOriginalName(),
-                "mime_type" => $imageData->getClientMimeType(),
-                "file_path" => $path,
-                "file_size" => $imageData->getSize(),
-            ]);
+                $image = Image::create([
+                    "file_name" => $imageData->getClientOriginalName(),
+                    "mime_type" => $imageData->getClientMimeType(),
+                    "file_path" => $path,
+                    "file_size" => $imageData->getSize(),
+                ]);
 
-            $newImages[] = $image->id; // Add the image ID to the array
+                $newImages[] = $image->id; // Add the image ID to the array
+            }
+
+            $product->images()->sync($newImages);
         }
-
-        $product->images()->sync($newImages);
 
         return response()->json([
             "success" => "Your Product was updated",
-            "products" => Product::with(["options", "images"])
+            "products" => Product::with(["options", "images", "tags"])
                 ->orderBy("updated_at", "desc")
                 ->get(),
         ]);

@@ -5,6 +5,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeController;
+use App\Models\Order;
+use App\Notifications\OrderPurchasedEmail;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,5 +56,10 @@ Route::get('/success',  [StripeController::class, 'success'])->name('success');
 Route::post('/contact/email', [MailController::class, 'sendContactEmail'])->name('contact.email'); 
 Route::get('/unsubscribe', [MailController::class, 'unsubscribe'])->name('unsubscribe.email');
 Route::post('/email/subscribe', [MailController::class, 'subscribe' ])->name('subscribe.email');
+
+// Route::get('/preview-email', function () {
+//     $notification = new OrderPurchasedEmail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com'); // Pass required data
+//     return $notification->toMail(Order::with('locations','customer','user','products.images')->find(1), 'test@example.com')->render(); 
+// });
 
 require __DIR__.'/auth.php';

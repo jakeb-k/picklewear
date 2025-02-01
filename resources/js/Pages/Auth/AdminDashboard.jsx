@@ -139,7 +139,7 @@ export default function AdminDashboard(props) {
             <Head title="Admin" />
             <hr className="border-gray-400 mt-3" />
             {tab == "products" && (
-                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
+                <div className="my-10 w-[100%] min-w-[1000px] mx-auto min-h-[100vh]">
                     <ProductsTable
                         products={products}
                         setEditItem={(data) => {
@@ -150,7 +150,7 @@ export default function AdminDashboard(props) {
                 </div>
             )}
             {tab == "orders" && (
-                <div className="my-10 w-[75%] min-w-[1000px] mx-auto min-h-[100vh]">
+                <div className="my-10 w-[100%] min-w-[1000px] mx-auto min-h-[100vh]">
                     <OrdersTable orders={orders} />
                 </div>
             )}

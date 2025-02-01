@@ -33,7 +33,7 @@ export default function ProductCard(props) {
                 <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
                 <div className="flex justify-center mt-auto font-roboto_mono">
                     <p
-                        className={`text-center pb-2 mt-auto ${product.discount > 0 ? "line-through text-base" : ""}`}
+                        className={`text-center pb-2 font-roboto_mono mt-auto ${product.discount > 0 ? "line-through text-base" : ""}`}
                     >
                         $
                         {product.price.toLocaleString(0, {
@@ -43,12 +43,12 @@ export default function ProductCard(props) {
                     </p>
                     {product.discount > 0 && (
                         <p
-                            className={`text-center pb-2 mt-auto ml-4 font-bold`}
+                            className={`text-center font-roboto-mono pb-2 mt-auto ml-4 font-bold`}
                         >
                             $
                             {(
                                 product.price -
-                                product.price * product.discount
+                                product.price * (product.discount)
                             ).toLocaleString(0, {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,

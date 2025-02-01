@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,12 +13,17 @@ class OrderPurchasedEmail extends Notification
 {
     use Queueable;
 
+    protected Order $order;
+
+    protected string $email;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(Order $order, string $email)
     {
-        //
+        $this->order = $order;
+        $this->email = $email;
     }
 
     /**
@@ -26,7 +33,7 @@ class OrderPurchasedEmail extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ["mail"];
     }
 
     /**
@@ -34,10 +41,19 @@ class OrderPurchasedEmail extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return (new MailMessage())
+            ->subject("Smashing News! Your Pickleball Order (".$this->order->code.") is Confirmed!")
+            ->greeting("Hello!")
+            ->view("mail.order_purchased", [
+                "order" => $this->order,
+                "email" => $this->email,
+                "date" => Carbon::parse($this->order->created_at)->format(
+                    "d/m/Y"
+                ),
+                'delivery_range' => Carbon::parse($this->order->created_at)->addDays(intval($this->order->expected_delivery_range))->format('D jS M Y') . " - " . Carbon::parse($this->order->created_at)->addDays(intval($this->order->expected_delivery_range) + 7)->format('D jS M Y'),
+                'address' => $this->order->locations->first()->street . ", " . $this->order->locations->first()->city . ", " . $this->order->locations->first()->state . ", " . $this->order->locations->first()->postcode,
+                'products' => $this->order->products->load(['images']),
+            ]);
     }
 
     // /**
