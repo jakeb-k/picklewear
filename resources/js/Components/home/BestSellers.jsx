@@ -50,7 +50,7 @@ const BestSellers = () => {
     if (!loading) {
         return (
             <div
-                className="relative ml-[1%] border pt-2 pb-8"
+                className="ml-[1%] border pt-2 pb-8 side-shadow"
                 ref={containerRef}
                 style={{ display: "flex", overflow: "hidden", width: "100%" }}
             >
@@ -68,14 +68,14 @@ const BestSellers = () => {
                             <div
                                 key={index}
                                 onClick={() => navigateToProduct(product.id)}
-                                className="relative mr-[2%] min-h-[350px] rounded-md bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl group z-20 cursor-pointer overflow-hidden transition-all duration-150 ease-in-out"
+                                className="relative mr-[2%] min-h-[350px] rounded-md bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl group  cursor-pointer overflow-hidden transition-all duration-150 ease-in-out pb-12"
                                 style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
                             >
                                <img
                                     src={productImg.file_path}
-                                    className="rounded-md rounded-b-none w-full object-cover product-image"
+                                    className="rounded-md rounded-b-none w-full object-cover product-image pb-8"
                                 />
-                                <div className="relative h-full px-2">
+                                <div className="px-2 absolute bottom-2 text-center w-full">
                                     <p className="text-xl text-center pt-4 pb-2">{product.name}</p>
                                     <p className='text-center pb-2'>${product.price}</p>
                                 </div>

@@ -6,7 +6,7 @@ import Footer from "@/Components/Footer";
 import ShoppingCart from "@/Components/ShoppingCart";
 import SearchResults from "@/Components/home/SearchResults";
 import NavigationMenu from "@/Components/home/NavigationMenu";
-
+import { motion } from 'motion/react'; 
 export default function MainLayout({ children }) {
     const { auth } = usePage().props;
     const [promos, setPromos] = useState([
@@ -81,7 +81,11 @@ export default function MainLayout({ children }) {
         );
     };
     return (
-        <div className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col min-h-screen sm:pt-0 bg-gray-200 relative">
             <CSSTransition
                 in={isQuerying}
                 timeout={300}
@@ -109,26 +113,15 @@ export default function MainLayout({ children }) {
                             </div>
                     </div>
                     <div className="flex absolute w-fit right-0 space-x-6 mr-12">
+                        
+                        <Link href={route("products.index", "favourites")}>
+                            <i className="fa-regular fa-heart text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out"></i>
+                        </Link>
                         <Link href={"/faqs"}>
-                            <i className="fa-regular fa-circle-question text-white text-lg hover:text-black "></i>
+                            <i className="fa-regular fa-circle-question text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out "></i>
                         </Link>
                         <Link href={"/faqs#contact"}>
-                            <i className="fa-regular fa-envelope text-white text-lg hover:text-black"></i>
-                        </Link>
-                        <Link href={route("dashboard")}>
-                            <i className="fa-brands fa-instagram text-white text-lg hover:text-black"></i>
-                        </Link>
-
-                        <Link href={route("dashboard")}>
-                            <i className="fa-brands fa-x-twitter text-white text-lg hover:text-black"></i>
-                        </Link>
-
-                        <Link href={route("dashboard")}>
-                            <i className="fa-brands fa-facebook-f text-white text-lg hover:text-black"></i>
-                        </Link>
-
-                        <Link href={route("dashboard")}>
-                            <i className="fa-brands fa-tiktok text-white text-lg hover:text-black"></i>
+                            <i className="fa-regular fa-envelope text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out"></i>
                         </Link>
                     </div>
                 </div>
@@ -198,12 +191,6 @@ export default function MainLayout({ children }) {
                                 className="fa-solid fa-magnifying-glass text-2xl cursor-pointer absolute right-2 hover:text-white"
                             ></i>
                         </div>
-
-                        {!auth?.user?.is_admin && (
-                            <Link href={route("products.index", "favourites")}>
-                                <i className="fa-regular fa-heart text-white text-2xl hover:text-main"></i>
-                            </Link>
-                        )}
                         {auth?.user ? (
                             <>
                                 {auth.user.is_admin ? (
@@ -212,7 +199,7 @@ export default function MainLayout({ children }) {
                                     ""
                                 )}
                                 <Link href={route("profile.edit")}>
-                                    <i className="fa-solid fa-user text-white text-2xl hover:text-main"></i>
+                                    <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
                                 </Link>
                             </>
                         ) : (
@@ -258,6 +245,6 @@ export default function MainLayout({ children }) {
             >
                 <ShoppingCart handleCartClose={() => setCartOpen(false)} />
             </CSSTransition>
-        </div>
+        </motion.div>
     );
 }
