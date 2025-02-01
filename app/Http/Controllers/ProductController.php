@@ -96,9 +96,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $related_items = Product::where("type", $product->type)
-            ->whereHas("images")
-            ->withAnyTags($product->tags->pluck("name")->toArray())
+        $related_items = Product::withAllTags($product->tags)
             ->limit(6)
             ->get();
         return Inertia::render("Products/ProductShowLayout", [
