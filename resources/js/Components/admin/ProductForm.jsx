@@ -100,10 +100,12 @@ export default function ProductForm({
                 });
         } else {
             formData.append("_method", "PUT");
-            formData.append(
-                "colorOptionId",
-                product.options.find((option) => option.type == "color").id,
-            );
+            if(product.options.find((option) => option.type == "color")){
+                formData.append(
+                    "colorOptionId",
+                    product.options.find((option) => option.type == "color").id,
+                );
+            }
             axios
                 .post(route("product.update", product), formData, {
                     headers: {

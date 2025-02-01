@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use http\Env\Response;
 use App\Models\Order;
 use App\Models\User;
+use App\Notifications\OrderPurchasedEmail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -20,7 +22,7 @@ class StripeController extends Controller
     public function checkoutShow()
     {
         return Inertia::render("Checkout", [
-            'locations' => Auth::check() ? Auth::user()->locations : null, 
+            "locations" => Auth::check() ? Auth::user()->locations : null,
         ]);
     }
     //Need to make a Stripe Web Hook to validate processed payment before
@@ -68,7 +70,10 @@ class StripeController extends Controller
         $products = [];
         foreach ($cart as $item) {
             $description = "{$item["description"]}";
-            $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null;
+            $color =
+                array_key_exists("color", $item) && !is_null($item["color"])
+                    ? ucfirst($item["color"])
+                    : null;
             $basePriceCents = intval($item["price"] * 100); // Convert base price to cents
             $discountValue = isset($request->discount) ? $request->discount : 0; // Default discount to 0 if not set
 
@@ -103,7 +108,10 @@ class StripeController extends Controller
                 "price" => $item["price"],
                 "quantity" => $item["quantity"],
                 "size" => $item["size"],
-                "color" => $color = array_key_exists('color', $item) && !is_null($item['color']) ? ucfirst($item['color']) : null,
+                "color" => ($color =
+                    array_key_exists("color", $item) && !is_null($item["color"])
+                        ? ucfirst($item["color"])
+                        : null),
                 "options" => $item["options"] ?? [],
             ];
             $products[] = $productDetails;
@@ -140,22 +148,21 @@ class StripeController extends Controller
             "mobile" => $request->mobile,
             "address" => $request->address,
         ]);
-    
 
         $customerLocation = null;
-        if(Auth::user()){
+        if (Auth::user()) {
             $user = User::find(Auth::user()->id);
-            $currentUserLocation = $user->locations[0]; 
-            if($currentUserLocation->street != $request->street){
+            $currentUserLocation = $user->locations[0];
+            if ($currentUserLocation->street != $request->street) {
                 $customerLocation = Location::create([
                     "street" => $request->street,
                     "city" => $request->city,
                     "state" => $request->state,
                     "postcode" => $request->postcode,
                 ]);
-                $user->locations()->sync([$customerLocation->id]); 
+                $user->locations()->sync([$customerLocation->id]);
             } else {
-                $customerLocation = $currentUserLocation; 
+                $customerLocation = $currentUserLocation;
             }
         } else {
             $customerLocation = Location::create([
@@ -169,11 +176,13 @@ class StripeController extends Controller
 
         $order = Order::create([
             "status" => "Unpaid",
-            "code" => 'ORD-'. str_pad(Order::count(), 5, '0', STR_PAD_LEFT), 
+            "code" => "ORD-" . str_pad(Order::count(), 5, "0", STR_PAD_LEFT),
             "total" => $request->total,
-            'expected_delivery_range' => max(array_column($cart, 'delivery_date')), 
+            "expected_delivery_range" => max(
+                array_column($cart, "delivery_date")
+            ),
             "session_id" => $session->id,
-            'customer_id' => $newCustomer->id, 
+            "customer_id" => $newCustomer->id,
             "sent" => false,
             "user_id" => Auth::user()->id ?? null,
         ]);
@@ -204,16 +213,25 @@ class StripeController extends Controller
         try {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
             if (!$session) {
-                throw new NotFoundHttpException('Stripe session not found');
+                throw new NotFoundHttpException("Stripe session not found");
             }
             $order = Order::where("session_id", $session->id)->first();
-            $customer = Customer::where('stripe_id', $session->id)->first(); 
-            $customer->email = $session->customer_details->email; 
-            $customer->save(); 
+            $customer = Customer::where("stripe_id", $session->id)->first();
+            $customer->email = $session->customer_details->email;
+            $customer->save();
             if ($order->status == "Unpaid") {
                 $order->status = "Paid";
                 $order->save();
             }
+            Notification::route("mail", $customer->email)->notify(
+                new OrderPurchasedEmail(
+                    $order->load([
+                        "customer",
+                        "user",
+                    ]),
+                    $customer->email
+                )
+            );
             return Inertia::render("Products/OrderShowLayout", [
                 "order" => $order->load([
                     "locations",
@@ -228,7 +246,7 @@ class StripeController extends Controller
         }
     }
     /**
-     * Hard to test locally - success works, so may not be even needed. 
+     * Hard to test locally - success works, so may not be even needed.
      *
      * @return void
      */
@@ -249,11 +267,11 @@ class StripeController extends Controller
     //         );
     //     } catch (\UnexpectedValueException $e) {
     //         // Invalid payload
-    //         Log::info('UnexpectedValueException: '. $e->getMessage()); 
+    //         Log::info('UnexpectedValueException: '. $e->getMessage());
     //         return response("", 400);
     //     } catch (\Stripe\Exception\SignatureVerificationException $e) {
     //         // Invalid signature
-    //         Log::info('SignatureVerificationException'. $e->getMessage()); 
+    //         Log::info('SignatureVerificationException'. $e->getMessage());
     //         return response("", 400);
     //     }
 
@@ -261,11 +279,11 @@ class StripeController extends Controller
     //     switch ($event->type) {
     //         case "checkout.session.completed":
     //             $session = $event->data->object;
-    //             $customer = Customer::where('stripe_id', $session->id); 
-    //             $customer->email = $session->customer_details->email; 
-    //             $customer->save(); 
-    //             Log::info($session->customer_details->email); 
-    //             Log::info('checkout completed'); 
+    //             $customer = Customer::where('stripe_id', $session->id);
+    //             $customer->email = $session->customer_details->email;
+    //             $customer->save();
+    //             Log::info($session->customer_details->email);
+    //             Log::info('checkout completed');
     //             $order = Order::where("session_id", $session->id)->first();
     //             $order->status = "Paid";
     //             $order->save();
@@ -275,7 +293,7 @@ class StripeController extends Controller
     //         default:
     //             echo "Received unknown event type " . $event->type;
     //     }
-    //     Log::info('not hitting right place'); 
+    //     Log::info('not hitting right place');
     //     return response("", 400);
     // }
 }

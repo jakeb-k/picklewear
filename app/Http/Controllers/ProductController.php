@@ -180,10 +180,16 @@ class ProductController extends Controller
             "description" => $request->description,
         ]);
 
-        if ($request->colors) {
+        if ($request->colorOptionId) {
             $colorOption = ProductOption::find($request->colorOptionId);
             $colorOption->values = str_replace(",", ".", $request->colors);
             $colorOption->save();
+        } else {
+            $colorOption = ProductOption::create([
+                'product_id' => $product->id,
+                'values' => str_replace(",", ".", $request->colors),
+                'type' => 'color',
+            ]);
         }
         $images = $request->file("images");
 
