@@ -71,9 +71,9 @@ export default function NavigationMenu({ closeMenu, ...props }) {
             }}
             className="absolute bg-black/40 h-screen w-screen z-10"
         >
-            <div className="bg-[#e5e7eb] border-4 border-main rounded rounded-t-none border-t-0 px-8 py-4 w-[75%] left-[12.5%] -bottom-[230%] mx-auto flex z-20">
+            <div className="bg-[#e5e7eb] drop-shadow-2xl rounded rounded-t-none border-t-0 px-8 py-4 w-[75%] left-[12.5%] -bottom-[230%] mx-auto flex z-20">
                 <div className="w-[12.5%] mr-24">
-                    <h3 className="font-bold mb-2">Shop By Price</h3>
+                    <h3 className="font-bold text-xl mb-2">Shop By Price</h3>
                     <ul className="text-secondary text-xl space-y-4">
                         <a
                             href={
@@ -118,7 +118,7 @@ export default function NavigationMenu({ closeMenu, ...props }) {
                     </ul>
                 </div>
                 <div className="w-[40%]">
-                    <h3 className="font-bold mb-2">Shop By Category</h3>
+                    <h3 className="font-bold text-xl mb-2">Shop By Category</h3>
                     <div className="flex flex-wrap text-secondary text-xl">
                         {options &&
                             options
@@ -157,9 +157,9 @@ export default function NavigationMenu({ closeMenu, ...props }) {
                                 ))}
                     </div>
                 </div>
-                <button className="p-12 ml-auto rounded-xl text-2xl bg-secondary hover:bg-main border-main transition-all duration-150 ease-in-out text-main hover:text-secondary">
+                <a  href={route("products.index", "popular")} className="p-12 ml-auto rounded-xl h-48 my-auto font-oswald tracking-wider text-2xl bg-secondary hover:bg-main border-main transition-all duration-150 ease-in-out text-main hover:text-secondary">
                     Shop Summer Collection
-                </button>
+                </a>
             </div>
         </div>
     );

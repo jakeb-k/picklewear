@@ -25,6 +25,7 @@ export default {
             },
             boxShadow: {
                 summer: "inset 5px 5px 0 2px #000000",
+                main: "0 0 25px #FFD100"
             },
             animation: {
                 wiggle: "wiggle 0.1s ease-in-out",

@@ -72,17 +72,17 @@ export default function ProductIndexLayout(props) {
     };
 
     useEffect(() => {
-        if(sessionStorage.getItem('crumbs')){
-            sessionStorage.removeItem('crumbs');
+        if (sessionStorage.getItem("crumbs")) {
+            sessionStorage.removeItem("crumbs");
         }
         const crumbs = {
             category: category,
-            type: type, 
-        }
+            type: type,
+        };
 
-        sessionStorage.setItem('crumbs', JSON.stringify(crumbs)); 
-    }, [])
-    
+        sessionStorage.setItem("crumbs", JSON.stringify(crumbs));
+    }, []);
+
     useEffect(() => {
         if (category === "favourites") {
             setProducts(favourites);
@@ -281,7 +281,17 @@ export default function ProductIndexLayout(props) {
                                 }
                             >
                                 {" "}
-                                / {type.charAt(0).toUpperCase() + type.slice(1)}
+                                /{" "}
+                                {type.includes("sale") ? (
+                                    <>
+                                        Under{" "}
+                                        <span className="font-roboto_mono">
+                                            ${+type.slice(4)}
+                                        </span>
+                                    </>
+                                ) : (
+                                    type.charAt(0).toUpperCase() + type.slice(1)
+                                )}
                             </a>
                         )}
                     </p>
