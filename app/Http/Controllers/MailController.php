@@ -59,25 +59,25 @@ class MailController extends Controller
      */
     public function subscribe(Request $request)
     {
-        $request->validate(
-            [
-                "email" => "required|email|unique:subscriber_emails",
-            ],
-            [
-                "email.unique" => "This email is already taken",
-                "email.required" => "An email is required",
-            ]
-        );
+        $request->validate([
+            "email" => "required|email|unique:subscriber_emails",
+        ], [
+            "email.unique" => "This email is already taken",
+            "email.required" => "An email is required",
+        ]);
 
         SubscriberEmail::create([
             "email" => $request->email,
         ]);
-        Notification::route("mail", $request->email)->notify(
-            new NewSubscriberEmail($request->email)
-        );
+
+        $html = view("mail.newsub", ['email' => $request->email])->render();
+        $subject = "Welcome to Picklewear Mail List";
+
+        $result = $this->mailer->sendMail($request->email, $subject, $html);
 
         return response()->json([
-            "success" => "This didn't fail",
+            "success" => $result === true,
+            "error" => $result === true ? null : $result,
         ]);
     }
 

@@ -10,6 +10,9 @@ use http\Env\Response;
 use App\Models\Order;
 use App\Models\User;
 use App\Notifications\OrderPurchasedEmail;
+use App\Services\ZohoMailerService;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
@@ -223,20 +226,37 @@ class StripeController extends Controller
                 $order->status = "Paid";
                 $order->save();
             }
-            Notification::route("mail", $customer->email)->notify(
-                new OrderPurchasedEmail(
-                    $order->load([
-                        "customer",
-                        "user",
-                    ]),
-                    $customer->email
-                )
-            );
+            $this->sendOrderConfirmedEmail($order, $customer); 
             return to_route("orders.show", ['order' => $order->id, 'session_id' => $sessionId]);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             throw new NotFoundHttpException();
         }
+    }
+
+    public function sendOrderConfirmedEmail(Order $order, Customer $customer)
+    {
+        $order->load(["customer", "user", "locations", "products.images"]);
+
+        $viewData = [
+            "order" => $order,
+            "email" => $customer->email,
+            "date" => Carbon::parse($order->created_at)->format("d/m/Y"),
+            "delivery_range" => Carbon::parse($order->created_at)->addDays((int) $order->expected_delivery_range)->format('D jS M Y') .
+                                " - " .
+                                Carbon::parse($order->created_at)->addDays((int) $order->expected_delivery_range + 7)->format('D jS M Y'),
+            "address" => $order->locations->first()->street . ", " .
+                        $order->locations->first()->city . ", " .
+                        $order->locations->first()->state . ", " .
+                        $order->locations->first()->postcode,
+            "products" => $order->products,
+        ];
+
+        $html = view("mail.order_purchased", $viewData)->render();
+        $subject = "Smashing News! Your Pickleball Order ({$order->code}) is Confirmed!";
+
+        $mailer = new ZohoMailerService(); 
+        $mailer->sendMail($customer->email, $subject, $html);
     }
     
     /**
