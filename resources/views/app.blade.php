@@ -12,7 +12,7 @@
         <script src="https://kit.fontawesome.com/0abaa836ef.js" crossorigin="anonymous"></script>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}&libraries=places"></script>
-
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
         <!-- Scripts -->
         @routes

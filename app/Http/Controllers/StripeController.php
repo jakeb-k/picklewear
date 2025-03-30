@@ -28,8 +28,13 @@ class StripeController extends Controller
             "locations" => Auth::check() ? Auth::user()->locations : null,
         ]);
     }
-    //Need to make a Stripe Web Hook to validate processed payment before
-    //creating new order.
+
+    /**
+     * Handle the checkout process from stripe
+     *
+     * @param Request $request
+     * @return void
+     */
     public function checkout(Request $request)
     {
         // Validate incoming request
@@ -208,6 +213,12 @@ class StripeController extends Controller
         return response()->json(["url" => $session->url]);
     }
 
+    /**
+     * Handle the success response from stripe checkout
+     *
+     * @param Request $request
+     * @return void
+     */
     public function success(Request $request)
     {
         \Stripe\Stripe::setApiKey(config("stripe.sk"));
@@ -234,6 +245,13 @@ class StripeController extends Controller
         }
     }
 
+    /**
+     * Send an order confirmation email to the customer. 
+     *
+     * @param Order $order
+     * @param Customer $customer
+     * @return void
+     */
     public function sendOrderConfirmedEmail(Order $order, Customer $customer)
     {
         $order->load(["customer", "user", "locations", "products.images"]);

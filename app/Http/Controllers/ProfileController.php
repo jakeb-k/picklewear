@@ -93,6 +93,11 @@ class ProfileController extends Controller
         return Redirect::to("/");
     }
 
+    /**
+     * Load the admin dashboard.
+     *
+     * @return void
+     */
     public function admin()
     {
         return Inertia::render("Auth/AdminDashboard", [
