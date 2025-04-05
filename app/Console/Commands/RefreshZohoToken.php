@@ -40,7 +40,7 @@ class RefreshZohoToken extends Command
         DB::table('zoho_oauth_tokens')->insert([
             'access_token' => $data['access_token'],
             'refresh_token' => $record->refresh_token, // stays the same
-            'expires_at' => Carbon::now()->addSeconds($data['expires_in']),
+            'expires_in' => Carbon::now()->addSeconds($data['expires_in']),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

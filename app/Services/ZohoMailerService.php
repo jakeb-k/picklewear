@@ -13,7 +13,7 @@ class ZohoMailerService
 
     public function __construct()
     {
-        $this->token = DB::table('zoho_tokens')->latest()->value('access_token');
+        $this->token = DB::table('zoho_oauth_tokens')->latest()->value('access_token');
         $this->accountId = config('services.zoho.account_id');
     }
 
@@ -26,8 +26,9 @@ class ZohoMailerService
             'toAddress'   => $to,
             'subject'     => $subject,
             'content'     => $html,
-            'contentType' => 'html',
+            'askReceipt'  => 'no',
         ];
+        //Log::info(json_encode($payload));
 
         $response = Http::withToken($this->token)
             ->post($url, $payload);
