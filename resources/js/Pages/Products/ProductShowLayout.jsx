@@ -27,6 +27,7 @@ export default function ProductShowLayout(props) {
     );
     const { addProduct } = useCartStore();
 
+    console.log(product); 
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
@@ -153,12 +154,12 @@ export default function ProductShowLayout(props) {
                 <div className="w-[45%] ml-auto flex flex-col justify-start">
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
-                        {product.discount && (
+                        {product.discount > 0 && (
                             <span className="text-lg line-through">
                                 ${product.price.toFixed(2)}
                             </span>
                         )}
-                        <span className={`text-2xl font-bold ${product.discount ? 'ml-12' : ''}`}>
+                        <span className={`text-2xl font-bold ${product.discount ? 'ml-6' : ''}`}>
                             $
                             {product.discount
                                 ? (
@@ -229,6 +230,7 @@ export default function ProductShowLayout(props) {
                         style={{ height: "auto" }}
                         className="h-full resize-none p-0 py-2 mb-6 overflow-visible w-full bg-transparent cursor-default pointer-events-none border-none text-black auto-resize"
                     ></textarea>
+                    {!product.available && (<p className='italic font-bold text-lg'>Currently out of stock — we know, it's a real dill-emma. Sorry for the heartbreak, we'll restock soon!</p>)}
                     <p className="italic my-4">
                         <b>
                             Will be delivered between{" "}
@@ -255,7 +257,7 @@ export default function ProductShowLayout(props) {
                                         setQuantity(quantity - 1);
                                     }
                                 }}
-                                className="rounded-l-xl border-2 border-gray-700 p-1 px-2 text-2xl hover:bg-gray-700 hover:border-main w-10 hover:border-2 duration-150 transition-color ease-in-out hover:text-main"
+                                className={`rounded-l-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? 'cursor-not-allowed' : ' hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2'}`}
                             >
                                 -
                             </button>
@@ -267,14 +269,15 @@ export default function ProductShowLayout(props) {
                                 onClick={() => {
                                     setQuantity(quantity + 1);
                                 }}
-                                className="rounded-r-xl border-2 border-gray-700 p-1 px-2 text-2xl hover:bg-gray-700 hover:border-main w-10 hover:border-2 duration-150 transition-color ease-in-out hover:text-main"
+                                className={`rounded-r-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? 'cursor-not-allowed' : ' hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2'}`}
                             >
                                 +
                             </button>
                         </div>
                         <button
+                            disabled={!product.available}
                             onClick={() => addToCart(product)}
-                            className="hover:bg-secondary hover:text-main hover:border-2 hover:border-main transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 border-2 border-black bg-main rounded-lg text-nowrap"
+                            className={`transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 rounded-lg text-nowrap ${!product.available ? 'bg-gray-400 border border-black cursor-not-allowed' : 'bg-main hover:bg-secondary hover:text-main hover:border-main border-2 border-black  hover:border-2 '}`}
                         >
                             Add To Cart
                         </button>
