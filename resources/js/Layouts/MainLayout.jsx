@@ -108,7 +108,7 @@ export default function MainLayout({ children }) {
                                 className=" text-nowrap promo-message  animate-scroll space-x-[300px] relative flex flex-row justify-start items-center "
                             >
                                 {promos.map((promo, index) => (
-                                    <p className="font-bold text-lg">{promo}</p>
+                                    <p key={index} className="font-bold text-lg">{promo}</p>
                                 ))}
                             </div>
                     </div>

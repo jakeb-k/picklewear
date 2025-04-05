@@ -24,6 +24,7 @@ class OrderController extends Controller
         
         \Stripe\Stripe::setApiKey(config("stripe.sk"));
         $sessionId = $request->query("session_id");
+
         if ($sessionId) {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
             if (!$session) {
@@ -47,7 +48,7 @@ class OrderController extends Controller
                     "products.images",
                 ]),
             ]);
-        } elseif(Auth::user()->role === 'admin') {
+        } elseif(Auth::user()->hasRole("admin")) {
             return Inertia::render("Products/OrderShowLayout", [
                 "order" => $order->load([
                     "locations",

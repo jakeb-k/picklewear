@@ -7,6 +7,7 @@ import tinycolor from "tinycolor2";
 import { CSSTransition } from "react-transition-group";
 import discountCodes from "@/utils/discountCodes";
 import AddressSearch from "@/Components/common/AddressSearch";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
 
 export default function Checkout(props) {
     const [errors, setErrors] = useState({});
@@ -21,10 +22,10 @@ export default function Checkout(props) {
         first_name: user?.first_name ?? "",
         last_name: user?.last_name ?? "",
         mobile: user?.mobile ?? "",
-        street: props.locations ? props.locations[0].street : "",
-        state: props.locations ? props.locations[0].state : "",
-        city: props.locations ? props.locations[0].city : "",
-        postcode: props.locations ? props.locations[0].postcode : "",
+        street: props.locations ? props.locations[0]?.street : "",
+        state: props.locations ? props.locations[0]?.state : "",
+        city: props.locations ? props.locations[0]?.city : "",
+        postcode: props.locations ? props.locations[0]?.postcode : "",
         discount: 0,
         discountAmount: 0,
     });
@@ -57,18 +58,15 @@ export default function Checkout(props) {
 
     useEffect(() => {
         setCartItems(products);
-        if (props.locations) {
-            setInitialLocation(
-                props.locations[0]?.street +
-                    " " +
-                    props.locations[0]?.city +
-                    " " +
-                    props.locations[0]?.state +
-                    " " +
-                    props.locations[0]?.postcode +
-                    ", " +
-                    "Australia",
-            );
+        const loc = props.locations?.[0];
+        if (loc) {
+            const parts = [
+                loc.street,
+                loc.city,
+                loc.state,
+                loc.postcode,
+            ].filter(Boolean);
+            setInitialLocation(parts.join(" ") + ", Australia");
         }
         setLoading(false);
     }, []);
@@ -123,6 +121,7 @@ export default function Checkout(props) {
     };
 
     const handleDiscount = (discountData) => {
+        console.log(discountData);
         const total = cartItems.reduce(
             (total, item) => total + item.price * item.quantity * discountData,
             0,
@@ -136,11 +135,18 @@ export default function Checkout(props) {
 
     const handleAddressSelect = (addressData) => {
         const { suggestion, postalCode } = addressData;
+        const terms = suggestion.terms;
+    
+        const street = terms.find((t, i) => i > 0 && isNaN(t.value))?.value || "";
+        const streetSecond = terms.find((t, i) => i > 1 && isNaN(t.value) && t.value !== street)?.value || "";
+        const city = terms.at(-3)?.value || "";
+        const state = terms.at(-2)?.value || "";
+    
         setData({
             ...data,
-            street: suggestion.terms[0].value + " " + suggestion.terms[1].value,
-            city: suggestion.terms[2].value,
-            state: suggestion.terms[3].value,
+            street: `${street} ${streetSecond}`.trim(),
+            city,
+            state,
             postcode: postalCode,
         });
     };
@@ -152,7 +158,7 @@ export default function Checkout(props) {
 
         setTimeout(() => {
             const discount = discountCodes.find((item) => item.name === code);
-
+            console.log(discount);
             if (discount) {
                 setPromoSuccess(true);
                 handleDiscount(discount.value);
@@ -172,7 +178,7 @@ export default function Checkout(props) {
             <div className="w-[60%]">
                 <div className="bg-white p-8 rounded-lg drop-shadow-lg ">
                     <p className="text-xl mb-2">Contact Information</p>
-                    <div className="w-full flex xl:flex-row flex-col xl:space-x-4 xl:space-y-0 space-y-4 mt-2">
+                    <div className="w-full flex items-center flex-wrap xl:flex-row flex-col xl:space-y-0 mt-2">
                         <input
                             name="first_name"
                             id="first_name"
@@ -181,7 +187,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.first_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-2 border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 mr-4 h-fit focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-2 border-red-500" : ""}`}
                         />
                         <input
                             name="last_name"
@@ -191,9 +197,9 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.last_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-2 border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 h-fit mr-4 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-2 border-red-500" : ""}`}
                         />
-                        <div className="relative">
+                        <div className="relative h-fit xl:pt-0 pt-4">
                             <input
                                 name="mobile"
                                 id="mobile"
@@ -202,13 +208,14 @@ export default function Checkout(props) {
                                 required
                                 onChange={handleOnChange}
                                 value={data.mobile}
-                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${errors?.mobile ? "border-2 border-red-500" : ""}`}
+                                className={`rounded-lg py-1 px-4 pl-12 bg-transparent hover:bg-gray-200/50 mr-4 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out xl:w-auto w-full ${errors?.mobile ? "border-2 border-red-500" : ""}`}
                             />
-                            <p className="absolute left-0 top-0 flex flex-col justify-center px-2 h-full border-r border-gray-500">
-                                +61{" "}
+                            <p className="absolute bottom-0 left-0 h-fit flex flex-col justify-center px-2 py-1 border-r border-gray-500">
+                                +61
                             </p>
                         </div>
                     </div>
+
                     <p className="text-xl mt-8 mb-2">Address</p>
                     <div className="relative">
                         <AddressSearch
@@ -236,7 +243,8 @@ export default function Checkout(props) {
                                             <img
                                                 className="shadow-lg rounded-xl w-[22.5%] h-full border-2 border-main"
                                                 src={
-                                                    item.image?.file_path ?? ""
+                                                    item.image?.file_path ??
+                                                    TestImage
                                                 }
                                             />
                                             <div className="w-[57.5%] space-y-6">
@@ -339,13 +347,16 @@ export default function Checkout(props) {
                 <div className="flex justify-between mt-8">
                     <div>
                         Promo Code{" "}
+                        {data.discount
+                            ? "(" + data.discount * 100 + "%" + ") "
+                            : ""}
                         <i
                             onClick={() => setExpanded(!expanded)}
                             className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded ? "rotate-180" : "rotate-0"}`}
                         ></i>
                     </div>
                     <p className="font-bold font-roboto_mono text-lg">
-                        ${" "}
+                        - ${""}
                         {data.discountAmount?.toLocaleString(0, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,

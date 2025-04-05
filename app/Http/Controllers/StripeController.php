@@ -27,7 +27,7 @@ class StripeController extends Controller
     public function checkoutShow()
     {
         return Inertia::render("Checkout", [
-            "locations" => Auth::check() ? Auth::user()->locations : null,
+            "locations" => Auth::check() ? Auth::user()->locations : [],
         ]);
     }
 

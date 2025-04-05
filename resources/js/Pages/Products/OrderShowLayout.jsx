@@ -2,6 +2,7 @@ import { Head, usePage } from "@inertiajs/react";
 import moment from "moment";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp"; 
 
 export default function OrderShowLayout(props) {
     const [loading, setLoading] = useState(false);
@@ -96,7 +97,7 @@ export default function OrderShowLayout(props) {
                                         <img
                                             className="shadow-lg rounded-xl max-w-[150px] h-full border-2 border-main"
                                             src={
-                                                item.images[0]?.file_path ?? ""
+                                                item.images[0]?.file_path ?? TestImage
                                             }
                                         />
                                         <div className="w-[57.5%] space-y-6">

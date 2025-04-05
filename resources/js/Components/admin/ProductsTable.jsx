@@ -6,8 +6,6 @@ import Swal from "sweetalert2";
 
 export default function ProductsTable({ setEditItem, ...props }) {
     const [success, setSuccess] = useState(null);
-    const [search, setSearch] = useState("");
-    const [isSearching, setIsSearching] = useState(false);
     const [products, setProducts] = useState(props.products);
 
     const [data, setData] = useState(
@@ -43,7 +41,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
 
     useEffect(() => {
         setData(
-            props.products.map((product) => {
+            products.map((product) => {
                 const id = product.id;
                 const image =
                     product.images.length > 0 ? product.images[0] : null;
@@ -74,11 +72,12 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 };
             }),
         );
-    }, [props.products]);
+    }, [products]);
 
-    function setAvailability(product) {
+   const setAvailability = (id) => {
+    console.log('bang');
         axios
-            .post(route("product.available", product))
+            .post(route("product.available", id))
             .then((response) => {
                 setProducts(response.data.products);
                 setSuccess("The availability of your product was updated");
@@ -172,37 +171,37 @@ export default function ProductsTable({ setEditItem, ...props }) {
     const columns = [
         {
             name: "Image",
-            cell: (row) => <img src={row.image?.file_path ?? TestImage} />,
-            width: "25%",
+            cell: (row) => <img className='h-32' src={row.image?.file_path ?? TestImage} />,
+            width: "15%",
         },
         {
             name: "Code",
             selector: (row) => row.code,
-            cell: (row) => <p>#{row.code}</p>,
+            cell: (row) => <p className='text-lg'>#{row.code}</p>,
             sortable: true,
             width: "7.5%",
         },
         {
             name: "Name",
             selector: (row) => row.name,
-            cell: (row) => <p>{row.name}</p>,
+            cell: (row) => <p className='text-lg'>{row.name}</p>,
             sortable: true,
-            width: "15%",
+            width: "17.5%",
         },
         {
             name: "Price",
             selector: (row) => row.price,
             sortable: true,
-            width: "7.5%",
+            width: "10%",
             cell: (row) => (
-                <p className="text-right font-roboto_mono">${row.price?.toFixed(2)}</p>
+                <p className="text-right font-roboto_mono text-lg">${row.price?.toFixed(2)}</p>
             ),
         },
         {
             name: "Type",
             selector: (row) => row.type,
             sortable: true,
-            width: "7.5%",
+            width: "10%",
         },
         {
             name: "Tags",
@@ -228,7 +227,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
                     })}
                 </p>
             ),
-            width: "10%",
+            width: "12.5%",
         },
         {
             name: "Actions",
@@ -262,7 +261,7 @@ export default function ProductsTable({ setEditItem, ...props }) {
     ];
 
     return (
-        <div className="rounded-lg shadow-lg">
+        <div className="rounded-lg shadow-lg bg-white">
             <DataTable
                 columns={columns}
                 data={data}

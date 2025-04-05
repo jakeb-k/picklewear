@@ -305,10 +305,15 @@ class ProductController extends Controller
     public function search(string $query)
     {
         $products = Product::where("name", "like", "%" . $query . "%")
-            ->orWhere("type", "like", "%" . $query . "%")
-            ->get();
+        ->orWhere("type", "like", "%" . $query . "%")
+        ->orWhereHas("tags", function ($q) use ($query) {
+            $q->where("name->en", "like", $query . "%");
+        })
+        ->with("images", 'tags')
+        ->get();
+    
         return response()->json([
-            "products" => $products->load(["images"]),
+            "products" => $products,
             "query" => $query,
         ]);
     }
@@ -341,6 +346,9 @@ class ProductController extends Controller
     {
         $product->delete();
 
+        return to_route('admin.dashboard')->with([
+            "success" => "Product deleted successfully",
+        ]);
         return response()->json([
             "products" => Product::with(["options", "images"])
                 ->orderBy("updated_at", "desc")

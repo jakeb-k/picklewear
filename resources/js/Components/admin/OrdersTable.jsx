@@ -32,7 +32,7 @@ export default function OrdersTable(props) {
     );
 
     useEffect(() => {
-        setData(props.orders.map((order) => {
+        setData(orders.map((order) => {
             const code = order.code; // Format order code
             const status = order.status;
             const userName =
@@ -56,7 +56,7 @@ export default function OrdersTable(props) {
                 createdAt,
             };
         }))
-    },[props.orders])
+    },[orders])
 
     const customStyles = {
         table: {
@@ -112,34 +112,33 @@ export default function OrdersTable(props) {
             name: "Code",
             selector: (row) => row.code,
             sortable: true,
-            width: "100px",
+            width: "8.3%",
         },
         {
             name: "Status",
             selector: (row) => row.status,
             sortable: true,
-            width: "100px",
+            width: "8.3%",
         },
         {
             name: "Name",
             selector: (row) => row.userName,
             sortable: true,
-            width: "175px",
+            width: "14.6%",
         },
         {
             name: "Mobile",
             selector: (row) => "0" + row.mobile,
             sortable: true,
-            width: "200px",
+            width: "16.6%",
         },
         {
             name: "Location",
             selector: (row) => row.location ?? "",
             sortable: true,
             cell: (row) => <p className="">{row.location ?? "N/A"}</p>,
-            width: "300px",
+            width: "25%",
         },
-
         {
             name: "Created At",
             selector: (row) => row.createdAt,
@@ -149,14 +148,14 @@ export default function OrdersTable(props) {
                     {moment(row.createdAt).format("DD/MM/YY")}
                 </p>
             ),
-            width: "125px",
+            width: "10.4%",
         },
         {
             name: "Total",
             selector: (row) => row.total,
             sortable: true,
             cell: (row) => <p className="text-right">${row.total}</p>,
-            width: "100px",
+            width: "8.3%",
         },
         {
             name: "Actions",
@@ -175,10 +174,10 @@ export default function OrdersTable(props) {
                     ></i>
                 </div>
             ),
-            width: "100px",
+            width: "8.3%",
         },
     ];
-
+    
     return (
         <div className="rounded-lg shadow-lg">
             <DataTable
