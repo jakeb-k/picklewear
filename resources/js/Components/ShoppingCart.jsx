@@ -1,6 +1,6 @@
 import useCartStore from "@/Stores/useCartStore";
 import { usePage } from "@inertiajs/react";
-import axios from "axios";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp"; 
 import { useEffect, useState, forwardRef } from "react";
 import tinycolor from "tinycolor2";
 
@@ -74,7 +74,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                                     <div className=" py-4 flex justify-between items-center">
                                         <img
                                             className="shadow-lg rounded-xl w-[37.5%] h-full border-2 border-main"
-                                            src={item.image?.file_path ?? ''}
+                                            src={item.image?.file_path ?? TestImage}
                                         />
                                         <div className="w-[57.5%] space-y-6">
                                             <p>{item.name}</p>

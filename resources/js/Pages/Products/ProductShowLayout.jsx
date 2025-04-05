@@ -6,6 +6,7 @@ import useCartStore from "@/Stores/useCartStore";
 import { v4 as uuidv4 } from "uuid";
 import RelatedItems from "@/Components/product/RelatedProducts";
 import { CSSTransition } from "react-transition-group";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
 
 export default function ProductShowLayout(props) {
     const product = props.product;
@@ -131,7 +132,7 @@ export default function ProductShowLayout(props) {
                                 <img
                                     onClick={() => setDisplayImage(image)}
                                     key={image.id}
-                                    src={image.file_path}
+                                    src={image.file_path ?? TestImage}
                                     className={`w-full max-h-[250px] rounded-md cursor-pointer ${
                                         displayImage.id != image.id
                                             ? "opacity-70 hover:opacity-100"
@@ -143,7 +144,7 @@ export default function ProductShowLayout(props) {
                     </div>
                     <div className="w-[75%]">
                         <img
-                            src={displayImage.file_path}
+                            src={displayImage?.file_path ?? TestImage}
                             className="w-full max-h-[450px] rounded-md object-contain"
                         />
                     </div>

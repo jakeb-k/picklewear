@@ -7,6 +7,7 @@ import tinycolor from "tinycolor2";
 import { CSSTransition } from "react-transition-group";
 import discountCodes from "@/utils/discountCodes";
 import AddressSearch from "@/Components/common/AddressSearch";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
 
 export default function Checkout(props) {
     const [errors, setErrors] = useState({});
@@ -236,7 +237,7 @@ export default function Checkout(props) {
                                             <img
                                                 className="shadow-lg rounded-xl w-[22.5%] h-full border-2 border-main"
                                                 src={
-                                                    item.image?.file_path ?? ""
+                                                    item.image?.file_path ?? TestImage
                                                 }
                                             />
                                             <div className="w-[57.5%] space-y-6">

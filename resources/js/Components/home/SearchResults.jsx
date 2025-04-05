@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp"; 
 
 export default function SearchResults({ query }) {
     const [message, setMessage] = useState("...loading");
@@ -41,7 +42,7 @@ export default function SearchResults({ query }) {
                {products.map((product) => (
                    <a href={route('products.show', product.id)} className="flex flex-col relative w-[30%] mr-[2.5%] mb-4 p-4 min-h-[250px] text-center rounded-md bg-white hover:bg-gray-200/25 group z-20 cursor-pointer overflow-hidden transition-all duration-300"> {/* Adjusted width and added bottom margin */}
                    <div className="absolute inset-0 bg-gray-200/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
-                       <img className='w-full' src={product.images[0]?.file_path} />
+                       <img className='w-full' src={product.images[0]?.file_path ?? TestImage } />
                        <p className='font-bold z-30'>{product.name}</p>
                        <p className='mt-auto z-30 font-roboto_mono'>${product.price}</p>
                    </a>
