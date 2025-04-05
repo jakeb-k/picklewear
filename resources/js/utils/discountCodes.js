@@ -1,6 +1,6 @@
 const discountCodes = [
-    { name: 'PICKLELISCIOUS', amount: 10 },
-    { name: 'REALDILL', amount: 5},
+    { name: 'Pickleliscious', value: .10 },
+    { name: 'REALDILL', value: .05},
   ];
   
   export default discountCodes;

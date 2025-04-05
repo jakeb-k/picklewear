@@ -124,6 +124,7 @@ export default function Checkout(props) {
     };
 
     const handleDiscount = (discountData) => {
+        console.log(discountData);
         const total = cartItems.reduce(
             (total, item) => total + item.price * item.quantity * discountData,
             0,
@@ -153,7 +154,7 @@ export default function Checkout(props) {
 
         setTimeout(() => {
             const discount = discountCodes.find((item) => item.name === code);
-
+            console.log(discount);
             if (discount) {
                 setPromoSuccess(true);
                 handleDiscount(discount.value);
@@ -237,7 +238,8 @@ export default function Checkout(props) {
                                             <img
                                                 className="shadow-lg rounded-xl w-[22.5%] h-full border-2 border-main"
                                                 src={
-                                                    item.image?.file_path ?? TestImage
+                                                    item.image?.file_path ??
+                                                    TestImage
                                                 }
                                             />
                                             <div className="w-[57.5%] space-y-6">
@@ -339,14 +341,14 @@ export default function Checkout(props) {
                 </div>
                 <div className="flex justify-between mt-8">
                     <div>
-                        Promo Code{" "}
+                        Promo Code{" "}{ data.discount ? '('+data.discount * 100 + '%'+') ' : ''}
                         <i
                             onClick={() => setExpanded(!expanded)}
                             className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded ? "rotate-180" : "rotate-0"}`}
                         ></i>
                     </div>
                     <p className="font-bold font-roboto_mono text-lg">
-                        ${" "}
+                        - ${""}
                         {data.discountAmount?.toLocaleString(0, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
