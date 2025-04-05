@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendContactEmail;
 use App\Models\SubscriberEmail;
 use App\Models\User;
 use App\Notifications\NewSubscriberEmail;
@@ -40,14 +41,16 @@ class MailController extends Controller
     
         $data = $request->only(["first_name", "last_name", "email", "message"]);
     
-        $htmlBody = view("mail.contact", ['data' => $data])->render();
+        // $htmlBody = view("mail.contact", ['data' => $data])->render();
     
-        $subject = "You have a new Enquiry";
-        $result = $this->mailer->sendMail('admin@picklewear.com.au', $subject, $htmlBody, null);
+        // $subject = "You have a new Enquiry";
+        // $result = $this->mailer->sendMail('admin@picklewear.com.au', $subject, $htmlBody, null);
     
+        SendContactEmail::dispatch($data);
+
         return response()->json([
-            "success" => $result === true,
-            "error" => $result === true ? null : $result,
+            "success" => true,
+            "error" => false,
         ]);
     }
 
