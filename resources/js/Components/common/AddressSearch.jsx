@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 
-const AddressSearch = ({ onAddressSelect, errors, initialLocation = undefined }) => {
+const AddressSearch = ({ onAddressSelect, errors, initialLocation = '' }) => {
     const {
         ready,
         value,
