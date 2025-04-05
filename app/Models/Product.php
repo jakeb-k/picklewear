@@ -38,5 +38,13 @@ class Product extends Model
         return $this->hasMany(ProductOption::class, 'product_id');
     }
 
+    /**
+     * A product can have many tags
+     */
+    public function tags()
+    {
+        return $this->morphToMany(\Spatie\Tags\Tag::class, 'taggable');
+    }
+
     
 }

@@ -341,6 +341,9 @@ class ProductController extends Controller
     {
         $product->delete();
 
+        return to_route('admin.dashboard')->with([
+            "success" => "Product deleted successfully",
+        ]);
         return response()->json([
             "products" => Product::with(["options", "images"])
                 ->orderBy("updated_at", "desc")
