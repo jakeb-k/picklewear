@@ -35,7 +35,6 @@ export default function SearchResults({ query }) {
         }, 2500);
     }, [products]);
 
-    console.log(products);
     return (
         <div
             id="show-scroll"
@@ -62,6 +61,13 @@ export default function SearchResults({ query }) {
                                 <p className="z-30 font-roboto_mono">
                                     ${product.price.toFixed(2)}
                                 </p>
+                            </div>
+                            <div className='flex flex-row space-x-4 z-30 mt-4'>
+                                {product.tags.map((tag) => 
+                                    <div className='rounded-2xl bg-gray-300 text-black font-bold  w-fit px-2'>
+                                        {tag.name.en}
+                                    </div>
+                                )}
                             </div>
                         </a>
                     ))}

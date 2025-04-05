@@ -305,10 +305,15 @@ class ProductController extends Controller
     public function search(string $query)
     {
         $products = Product::where("name", "like", "%" . $query . "%")
-            ->orWhere("type", "like", "%" . $query . "%")
-            ->get();
+        ->orWhere("type", "like", "%" . $query . "%")
+        ->orWhereHas("tags", function ($q) use ($query) {
+            $q->where("name->en", "like", $query . "%");
+        })
+        ->with("images", 'tags')
+        ->get();
+    
         return response()->json([
-            "products" => $products->load(["images"]),
+            "products" => $products,
             "query" => $query,
         ]);
     }
