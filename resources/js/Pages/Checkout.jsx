@@ -135,11 +135,18 @@ export default function Checkout(props) {
 
     const handleAddressSelect = (addressData) => {
         const { suggestion, postalCode } = addressData;
+        const terms = suggestion.terms;
+    
+        const street = terms.find((t, i) => i > 0 && isNaN(t.value))?.value || "";
+        const streetSecond = terms.find((t, i) => i > 1 && isNaN(t.value) && t.value !== street)?.value || "";
+        const city = terms.at(-3)?.value || "";
+        const state = terms.at(-2)?.value || "";
+    
         setData({
             ...data,
-            street: suggestion.terms[0].value + " " + suggestion.terms[1].value,
-            city: suggestion.terms[2].value,
-            state: suggestion.terms[3].value,
+            street: `${street} ${streetSecond}`.trim(),
+            city,
+            state,
             postcode: postalCode,
         });
     };
