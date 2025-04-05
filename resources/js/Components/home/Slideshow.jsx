@@ -59,7 +59,7 @@ const Slideshow = () => {
                 Play like a Pro
             </p>
             <a  href={route("products.index", "popular")} className="hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic text-3xl font-bold absolute bottom-4 right-4 px-4 py-2 bg-main rounded-lg ">
-                Browse our Summer Collection
+                Browse our Most Popular Items
             </a>
         </div>
     );

@@ -88,7 +88,7 @@ export default function ProductShowLayout(props) {
                 <Alert />
             </CSSTransition>
             {crumbs && (
-                <div className="flex mt-12 justify-between items-center">
+                <div className="flex mt-12 justify-between items-center mb-4">
                     <p className="font-oswald text-3xl">
                         <a
                             className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
