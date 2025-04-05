@@ -37,6 +37,11 @@ return [
     'google_maps' => [
         'api_key' => env('GOOGLE_MAPS_KEY'),
     ],
+    'zoho' => [
+        'client_id' => env('ZOHO_CLIENT_ID'),
+        'client_secret' => env('ZOHO_CLIENT_SECRET'),
+        'account_id' => env('ZOHO_ACCOUNT_ID'),
+    ]
 
 
 ];
