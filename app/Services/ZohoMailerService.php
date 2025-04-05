@@ -2,44 +2,44 @@
 
 namespace App\Services;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ZohoMailerService
 {
-    protected PHPMailer $mail;
+    protected string $token;
+    protected string $accountId;
 
     public function __construct()
     {
-        $this->mail = new PHPMailer(true);
-        $this->configure();
+        $this->token = DB::table('zoho_tokens')->latest()->value('access_token');
+        $this->accountId = config('services.zoho.account_id');
     }
 
-    protected function configure(): void
+    public function sendMail(string $to, string $subject, string $html): bool|string
     {
-        $this->mail->isSMTP();
-        $this->mail->Host       = 'smtp.zoho.com.au';
-        $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = 'admin@picklewear.com.au';
-        $this->mail->Password   = env("ZOHO_MAIL_PASSWORD");
-        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $this->mail->Port       = 465;
-        $this->mail->isHTML(true);
-        $this->mail->setFrom('admin@picklewear.com.au', 'Admin');
-    }
+        $url = "https://mail.zoho.com.au/api/accounts/{$this->accountId}/messages";
 
-    public function sendMail(string $to, string $subject, string $body, ?string $altBody = null): bool|string
-    {
-        try {
-            $this->mail->clearAllRecipients();
-            $this->mail->addAddress($to);
-            $this->mail->Subject = $subject;
-            $this->mail->Body    = $body;
-            $this->mail->AltBody = $altBody ?? strip_tags($body);
-            $this->mail->send();
-            return true;
-        } catch (Exception $e) {
-            return $this->mail->ErrorInfo;
+        $payload = [
+            'fromAddress' => 'admin@picklewear.com.au',
+            'toAddress'   => $to,
+            'subject'     => $subject,
+            'content'     => $html,
+            'contentType' => 'html',
+        ];
+
+        $response = Http::withToken($this->token)
+            ->post($url, $payload);
+
+        if ($response->failed()) {
+            Log::error('Zoho API sendMail failed', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+            return $response->body();
         }
+
+        return true;
     }
 }
