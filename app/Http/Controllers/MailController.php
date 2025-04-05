@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendContactEmail;
+use App\Jobs\SendSubscribersWelcomeEmail;
 use App\Models\SubscriberEmail;
 use App\Models\User;
 use App\Notifications\NewSubscriberEmail;
@@ -73,14 +74,15 @@ class MailController extends Controller
             "email" => $request->email,
         ]);
 
-        $html = view("mail.newsub", ['email' => $request->email])->render();
-        $subject = "Welcome to Picklewear Mail List";
+        // $html = view("mail.newsub", ['email' => $request->email])->render();
+        // $subject = "Welcome to Picklewear Mail List";
 
-        $result = $this->mailer->sendMail($request->email, $subject, $html);
+        // $result = $this->mailer->sendMail($request->email, $subject, $html);
+        SendSubscribersWelcomeEmail::dispatch($request->email);
 
         return response()->json([
-            "success" => $result === true,
-            "error" => $result === true ? null : $result,
+            "success" => true,
+            "error" => false,
         ]);
     }
 
