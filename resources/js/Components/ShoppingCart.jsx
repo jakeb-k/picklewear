@@ -51,7 +51,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
             <div onClick={() => setItemsAndClose()} className="w-2/3 min-h-screen  bg-black/50 "></div>
             <div className="w-1/3 min-h-screen relative py-10 bg-gray-100 min-w-[450px]">
                 <div className="flex justify-between items-center text-3xl ml-10">
-                    <p>{user ? user.first_name + "'s Cart " : "Your Cart"} </p>
+                    <p>{user ? user.first_name + "'s Cart " : "Your Cart"}{cartItems.length > 0 ? ' ('+cartItems.length+')' : '' }</p>
                     <button
                         onClick={() => setItemsAndClose()}
                         className="border-2 rounded-full border-black px-3 py-0 h-7 hover:bg-secondary hover:text-main duration-150 transition-all ease-in-out relative -top-6 -left-8"
@@ -62,7 +62,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                 {!loading && cartItems.length > 0 ? (
                     <div
                         id="show-scroll"
-                        className="max-h-[550px] px-8 w-full overflow-y-scroll overflow-x-hidden"
+                        className="max-h-[75vh] px-8 w-full overflow-y-scroll overflow-x-hidden"
                     >
                         {cartItems.map((item, index) => {
                             let hex = tinycolor(item.color);
