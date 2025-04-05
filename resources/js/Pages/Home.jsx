@@ -27,7 +27,7 @@ export default function Home() {
                             <em className="underline">Real Dill!</em>
                         </h1>
                         <h3 className="text-main text-xl w-1/2 mt-6 font-sans">
-                            Use code REALDILL to relish a 20% discount sitewide
+                            Use code REALDILL to relish a 15% discount sitewide
                             until September! Spend $75 or more, and we’ll throw
                             in a free gift—now that's a deal worth grabbing!
                         </h3>
