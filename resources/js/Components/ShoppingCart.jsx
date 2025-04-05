@@ -1,6 +1,6 @@
 import useCartStore from "@/Stores/useCartStore";
 import { usePage } from "@inertiajs/react";
-import axios from "axios";
+import TestImage from "@/../assets/images/testing_imgs/test_1.webp"; 
 import { useEffect, useState, forwardRef } from "react";
 import tinycolor from "tinycolor2";
 
@@ -51,7 +51,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
             <div onClick={() => setItemsAndClose()} className="w-2/3 min-h-screen  bg-black/50 "></div>
             <div className="w-1/3 min-h-screen relative py-10 bg-gray-100 min-w-[450px]">
                 <div className="flex justify-between items-center text-3xl ml-10">
-                    <p>{user ? user.first_name + "'s Cart " : "Your Cart"} </p>
+                    <p>{user ? user.first_name + "'s Cart " : "Your Cart"}{cartItems.length > 0 ? ' ('+cartItems.length+')' : '' }</p>
                     <button
                         onClick={() => setItemsAndClose()}
                         className="border-2 rounded-full border-black px-3 py-0 h-7 hover:bg-secondary hover:text-main duration-150 transition-all ease-in-out relative -top-6 -left-8"
@@ -62,7 +62,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                 {!loading && cartItems.length > 0 ? (
                     <div
                         id="show-scroll"
-                        className="max-h-[550px] px-8 w-full overflow-y-scroll overflow-x-hidden"
+                        className="max-h-[75vh] px-8 w-full overflow-y-scroll overflow-x-hidden"
                     >
                         {cartItems.map((item, index) => {
                             let hex = tinycolor(item.color);
@@ -74,7 +74,7 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
                                     <div className=" py-4 flex justify-between items-center">
                                         <img
                                             className="shadow-lg rounded-xl w-[37.5%] h-full border-2 border-main"
-                                            src={item.image?.file_path ?? ''}
+                                            src={item.image?.file_path ?? TestImage}
                                         />
                                         <div className="w-[57.5%] space-y-6">
                                             <p>{item.name}</p>

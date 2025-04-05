@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendOrderCompletedEmail;
+use App\Jobs\SendOrderPurchasedEmail;
 use App\Models\Customer;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -10,6 +12,9 @@ use http\Env\Response;
 use App\Models\Order;
 use App\Models\User;
 use App\Notifications\OrderPurchasedEmail;
+use App\Services\ZohoMailerService;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
@@ -22,11 +27,16 @@ class StripeController extends Controller
     public function checkoutShow()
     {
         return Inertia::render("Checkout", [
-            "locations" => Auth::check() ? Auth::user()->locations : null,
+            "locations" => Auth::check() ? Auth::user()->locations : [],
         ]);
     }
-    //Need to make a Stripe Web Hook to validate processed payment before
-    //creating new order.
+
+    /**
+     * Handle the checkout process from stripe
+     *
+     * @param Request $request
+     * @return void
+     */
     public function checkout(Request $request)
     {
         // Validate incoming request
@@ -205,6 +215,12 @@ class StripeController extends Controller
         return response()->json(["url" => $session->url]);
     }
 
+    /**
+     * Handle the success response from stripe checkout
+     *
+     * @param Request $request
+     * @return void
+     */
     public function success(Request $request)
     {
         \Stripe\Stripe::setApiKey(config("stripe.sk"));
@@ -223,15 +239,9 @@ class StripeController extends Controller
                 $order->status = "Paid";
                 $order->save();
             }
-            Notification::route("mail", $customer->email)->notify(
-                new OrderPurchasedEmail(
-                    $order->load([
-                        "customer",
-                        "user",
-                    ]),
-                    $customer->email
-                )
-            );
+
+            SendOrderPurchasedEmail::dispatch($order, $customer);
+            
             return to_route("orders.show", ['order' => $order->id, 'session_id' => $sessionId]);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
