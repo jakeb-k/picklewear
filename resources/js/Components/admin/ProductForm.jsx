@@ -13,6 +13,8 @@ export default function ProductForm({
     ...props
 }) {
     const { product } = props;
+    const [categoryTags, setCategoryTags] = useState([]);
+    const [typeTags, setTypeTags] = useState([]);
     const [images, setImages] = useState(product?.images ?? []);
     const [colorOptions, setColorOptions] = useState(
         product?.options?.some((option) => option.type == "color")
@@ -22,46 +24,24 @@ export default function ProductForm({
             : [],
     );
 
-    const [tags, setTags] = useState(product?.tags.map((tag) => {
-        return {
-            label: tag.name.en, 
-            value: tag.id, 
-        }
-    }) ?? []);
+    console.log(product.tags); 
+
     const { data, setData } = useForm({
         name: product?.name ?? "",
 
         price: product?.price ?? "",
-        type: {
-            value:
-                product?.tags?.find((tag) => tag.type == "category")?.name
-                    ?.en || "",
-            label: product?.tags?.find((tag) => tag.type == "category")?.name
-                ?.en
-                ? product.tags
-                      .find((tag) => tag.type === "category")
-                      .name.en.charAt(0)
-                      .toUpperCase() +
-                  product.tags
-                      .find((tag) => tag.type === "category")
-                      .name.en.slice(1)
-                : "",
-        },
-        type: {
-            value:
-                product?.tags?.find((tag) => tag.type == "type")?.name
-                    ?.en || "",
-            label: product?.tags?.find((tag) => tag.type == "type")?.name
-                ?.en
-                ? product.tags
-                      .find((tag) => tag.type === "type")
-                      .name.en.charAt(0)
-                      .toUpperCase() +
-                  product.tags
-                      .find((tag) => tag.type === "type")
-                      .name.en.slice(1)
-                : "",
-        },
+        type:  product?.tags.filter((tag) => tag.type !== 'category').map((tag) => {
+            return {
+                label: tag.name.en,
+                value: tag.id,
+            };
+        }) ?? [], 
+        category:  product?.tags.filter((tag) => tag.type === 'category').map((tag) => {
+            return {
+                label: tag.name.en,
+                value: tag.id,
+            };
+        }) ?? [],
         url: product?.url ?? "",
         delivery_date: product?.delivery_date ?? "",
         discount: product?.discount * 100 ?? 0,
@@ -89,6 +69,52 @@ export default function ProductForm({
             type: selectedOption,
         }));
     };
+
+    function getProductTags() {
+        return axios
+            .get(route("products.tags"))
+            .then((response) => {
+                setCategoryTags(response.data.categories.map((tag) => {
+                    return {
+                        value: tag.id,
+                        label: tag.name.en
+                            .split(" ")
+                            .map(
+                                (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                            )
+                            .join(" "),
+                    };
+                }),);
+                setTypeTags(
+                    response.data.types.map((tag) => {
+                        return {
+                            value: tag.id,
+                            label: tag.name.en
+                                .split(" ")
+                                .map(
+                                    (word) =>
+                                        word.charAt(0).toUpperCase() +
+                                        word.slice(1),
+                                )
+                                .join(" "),
+                        };
+                    }),
+                );
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    useEffect(() => {
+        async function getData() {
+            await getProductTags();
+        }
+
+        getData();
+    }, []);
 
     function updateProduct(product) {
         //Create new form data object to put files in
@@ -282,7 +308,7 @@ export default function ProductForm({
     return (
         <div className="min-w-[750px] w-[80%] bg-white shadow-lg rounded-lg p-8 mx-auto my-6">
             <div className="flex items-center space-x-[5%] mb-3">
-                <div className="flex-1">
+                <div className=" w-1/3">
                     <p className="flex items-center text-base">
                         Name:{" "}
                         <span className="text-red-500 text-3xl italic">*</span>
@@ -307,13 +333,9 @@ export default function ProductForm({
                         </p>
                         <Select
                             name="type"
-                            options={[
-                                { value: "mens", label: "Mens" },
-                                { value: "womens", label: "Womens" },
-                                { value: "kids", label: "Kids" },
-                                { value: "gear", label: "Gear" },
-                            ]}
+                            options={typeTags}
                             onChange={handleOnSelectChange}
+                            isMulti
                             value={data.type}
                             styles={customStyles}
                         />
@@ -326,14 +348,10 @@ export default function ProductForm({
                             </span>
                         </p>
                         <Select
-                            name="type"
-                            options={[
-                                { value: "mens", label: "Mens" },
-                                { value: "womens", label: "Womens" },
-                                { value: "kids", label: "Kids" },
-                                { value: "gear", label: "Gear" },
-                            ]}
+                            name="category"
+                            options={categoryTags}
                             onChange={handleOnSelectChange}
+                            isMulti
                             value={data.category}
                             styles={customStyles}
                         />

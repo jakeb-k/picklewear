@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 "wristbands" => Tag::findOrCreateFromString("wristbands",'gear'),
                 "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
                 "accessories" => Tag::findOrCreateFromString("accessories", 'gear'),
-                "paddle coveres" => Tag::findOrCreateFromString("paddle coveres", 'gear'),
+                "paddle covers" => Tag::findOrCreateFromString("paddle covers", 'gear'),
                 "bags" => Tag::findOrCreateFromString("bags", 'gear'),
                 "sleeves" => Tag::findOrCreateFromString("sleeves", 'gear'),
                 "ankle braces" => Tag::findOrCreateFromString("ankle braces", 'gear'),

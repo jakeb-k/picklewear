@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\Tags\Tag;
 
 class ProductController extends Controller
 {
@@ -353,6 +354,23 @@ class ProductController extends Controller
             "products" => Product::with(["options", "images"])
                 ->orderBy("updated_at", "desc")
                 ->get(),
+        ]);
+    }
+
+    /**
+     * Get the tags for product creates and updates
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTags()
+    {
+        $categoryTags = Tag::where("type", 'category')->get();
+
+        $typeTags = Tag::whereNot('type', 'category')->get();
+
+        return response()->json([
+            'categories' => $categoryTags,
+            'types' => $typeTags, 
         ]);
     }
 }

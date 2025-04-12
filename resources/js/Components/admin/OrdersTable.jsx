@@ -38,7 +38,7 @@ export default function OrdersTable(props) {
             .get(route("orders.complete", orderId))
             .then((response) => {
                 setSuccess(response.data.message);
-                setOrders(response.data.orders); 
+                setOrders(response.data.orders);
             })
             .catch((error) => {
                 console.error(error);
@@ -48,7 +48,7 @@ export default function OrdersTable(props) {
     useEffect(() => {
         setData(
             orders.map((order) => {
-                const id = order.id; 
+                const id = order.id;
                 const code = order.code; // Format order code
                 const status = order.status;
                 const userName =
@@ -189,7 +189,7 @@ export default function OrdersTable(props) {
                         }}
                         className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"
                     ></i>
-                    <i  
+                    <i
                         onClick={() => completeOrder(row.id)}
                         className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == "Completed" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
                     ></i>
