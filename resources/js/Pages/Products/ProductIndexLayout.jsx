@@ -230,7 +230,7 @@ export default function ProductIndexLayout(props) {
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            width: "18rem",
+            width: "20rem",
             cursor: "pointer",
             fontSize: "1rem", // Larger font size
             borderColor: state.isFocused ? "#6B7280" : "#6B7280", // gray-600 colour
@@ -256,7 +256,7 @@ export default function ProductIndexLayout(props) {
     };
     return (
         <div className="min-h-screen py-24">
-            <div className="mx-24">
+            <div className="lg:mx-24 mx-8">
                 <Head
                     title={
                         category.charAt(0).toUpperCase() +
@@ -272,7 +272,7 @@ export default function ProductIndexLayout(props) {
                 <Alert />
 
                 <div className="flex mt-12 justify-between items-center">
-                    <p className="font-oswald text-3xl">
+                    <p className="font-oswald lg:text-3xl text-xl">
                         <a
                             className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
                             href={route("index")}
@@ -312,7 +312,7 @@ export default function ProductIndexLayout(props) {
                         )}
                     </p>
                     {!loading && (
-                        <p className="font-oswald text-3xl italic text-gray-500">
+                        <p className="font-oswald lg:text-3xl text-xl italic text-gray-500">
                             {productChunks.reduce(
                                 (count, group) => count + group.length,
                                 0,
@@ -322,8 +322,8 @@ export default function ProductIndexLayout(props) {
                     )}
                 </div>
             </div>
-            <hr className=" bg-gray-400 my-8 h-0.5 mx-16" />
-            <div className="flex justify-between px-16 mb-8">
+            <hr className=" bg-gray-400 lg:my-8 my-4 h-0.5 lg:mx-16 mx-8" />
+            <div className="flex lg:flex-row flex-col justify-between lg:px-16 px-8 mb-8">
                 <div className="flex flex-wrap">
                     {colorFilters.map((filter) => {
                         return (
@@ -398,10 +398,10 @@ export default function ProductIndexLayout(props) {
                 )}
             </div>
             {!loading && (
-                <main className="flex space-x-6 mx-16">
+                <main className="flex lg:flex-row flex-col lg:space-x-6 mx-4 lg:mx-16">
                     {products.length > 0 ? (
                         <>
-                            <section className="bg-white p-8 rounded-lg drop-shadow-lg w-[24.5%] h-fit">
+                            <section id="filters" className="bg-white p-8 rounded-lg drop-shadow-lg lg:w-[24.5%] h-fit">
                                 {/* COLOR FILTER */}
                                 <ProductColorFilter
                                     colorOptions={colorOptions}
@@ -422,16 +422,16 @@ export default function ProductIndexLayout(props) {
                                 />
                                 <div className="bg-gray-400 h-[0.5px] my-4" />
                             </section>
-                            <section className="w-[75.5%] space-y-6">
+                            <section className="lg:w-[75.5%] w-full lg:mt-0 mt-4 space-y-6">
                                 {shownProductChunks.map((chunk, index) => (
                                     <div
                                         key={index}
-                                        className="flex justify-start gap-[3%] w-full"
+                                        className="flex lg:flex-row flex-col justify-start gap-[3%] w-full"
                                     >
                                         {chunk.map((product) => (
                                             <div
                                                 key={product.id}
-                                                className="flex-1 max-w-[31.5%] flex-col"
+                                                className="flex-1 lg:max-w-[31.5%] flex-col"
                                             >
                                                 <ProductCard
                                                     product={product}
@@ -446,13 +446,14 @@ export default function ProductIndexLayout(props) {
                                             productChunks.length / 2,
                                         ),
                                     }).map((_, index) => (
-                                        <button
+                                        <a
+                                            href="#filters"
                                             key={index}
                                             onClick={() => setPage(index + 1)}
                                             className={`px-3 py-1 rounded ${page === index + 1 ? "bg-black text-white" : "bg-gray-200 border border-black hover:bg-main hover:text-black transition-all duration-150 ease-in-out"}`}
                                         >
                                             {index + 1}
-                                        </button>
+                                        </a>
                                     ))}
                                 </div>
                             </section>
