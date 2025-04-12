@@ -27,7 +27,6 @@ export default function ProductShowLayout(props) {
     );
     const { addProduct } = useCartStore();
 
-    console.log(product); 
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
@@ -77,7 +76,7 @@ export default function ProductShowLayout(props) {
     };
 
     return (
-        <div className="min-h-screen py-24 mx-24">
+        <div className="min-h-screen py-24 lg:mx-24 mx-8">
             <Head title={product.name} />
             <CSSTransition
                 in={showAlert}
@@ -125,16 +124,16 @@ export default function ProductShowLayout(props) {
                 </div>
             )}
 
-            <div className={`flex ${!crumbs ? 'mt-12' : ''}`} >
-                <div className="flex justify-between items-center w-[47.5%] ">
-                    <div className="w-[20%] space-y-8">
+            <div className={`flex lg:flex-row flex-col ${!crumbs ? 'mt-12' : ''}`} >
+                <div className="flex lg:flex-row flex-col justify-between items-center lg:w-[47.5%] ">
+                    <div className="lg:w-[20%] flex lg:flex-col flex-row lg:space-y-8">
                         {images.map((image) => {
                             return (
                                 <img
                                     onClick={() => setDisplayImage(image)}
                                     key={image.id}
                                     src={image.file_path ?? TestImage}
-                                    className={`w-full max-h-[250px] rounded-md cursor-pointer ${
+                                    className={`lg:w-full w-1/3 max-h-[250px] rounded-md cursor-pointer ${
                                         displayImage.id != image.id
                                             ? "opacity-70 hover:opacity-100"
                                             : "border border-main"
@@ -143,7 +142,7 @@ export default function ProductShowLayout(props) {
                             );
                         })}
                     </div>
-                    <div className="w-[75%]">
+                    <div className="lg:w-[75%]">
                         <img
                             src={displayImage?.file_path ?? TestImage}
                             className="w-full max-h-[450px] rounded-md object-contain"
@@ -151,7 +150,7 @@ export default function ProductShowLayout(props) {
                     </div>
                 </div>
 
-                <div className="w-[45%] ml-auto flex flex-col justify-start">
+                <div className="lg:w-[45%] lg:ml-auto flex flex-col justify-start">
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
                         {product.discount > 0 && (
@@ -249,7 +248,7 @@ export default function ProductShowLayout(props) {
                                 : ""}
                         </b>
                     </p>
-                    <div className="mt-auto flex space-x-32 mx-auto">
+                    <div className="mt-auto flex lg:flex-row flex-col lg:space-x-32 lg:mx-auto lg:space-y-0 space-y-8">
                         <div className="flex">
                             <button
                                 onClick={() => {
@@ -284,7 +283,7 @@ export default function ProductShowLayout(props) {
                     </div>
                 </div>
             </div>
-            <div className="mt-8 font-oswald py-10">
+            <div className="lg:mt-8 font-oswald py-10">
                 <h2 className="text-2xl text-secondary italic text-left mb-8">
                     You might also like...
                 </h2>

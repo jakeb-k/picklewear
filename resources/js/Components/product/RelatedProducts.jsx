@@ -28,29 +28,29 @@ const RelatedItems = (props) => {
         }
     }, [products?.length, loading]);
 
+    const isMobile = window.innerWidth < 640; // Tailwind 'sm' breakpoint
+
+    const slideAmount = isMobile ? 102 : 24.95;
     return (
         <div
-            className="relative border pt-2 pb-8"
+            className="relative border pt-2 pb-8 flex overflow-hidden w-full"
             ref={containerRef}
-            style={{ display: "flex", overflow: "hidden", width: "100%" }}
         >
             <div
-                className="w-full flex"
+                className="w-full flex lg:flex-nowrap flex-wrap"
                 style={{
                     display: "flex justify-center",
-                    transform: `translateX(-${currentIndex * 24.95}%)`, // Slide by 25% for one image
+                    transform: `translateX(-${currentIndex * slideAmount}%)`, // Slide by 25% for one image
                     transition: "transform 0.5s ease-in-out",
                 }}
             >
-                {/* bg-gray-100/90 rounded-md overflow-hidden shadow-md shadow-grey-500 cursor-pointer hover:shadow-xl hover:bg-white  */}
                 {products.map((product, index) => {
                     const productImg = product.images[0];
                     return (
                         <div
                             key={index}
                             onClick={() => navigateToProduct(product.id)}
-                            className="relative max-w-[25%] mr-[2%] min-h-[350px] rounded-md group z-20 cursor-pointer overflow-hidden transition-all duration-150 bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl"
-                            style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
+                            className="relative lg:max-w-[25%] lg:min-w-[23%] w-[47.5%] lg:mt-0 mt-2 mr-[2%] lg:min-h-[350px] min-h-[250px] rounded-md group z-20 cursor-pointer overflow-hidden transition-all duration-150 bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl"
                         >
                             <img
                                 src={
@@ -60,7 +60,7 @@ const RelatedItems = (props) => {
                                 }
                                 className="rounded-md rounded-b-none w-full object-cover product-image"
                             />
-                            <div className="relative h-full  px-2">
+                            <div className="relative h-full px-2">
                                 <p className="text-xl text-center pt-4 pb-2">
                                     {product.name}
                                 </p>
