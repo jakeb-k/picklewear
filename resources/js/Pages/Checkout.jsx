@@ -107,6 +107,8 @@ export default function Checkout(props) {
             .catch((error) => {
                 console.error(error);
                 setErrors(error.response.data.errors);
+                const detailsSection = document.getElementById("details");
+                detailsSection.scrollIntoView({ behavior: "smooth", block: "start" });
             })
             .finally(() => {
                 setCheckoutLoading(false);
@@ -173,12 +175,12 @@ export default function Checkout(props) {
     }
 
     return (
-        <div className="flex justify-between min-h-screen py-24 px-32 mt-12">
+        <div className="flex lg:flex-row flex-col justify-between min-h-screen py-24 lg:px-32 px-8 mt-12">
             <Head title="Checkout" />
-            <div className="w-[60%]">
-                <div className="bg-white p-8 rounded-lg drop-shadow-lg ">
+            <div className="lg:w-[60%]">
+                <div id="details" className="bg-white p-8 rounded-lg drop-shadow-lg ">
                     <p className="text-xl mb-2">Contact Information</p>
-                    <div className="w-full flex items-center flex-wrap xl:flex-row flex-col xl:space-y-0 mt-2">
+                    <div className="w-full flex items-center lg:flex-wrap xl:flex-row flex-col flex-nowrap xl:space-y-0 mt-2">
                         <input
                             name="first_name"
                             id="first_name"
@@ -187,7 +189,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.first_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 mr-4 h-fit focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-2 border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4 lg:w-auto w-full bg-transparent hover:bg-gray-200/50 lg:mr-4 h-fit focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-2 border-red-500" : ""}`}
                         />
                         <input
                             name="last_name"
@@ -197,7 +199,7 @@ export default function Checkout(props) {
                             required
                             onChange={handleOnChange}
                             value={data.last_name}
-                            className={`rounded-lg py-1 px-4 bg-transparent hover:bg-gray-200/50 h-fit mr-4 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-2 border-red-500" : ""}`}
+                            className={`rounded-lg py-1 px-4  lg:w-auto w-full bg-transparent lg:mt-0 mt-4 hover:bg-gray-200/50 h-fit lg:mr-4 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.last_name ? "border-2 border-red-500" : ""}`}
                         />
                         <div className="relative h-fit xl:pt-0 pt-4">
                             <input
@@ -230,7 +232,7 @@ export default function Checkout(props) {
                     {!loading && cartItems.length > 0 ? (
                         <div
                             id="show-scroll"
-                            className=" px-8 w-full overflow-x-hidden"
+                            className="lg:px-8 px-4 w-full overflow-x-hidden"
                         >
                             {cartItems.map((item, index) => {
                                 let hex = tinycolor(item.color);
@@ -239,15 +241,14 @@ export default function Checkout(props) {
                                         key={index}
                                         className="relative w-full border-b border-gray-400 mb-4 py-4"
                                     >
-                                        <div className=" py-4 flex justify-between items-center">
+                                        <div className="py-4 flex lg:flex-row flex-col lg:justify-between lg:items-center">
                                             <img
-                                                className="shadow-lg rounded-xl w-[22.5%] h-full border-2 border-main"
+                                                className="shadow-lg rounded-xl lg:w-[22.5%] h-full border-2 border-main"
                                                 src={
-                                                    item.image?.file_path ??
                                                     TestImage
                                                 }
                                             />
-                                            <div className="w-[57.5%] space-y-6">
+                                            <div className="lg:w-[57.5%] lg:mt-0 mt-4 space-y-6">
                                                 <p>{item.name}</p>
                                                 <div className="flex space-x-6 items-center">
                                                     <p className="font-roboto_mono">
@@ -259,7 +260,7 @@ export default function Checkout(props) {
                                                             backgroundColor:
                                                                 hex.toHexString(),
                                                         }}
-                                                        className={`rounded-full  p-2 w-4 h-4 border transition-all border-black duration-150 ease-in-out cursor-pointer`}
+                                                        className={`rounded-full p-2 w-4 h-4 border transition-all border-black duration-150 ease-in-out cursor-pointer`}
                                                     ></div>
                                                 </div>
                                                 <div className="flex">
@@ -299,14 +300,14 @@ export default function Checkout(props) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="absolute top-[35%] -right-2">
+                                        <div className="absolute lg:top-[35%] top-[85.5%] -right-4 lg:-right-2">
                                             <button
                                                 onClick={() => {
                                                     removeItem(item.cartItemId);
                                                 }}
-                                                className="border-2 rounded-full border-black px-2 py-0 h-5 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out relative"
+                                                className="border-2 rounded-full border-black lg:px-2 px-3 py-0 lg:h-5 h-8 hover:bg-secondary hover:text-red-500 duration-150 transition-all ease-in-out relative"
                                             >
-                                                <i className="fa-solid fa-minus text-xs absolute top-0 left-[17.5%]"></i>
+                                                <i className="fa-solid fa-minus text-xs lg:absolute lg:top-0 lg:left-[17.5%]"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -326,7 +327,7 @@ export default function Checkout(props) {
                 </div>
             </div>
 
-            <div className="bg-white p-8 rounded-lg drop-shadow-lg w-[37.5%] h-fit">
+            <div className="bg-white p-8 rounded-lg drop-shadow-lg lg:w-[37.5%] lg:mt-0 mt-4 h-fit">
                 <p className="text-2xl">Summary</p>
                 <div className="flex justify-between mt-8">
                     <p>Subtotal</p>
@@ -345,13 +346,12 @@ export default function Checkout(props) {
                     </p>
                 </div>
                 <div className="flex justify-between mt-8">
-                    <div>
+                    <div onClick={() => setExpanded(!expanded)}>
                         Promo Code{" "}
                         {data.discount
                             ? "(" + data.discount * 100 + "%" + ") "
                             : ""}
                         <i
-                            onClick={() => setExpanded(!expanded)}
                             className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded ? "rotate-180" : "rotate-0"}`}
                         ></i>
                     </div>

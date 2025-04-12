@@ -26,7 +26,7 @@ export default function Login({ status, canResetPassword }) {
         <div className="w-full flex-grow flex flex-col justify-center items-center min-h-screen">
             <Head title="Log in" />
 
-            <div className='w-1/3 p-6 my-auto sm:max-w-md bg-white shadow-md overflow-hidden sm:rounded-lg mx-auto'>
+            <div className='lg:w-1/3 p-6 my-auto sm:max-w-md bg-white shadow-md overflow-hidden sm:rounded-lg mx-auto'>
                 {status && (
                     <div className="mb-4 font-medium text-sm text-green-600">
                         {status}

@@ -10,14 +10,14 @@ export default function Edit({ auth, mustVerifyEmail, status, orders, location }
         <div className="py-24 pb-8">
             <Head title="Profile" />
 
-            <div className="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8 ">
+            <div className="py-12 max-w-7xl mx-auto px-4 lg:px-8 ">
                 <div className="mb-6">
                     <h1 className="text-3xl mr-12">{auth.user.name}</h1>
                     <div className="bg-gray-300 h-0.5 rounded-lg w-full mt-4" />
                 </div>
-                <div className="space-y-6">
-                    <div className="flex justify-between space-x-[2.5%]">
-                        <div className="p-4 sm:p-8 bg-white w-1/2 shadow sm:rounded-lg flex-1">
+                <div className="space-y-6 lg:mx-auto">
+                    <div className="flex lg:flex-row flex-col justify-between lg:space-x-[2.5%]">
+                        <div className="p-4 sm:p-8 bg-white lg:w-1/2 shadow sm:rounded-lg flex-1">
                             <UpdateProfileInformationForm
                                 mustVerifyEmail={mustVerifyEmail}
                                 status={status}
@@ -27,7 +27,7 @@ export default function Edit({ auth, mustVerifyEmail, status, orders, location }
                         </div>
                         <div
                             id="show-scroll"
-                            className="p-4 sm:p-8 bg-white w-1/2 shadow sm:rounded-lg flex-1 h-[450px] overflow-y-scroll"
+                            className="p-4 sm:p-8 bg-white lg:w-1/2 mt-4 lg:mt-0 shadow sm:rounded-lg flex-1 h-[450px] overflow-y-scroll"
                         >
                             <p className="text-lg"> Past Orders</p>
                             <div className="flex flex-col space-y-6 mt-4">
@@ -41,7 +41,7 @@ export default function Edit({ auth, mustVerifyEmail, status, orders, location }
                                             <p className="flex-1">
                                                 {order.code}
                                             </p>
-                                            <p className="px-2 py-0.5 min-w-24 mr-6 text-center border-2 rounded-full border-main font-bold text-base">
+                                            <p className={`px-2 lg:py-0.5 lg:min-w-24 min-w-20 lg:mr-6 mr-3 text-center border-2 rounded-full border-main font-bold lg:text-base ${order.status.length > 6 ? 'text-xs' : ''}`}>
                                                 {order.status}
                                             </p>
                                             <p className="flex-1 text-center">
@@ -70,7 +70,7 @@ export default function Edit({ auth, mustVerifyEmail, status, orders, location }
                         </div>
                     </div>
                     <div className="flex justify-between space-x-[2.5%]">
-                        <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg w-1/2">
+                        <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg lg:w-1/2">
                             <UpdatePasswordForm />
                         </div>
                     </div>

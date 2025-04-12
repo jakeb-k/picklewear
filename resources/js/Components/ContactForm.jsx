@@ -43,14 +43,14 @@ export default function ContactForm() {
     }
 
     return (
-        <section id="contact" className="py-8 px-12 rounded-xl max-w-3xl mx-auto space-y-8">
+        <section id="contact" className="py-8 lg:px-12 rounded-xl max-w-3xl mx-auto space-y-8">
             <h1>Get In Touch</h1>
             <div className="flex items-center justify-between">
                 <div className="w-[47.5%] flex flex-col">
                     <label>
                         First Name{" "}
                         <span className="text-base text-red-500 italic">
-                            (required)
+                            *
                         </span>{" "}
                     </label>
                     <input
@@ -81,7 +81,7 @@ export default function ContactForm() {
                 <label>
                     Email{" "}
                     <span className="text-base text-red-500 italic">
-                        (required)
+                        *
                     </span>
                 </label>
                 <input
@@ -99,7 +99,7 @@ export default function ContactForm() {
                 <label>
                     Message{" "}
                     <span className="text-base text-red-500 italic">
-                        (required)
+                        *
                     </span>
                 </label>
                 <textarea
@@ -119,7 +119,7 @@ export default function ContactForm() {
                 </p>
                 <button onClick={() => sendEmail()}
                 disabled={success}
-                className={`hover:bg-main w-1/4 text-secondary hover:text-secondary border-2 border-secondary transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 rounded-lg flex items-center justify-center ${success ?'bg-green-500 text-white hover:bg-green-500 hover:text-white' :''}`}>
+                className={`hover:bg-main lg:w-1/4 text-secondary hover:text-secondary border-2 border-secondary transition-all duration-200 ease-in-out italic text-3xl font-bold px-4 py-2 rounded-lg flex items-center justify-center ${success ?'bg-green-500 text-white hover:bg-green-500 hover:text-white' :''}`}>
                     {loading && (<svg
                         className="animate-spin -ml-1 mr-3 h-5 w-5 text-secondary"
                         xmlns="http://www.w3.org/2000/svg"

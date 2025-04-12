@@ -27,7 +27,6 @@ export default function ProductShowLayout(props) {
     );
     const { addProduct } = useCartStore();
 
-    console.log(product); 
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
@@ -35,7 +34,7 @@ export default function ProductShowLayout(props) {
             price: product.discount
                 ? (
                       product.price -
-                      product.price * (product.discount)
+                      product.price * product.discount
                   ).toLocaleString(0, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -67,7 +66,7 @@ export default function ProductShowLayout(props) {
 
     const Alert = () => {
         return (
-            <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary">
+            <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 lg:top-24 top-28 lg:right-12 lg:left-auto lg:translate-x-0 left-1/2 transform -translate-x-1/2 lg:h-8 h-16 lg:w-fit w-full items-center bg-secondary z-[999]">
                 <i className="fa-regular fa-circle-check text-main mt-1"></i>
                 <p className="tracking-wide ml-4 text-main font-oswald">
                     Your item/s have been added to the cart.
@@ -77,7 +76,7 @@ export default function ProductShowLayout(props) {
     };
 
     return (
-        <div className="min-h-screen py-24 mx-24">
+        <div className="min-h-screen py-24 lg:mx-24 mx-8">
             <Head title={product.name} />
             <CSSTransition
                 in={showAlert}
@@ -97,7 +96,7 @@ export default function ProductShowLayout(props) {
                             Home{" "}
                         </a>
                         <a
-                            className='text-gray-400 hover:text-black duration-150 ease-in-out transition-all'
+                            className="text-gray-400 hover:text-black duration-150 ease-in-out transition-all"
                             href={route("products.index", crumbs.category)}
                         >
                             {" / "}
@@ -125,16 +124,18 @@ export default function ProductShowLayout(props) {
                 </div>
             )}
 
-            <div className={`flex ${!crumbs ? 'mt-12' : ''}`} >
-                <div className="flex justify-between items-center w-[47.5%] ">
-                    <div className="w-[20%] space-y-8">
+            <div
+                className={`flex lg:flex-row flex-col ${!crumbs ? "mt-12" : ""}`}
+            >
+                <div className="flex lg:flex-row flex-col justify-between items-center lg:w-[47.5%] ">
+                    <div className="lg:w-[20%] flex lg:flex-col flex-row lg:space-y-8">
                         {images.map((image) => {
                             return (
                                 <img
                                     onClick={() => setDisplayImage(image)}
                                     key={image.id}
                                     src={image.file_path ?? TestImage}
-                                    className={`w-full max-h-[250px] rounded-md cursor-pointer ${
+                                    className={`lg:w-full w-1/3 max-h-[250px] rounded-md cursor-pointer ${
                                         displayImage.id != image.id
                                             ? "opacity-70 hover:opacity-100"
                                             : "border border-main"
@@ -143,7 +144,7 @@ export default function ProductShowLayout(props) {
                             );
                         })}
                     </div>
-                    <div className="w-[75%]">
+                    <div className="lg:w-[75%]">
                         <img
                             src={displayImage?.file_path ?? TestImage}
                             className="w-full max-h-[450px] rounded-md object-contain"
@@ -151,7 +152,7 @@ export default function ProductShowLayout(props) {
                     </div>
                 </div>
 
-                <div className="w-[45%] ml-auto flex flex-col justify-start">
+                <div className="lg:w-[45%] lg:ml-auto flex flex-col justify-start">
                     <p className="text-3xl font-oswald">{product.name}</p>
                     <p className="mt-6">
                         {product.discount > 0 && (
@@ -159,12 +160,14 @@ export default function ProductShowLayout(props) {
                                 ${product.price.toFixed(2)}
                             </span>
                         )}
-                        <span className={`text-2xl font-bold ${product.discount ? 'ml-6' : ''}`}>
+                        <span
+                            className={`text-2xl font-bold ${product.discount ? "ml-6" : ""}`}
+                        >
                             $
                             {product.discount
                                 ? (
                                       product.price -
-                                      product.price * (product.discount)
+                                      product.price * product.discount
                                   ).toLocaleString(0, {
                                       minimumFractionDigits: 2,
                                       maximumFractionDigits: 2,
@@ -230,7 +233,13 @@ export default function ProductShowLayout(props) {
                         style={{ height: "auto" }}
                         className="h-full resize-none p-0 py-2 mb-6 overflow-visible w-full bg-transparent cursor-default pointer-events-none border-none text-black auto-resize"
                     ></textarea>
-                    {!product.available && (<p className='italic font-bold text-lg'>Currently out of stock — we know, it's a real dill-emma. Sorry for the heartbreak, we'll restock soon!</p>)}
+                    {!product.available && (
+                        <p className="italic font-bold text-lg">
+                            Currently out of stock — we know, it's a real
+                            dill-emma. Sorry for the heartbreak, we'll restock
+                            soon!
+                        </p>
+                    )}
                     <p className="italic my-4">
                         <b>
                             Will be delivered between{" "}
@@ -249,7 +258,7 @@ export default function ProductShowLayout(props) {
                                 : ""}
                         </b>
                     </p>
-                    <div className="mt-auto flex space-x-32 mx-auto">
+                    <div className="mt-auto flex lg:flex-row flex-col lg:space-x-32 lg:mx-auto lg:space-y-0 space-y-8">
                         <div className="flex">
                             <button
                                 onClick={() => {
@@ -257,7 +266,7 @@ export default function ProductShowLayout(props) {
                                         setQuantity(quantity - 1);
                                     }
                                 }}
-                                className={`rounded-l-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? 'cursor-not-allowed' : ' hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2'}`}
+                                className={`rounded-l-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? "cursor-not-allowed" : " hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2"}`}
                             >
                                 -
                             </button>
@@ -269,7 +278,7 @@ export default function ProductShowLayout(props) {
                                 onClick={() => {
                                     setQuantity(quantity + 1);
                                 }}
-                                className={`rounded-r-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? 'cursor-not-allowed' : ' hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2'}`}
+                                className={`rounded-r-xl border-2 border-gray-700 p-1 px-2 text-2xl w-10 duration-150 transition-color ease-in-out  ${!product.available ? "cursor-not-allowed" : " hover:bg-gray-700 hover:border-main hover:text-main 10 hover:border-2"}`}
                             >
                                 +
                             </button>
@@ -277,14 +286,14 @@ export default function ProductShowLayout(props) {
                         <button
                             disabled={!product.available}
                             onClick={() => addToCart(product)}
-                            className={`transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 rounded-lg text-nowrap ${!product.available ? 'bg-gray-400 border border-black cursor-not-allowed' : 'bg-main hover:bg-secondary hover:text-main hover:border-main border-2 border-black  hover:border-2 '}`}
+                            className={`transition-all duration-200 ease-in-out text-3xl font-bold px-4 py-2 rounded-lg text-nowrap ${!product.available ? "bg-gray-400 border border-black cursor-not-allowed" : "bg-main hover:bg-secondary hover:text-main hover:border-main border-2 border-black  hover:border-2 "}`}
                         >
                             Add To Cart
                         </button>
                     </div>
                 </div>
             </div>
-            <div className="mt-8 font-oswald py-10">
+            <div className="lg:mt-8 font-oswald py-10">
                 <h2 className="text-2xl text-secondary italic text-left mb-8">
                     You might also like...
                 </h2>
