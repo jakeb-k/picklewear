@@ -62,7 +62,7 @@ export default function Footer() {
 
     return (
         <div id="footer" className="bg-secondary text-main w-full py-8 px-4">
-            <div className="flex w-full flex-row-reverse px-12 justify-between">
+            <div className="flex w-full lg:flex-row-reverse flex-col lg:px-12 justify-between">
                 <div className="flex flex-row w-fit space-x-2 items-start">
                     <img src={Logo} className="w-12 h-auto" />
                     <div>
@@ -72,7 +72,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex w-[35%]">
+                <div className="flex lg:w-[35%] lg:my-0 my-8">
                     <div className="w-1/3 text-left">
                         <p className="text-2xl font-oswald tracking-wider mb-4">
                             Shop
@@ -127,7 +127,7 @@ export default function Footer() {
                         </div>
                     </div>
                 </div>
-                <div className="w-[45%]">
+                <div className="lg:w-[45%]">
                     <p className="text-3xl font-oswald tracking-wider">
                         Be the first to know!
                     </p>
@@ -136,7 +136,7 @@ export default function Footer() {
                         products and exclusive discounts
                     </p>
                     <div
-                        className={`relative w-2/3 mt-6 ${
+                        className={`relative lg:w-2/3 mt-6 ${
                             (isInvalid || error) ? "animate-wiggle" : ""
                         }`}
                     >
