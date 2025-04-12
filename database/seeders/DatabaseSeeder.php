@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
             "kids" => [
                 "polos" => Tag::findOrCreateFromString("polos",'tops'),
                 "t-shirts" => Tag::findOrCreateFromString("t-shirts",'tops'),
-                "long-sleeve shirts" => Tag::findOrCreateFromString("long-sleeve shirts",'tops'),
+                "long-sleeves" => Tag::findOrCreateFromString("long-sleeves",'tops'),
                 "shorts" => Tag::findOrCreateFromString("shorts",'bottoms'),
                 "skorts" => Tag::findOrCreateFromString("skorts",'bottoms'),
                 "track pants" => Tag::findOrCreateFromString("track pants",'bottoms'),

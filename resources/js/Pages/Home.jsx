@@ -18,7 +18,7 @@ export default function Home() {
                     animate={{ transform: "translateY(0%)", opacity: 1 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
                 >
-                    <div className="ml-12 font-oswald">
+                    <div className="lg:ml-12 px-6 lg:px-0 font-oswald">
                         <div>
                             <h1 className="text-main text-5xl  lg:w-1/2">
                                 Smash It in Style!
@@ -28,12 +28,12 @@ export default function Home() {
                                 <em className="underline">Real Dill!</em>
                             </h1>
                         </div>
-                        <h3 className="text-main text-xl lg:w-1/2 mt-6 font-sans">
+                        <h3 className="text-main text-xl tex lg:w-1/2 mt-6 font-sans">
                             Use code REALDILL to relish a 15% discount sitewide
                             until September! Spend $75 or more, and we’ll throw
                             in a free gift—now that's a deal worth grabbing!
                         </h3>
-                        <div className="mt-8 flex space-x-8">
+                        <div className="mt-8 flex space-x-8 justify-center lg:justify-start">
                             <a
                                 href={route("products.index", "sale")}
                                 className="px-8 font-bold py-4 text-center bg-main rounded-lg w-[150px] hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out"
@@ -51,7 +51,7 @@ export default function Home() {
                 </motion.div>
             </div>
             {/* FIRST PRODUCT SECTION  */}
-            <div className="mx-12 font-oswald pt-20 lg:pb-40 pb-20">
+            <div className="lg:mx-12 mx-4 font-oswald pt-20 lg:pb-40 pb-20">
                 <h2 className="text-3xl text-secondary italic text-center">
                     Shop by Category
                 </h2>

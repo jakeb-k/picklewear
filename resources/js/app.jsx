@@ -5,15 +5,21 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import MainLayout from './Layouts/MainLayout';
+import MobileLayout from "./Layouts/MobileLayout";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
 createInertiaApp({
     title: (title) =>`${title} - ${appName}`,
     resolve: (name) => {
         const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
         let page = pages[`./Pages/${name}.jsx`];
-        page.default.layout = page.default.layout || ((page) =><MainLayout children={page} />);
+        page.default.layout = page.default.layout || ((page) =>
+            isMobile
+                ? <MobileLayout>{page}</MobileLayout>
+                : <MainLayout>{page}</MainLayout>
+        );
         return page;
     },
     setup({ el, App, props }) {
