@@ -181,6 +181,10 @@ class ProductController extends Controller
                 "product_id" => $product->id,
             ]);
 
+            $tagIds = array_merge($request->category, $request->type);
+            $tags = Tag::findMany($tagIds); 
+            $product->attachTags($tags); 
+            
             $images = $request->file("images");
 
             foreach ($images as $index => $imageData) {
@@ -229,6 +233,10 @@ class ProductController extends Controller
             "discount" => $request->discount / 100,
             "description" => $request->description,
         ]);
+
+        $tagIds = array_merge($request->category, $request->type);
+        $tags = Tag::findMany($tagIds); 
+        $product->syncTags($tags); 
 
         if ($request->colorOptionId) {
             $colorOption = ProductOption::find($request->colorOptionId);

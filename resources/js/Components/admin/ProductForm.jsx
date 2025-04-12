@@ -24,7 +24,7 @@ export default function ProductForm({
             : [],
     );
 
-    console.log(product.tags); 
+    // console.log(product.tags); 
 
     const { data, setData } = useForm({
         name: product?.name ?? "",
@@ -63,10 +63,10 @@ export default function ProductForm({
         }));
     };
 
-    const handleOnSelectChange = (selectedOption) => {
+    const handleOnSelectChange = (selectedOption, field) => {
         setData((prevData) => ({
             ...prevData,
-            type: selectedOption,
+            [field]: selectedOption,
         }));
     };
 
@@ -123,9 +123,12 @@ export default function ProductForm({
         images.forEach((image, index) => {
             formData.append("images[]", image); // Use 'files[]' to ensure array format
         });
+        // Add data
         Object.entries(data).forEach(([key, value]) => {
-            if (key == "type") {
-                formData.append(key, value["value"]);
+            if (Array.isArray(value)) {
+                value.forEach(val => {
+                    formData.append(`${key}[]`, val.value); // proper array format
+                });
             } else {
                 formData.append(key, value);
             }
@@ -334,8 +337,9 @@ export default function ProductForm({
                         <Select
                             name="type"
                             options={typeTags}
-                            onChange={handleOnSelectChange}
+                            onChange={(option) => handleOnSelectChange(option, "type")}
                             isMulti
+                            isClearable={false}
                             value={data.type}
                             styles={customStyles}
                         />
@@ -350,8 +354,9 @@ export default function ProductForm({
                         <Select
                             name="category"
                             options={categoryTags}
-                            onChange={handleOnSelectChange}
+                            onChange={(option) => handleOnSelectChange(option, "category")}
                             isMulti
+                            isClearable={false}
                             value={data.category}
                             styles={customStyles}
                         />
