@@ -142,31 +142,32 @@ export default function ProductIndexLayout(props) {
     }, [priceFilter]);
 
     function sortProducts() {
+        console.log("Sorting products by: ", sort.value);
         let sortedProducts = [];
 
         switch (sort.value) {
             case "priceAsc":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => a.price - b.price,
                 );
                 break;
             case "priceDesc":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.price - a.price,
                 );
                 break;
             case "popularity":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.order_count - a.order_count,
                 );
                 break;
             case "discount":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.discount - a.discount,
                 );
                 break;
             case "arrivals":
-                sortedProducts = [...products].sort((a, b) => {
+                sortedProducts = products.sort((a, b) => {
                     const now = new Date().getTime();
                     const diffA = Math.abs(
                         new Date(a.created_at).getTime() - now,
@@ -179,7 +180,7 @@ export default function ProductIndexLayout(props) {
                 });
                 break;
             case "delivery":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => a.delivery_date - b.delivery_date,
                 );
                 break;
@@ -188,6 +189,7 @@ export default function ProductIndexLayout(props) {
                 return;
         }
 
+        console.log(sortedProducts); 
         // Update the state with sorted products and re-chunk them
         setProducts(sortedProducts);
         setChunks(chunkProducts(sortedProducts));
