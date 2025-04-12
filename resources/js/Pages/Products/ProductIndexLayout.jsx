@@ -429,7 +429,7 @@ export default function ProductIndexLayout(props) {
                                         {chunk.map((product) => (
                                             <div
                                                 key={product.id}
-                                                className="flex-1 max-w-[31.5%]"
+                                                className="flex-1 max-w-[31.5%] flex-col"
                                             >
                                                 <ProductCard
                                                     product={product}
