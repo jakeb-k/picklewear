@@ -178,21 +178,21 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-            <div className="flex lg:flex-row-reverse flex-col justify-between px-12 items-center mt-8 -mb-2">
+            <div className="flex lg:flex-row-reverse flex-col justify-between lg:px-12 px-6 items-center mt-8 -mb-2">
                 <div className="flex space-x-4 text-3xl border-[3px] border-main p-3 pt- relative items-center">
                     <i className="fa-brands fa-cc-visa lg:text-base text-sm"></i>
 
-                    <i className="fa-brands fa-cc-mastercard lg:text-base text-xl"></i>
+                    <i className="fa-brands fa-cc-mastercard lg:text-base text-sm"></i>
 
-                    <i className="fa-brands fa-cc-amex lg:text-base text-xl"></i>
+                    <i className="fa-brands fa-cc-amex lg:text-base text-sm"></i>
 
-                    <i className="fa-brands fa-cc-jcb lg:text-base text-xl"></i>
+                    <i className="fa-brands fa-cc-jcb lg:text-base text-sm"></i>
 
                     <img className="w-[42px] h-[42px]" src={ZipLogo} />
 
-                    <i className="fa-brands fa-apple-pay lg:text-base text-xl"></i>
+                    <i className="fa-brands fa-apple-pay lg:text-base text-sm"></i>
 
-                    <i className="fa-brands fa-google lg:text-base text-xl"></i>
+                    <i className="fa-brands fa-google lg:text-base text-sm"></i>
                     <p className="text-sm px-2 absolute flex items-center -top-6 left-0 bg-secondary">
                         Secure Checkout By{" "}
                         <i className="fa-brands fa-stripe text-4xl mx-2 mt-0.5"></i>{" "}

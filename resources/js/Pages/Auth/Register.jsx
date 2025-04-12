@@ -16,7 +16,7 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-    
+
         post(route("register"), {
             onFinish: () => reset("password", "password_confirmation"),
             onError: (errors) => {
@@ -28,16 +28,22 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center">
+        <div className="min-h-screen flex flex-col justify-center lg:mt-0 mt-10">
             <Head title="Register" />
 
             <div className="w-full min-w-[300px] p-6 my-auto sm:max-w-md bg-white shadow-md overflow-hidden sm:rounded-lg mx-auto">
+                <h2>Create an Account</h2>
                 <form onSubmit={submit}>
                     <div className="flex justify-between">
-                        <div className='w-[47.5%]'>
-                            <div className='flex flex-row relative'>
-                                <InputLabel htmlFor="first_name" value="First Name"/>
-                                <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                        <div className="w-[47.5%]">
+                            <div className="flex flex-row relative">
+                                <InputLabel
+                                    htmlFor="first_name"
+                                    value="First Name"
+                                />
+                                <span className="text-red-400 text-2xl absolute left-16 top-0 ml-2">
+                                    *
+                                </span>
                             </div>
 
                             <TextInput
@@ -58,10 +64,15 @@ export default function Register() {
                                 className="mt-2"
                             />
                         </div>
-                        <div className='w-[47.5%]'>
-                            <div className='flex flex-row relative'>
-                                <InputLabel htmlFor="last_name" value="Last Name"/>
-                                <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                        <div className="w-[47.5%]">
+                            <div className="flex flex-row relative">
+                                <InputLabel
+                                    htmlFor="last_name"
+                                    value="Last Name"
+                                />
+                                <span className="text-red-400 text-2xl absolute left-16 top-0 ml-2">
+                                    *
+                                </span>
                             </div>
 
                             <TextInput
@@ -83,25 +94,14 @@ export default function Register() {
                             />
                         </div>
                     </div>
-                    <div className="mt-4">
-                        <div className='flex flex-row relative'>
-                            <InputLabel htmlFor="mobile" value="Mobile"/>
-                            <span className='text-red-400 text-2xl absolute left-12 top-0 ml-2'>*</span>
-                        </div>
-                        <TextInput
-                            id="mobile"
-                            type="text"
-                            name="mobile"
-                            value={data.mobile}
-                            className="mt-1 block w-full"
-                            onChange={(e) => setData("mobile", e.target.value)}
-                            required
-                        />
 
-                        <InputError message={errors.email} className="mt-2" />
-                    </div>
                     <div className="mt-4">
-                        <InputLabel htmlFor="email" value="Email"/>
+                        <div className="flex flex-row relative">
+                            <InputLabel htmlFor="email" value="Email" />
+                            <span className="text-red-400 text-2xl absolute left-12 top-0 ml-2">
+                                *
+                            </span>
+                        </div>
 
                         <TextInput
                             id="email"
@@ -116,11 +116,31 @@ export default function Register() {
 
                         <InputError message={errors.email} className="mt-2" />
                     </div>
-
                     <div className="mt-4">
-                        <div className='flex flex-row relative'>
+                        <div className="flex flex-row relative">
+                            <InputLabel htmlFor="mobile" value="Mobile" />
+                            <span className="text-red-400 text-2xl absolute left-12 top-0 ml-2">
+                                *
+                            </span>
+                        </div>
+                        <TextInput
+                            id="mobile"
+                            type="text"
+                            name="mobile"
+                            value={data.mobile}
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData("mobile", e.target.value)}
+                            required
+                        />
+
+                        <InputError message={errors.email} className="mt-2" />
+                    </div>
+                    <div className="mt-4">
+                        <div className="flex flex-row relative">
                             <InputLabel htmlFor="password" value="Password" />
-                            <span className='text-red-400 text-2xl absolute left-16 top-0 ml-2'>*</span>
+                            <span className="text-red-400 text-2xl absolute left-16 top-0 ml-2">
+                                *
+                            </span>
                         </div>
 
                         <TextInput
@@ -143,9 +163,14 @@ export default function Register() {
                     </div>
 
                     <div className="mt-4">
-                        <div className='flex flex-row relative'>
-                            <InputLabel htmlFor="password_confirmation" value="Password Confirmation" />
-                            <span className='text-red-400 text-2xl absolute left-36 top-0 ml-2'>*</span>
+                        <div className="flex flex-row relative">
+                            <InputLabel
+                                htmlFor="password_confirmation"
+                                value="Password Confirmation"
+                            />
+                            <span className="text-red-400 text-2xl absolute left-36 top-0 ml-2">
+                                *
+                            </span>
                         </div>
 
                         <TextInput
