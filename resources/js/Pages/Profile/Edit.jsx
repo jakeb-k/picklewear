@@ -35,7 +35,7 @@ export default function Edit({ auth, mustVerifyEmail, status, orders, location }
                                     return (
                                         <a
                                             key={order.code}
-                                            href={route("orders.show", order)}
+                                            href={route("orders.show", order)+"?session_id="+order.session_id}
                                             className="rounded-lg w-full flex items-center justify-between border border-gray-600 px-2 py-2 hover:bg-gray-200 transition-color duration-150 ease-in-out"
                                         >
                                             <p className="flex-1">
