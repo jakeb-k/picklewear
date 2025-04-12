@@ -59,7 +59,7 @@ const AddressSearch = ({ onAddressSelect, errors, initialLocation = '' }) => {
                     onChange={handleInputChange}
                     disabled={!ready}
                     placeholder="Enter an address"
-                    className={`rounded-lg py-1 px-4 w-full min-w-[410px] pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.first_name ? "border-red-500" : ""}`}
+                    className={`rounded-lg py-1 px-4 w-full lg:min-w-[410px] pl-8 bg-transparent hover:bg-gray-200/50 focus:ring-2 focus:ring-[#FFD100] focus:outline-none transition-all duration-150 ease-in-out ${errors?.address ? "border-red-500" : ""}`}
                 />
 
                 <p className="absolute left-0 top-0 h-full flex flex-col justify-center px-2">

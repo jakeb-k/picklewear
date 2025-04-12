@@ -45,7 +45,7 @@ export default function SearchResults({ query }) {
                     {products.map((product) => (
                         <a
                             href={route("products.show", product.id)}
-                            className="flex flex-col relative w-[30%] mr-[2.5%] mb-4 p-4 min-h-[250px] text-center rounded-md bg-white hover:bg-gray-200/25 group z-20 cursor-pointer overflow-hidden transition-all duration-300"
+                            className="flex flex-col relative lg:w-[30%] mr-[2.5%] mb-4 p-4 min-h-[250px] text-center rounded-md bg-white hover:bg-gray-200/25 group z-20 cursor-pointer overflow-hidden transition-all duration-300"
                         >
                             {" "}
                             {/* Adjusted width and added bottom margin */}
@@ -62,9 +62,9 @@ export default function SearchResults({ query }) {
                                     ${product.price.toFixed(2)}
                                 </p>
                             </div>
-                            <div className='flex flex-row space-x-4 z-30 mt-4'>
+                            <div className='flex flex-row flex-wrap z-30 mt-4'>
                                 {product.tags.map((tag) => 
-                                    <div className='rounded-2xl bg-gray-300 text-black font-bold  w-fit px-2'>
+                                    <div className='rounded-2xl bg-gray-300 text-black font-bold mr-2 mt-2 w-fit px-2'>
                                         {tag.name.en}
                                     </div>
                                 )}

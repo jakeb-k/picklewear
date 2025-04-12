@@ -51,8 +51,8 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
                 <div className="w-full max-w-md mx-auto">
                     <div className="flex justify-between">
                         <p>
-                            Min: ${" "}
-                            <span className='font-roboto-mono'>
+                            Min: $
+                            <span className='font-roboto_mono'>
                                 {minValue.toLocaleString(0, {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
@@ -60,13 +60,13 @@ export default function ProductPriceFilter({ min, max, updateFilters }) {
                             </span>
                         </p>
                         <p>
-                            <span className='font-roboto-mono'>
+                            Max: $
+                            <span className='font-roboto_mono'>
                                 {maxValue.toLocaleString(0, {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
                                 })}
                             </span>
-                            Max: $
                         </p>
                     </div>
                     <MultiRangeSlider

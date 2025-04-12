@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendOrderCompletedEmail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ class OrderController extends Controller
      */
     public function show(Request $request, Order $order)
     {
-        
         \Stripe\Stripe::setApiKey(config("stripe.sk"));
         $sessionId = $request->query("session_id");
 
@@ -48,7 +48,7 @@ class OrderController extends Controller
                     "products.images",
                 ]),
             ]);
-        } elseif(Auth::user()->hasRole("admin")) {
+        } elseif (Auth::user()->hasRole("admin")) {
             return Inertia::render("Products/OrderShowLayout", [
                 "order" => $order->load([
                     "locations",
@@ -57,8 +57,34 @@ class OrderController extends Controller
                     "products.images",
                 ]),
             ]);
-
         }
-        throw new HttpException(403, 'Unauthorized action.');
+        throw new HttpException(403, "Unauthorized action.");
+    }
+
+    /**
+     * Complete the order and dispatch an email denoting the details
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function completeOrder(Order $order)
+    {
+        $order->update([
+            "status" => "Completed",
+        ]);
+
+        SendOrderCompletedEmail::dispatch($order, $order->customer);
+
+        return response()->json([
+            "message" => "Order completed successfully",
+            "orders" => Order::with([
+                "products",
+                "user",
+                "locations",
+                "customer",
+            ])
+                ->orderBy("updated_at", "desc")
+                ->get(),
+        ]);
     }
 }

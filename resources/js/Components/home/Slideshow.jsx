@@ -35,9 +35,8 @@ const Slideshow = () => {
 
     return (
         <div
-            className="relative"
+            className="relative flex overflow-hidden w-full"
             ref={containerRef}
-            style={{ display: "flex", overflow: "hidden", width: "100%" }}
         >
             <div
                 style={{
@@ -55,11 +54,11 @@ const Slideshow = () => {
                     />
                 ))}
             </div>
-            <p className="italic text-3xl font-bold absolute top-4 left-4 px-4 py-2 text-main rounded-lg">
+            <p className="italic lg:text-3xl font-bold absolute top-4 left-4 px-4 py-2 text-main rounded-lg">
                 Play like a Pro
             </p>
-            <a  href={route("products.index", "popular")} className="hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic text-3xl font-bold absolute bottom-4 right-4 px-4 py-2 bg-main rounded-lg ">
-                Browse our Summer Collection
+            <a  href={route("products.index", "popular")} className="hover:bg-secondary hover:text-main border-2 border-main transition-all duration-200 ease-in-out italic lg:text-3xl font-bold absolute bottom-4 right-4 px-4 py-2 bg-main rounded-lg ">
+                Browse our Most Popular Items
             </a>
         </div>
     );

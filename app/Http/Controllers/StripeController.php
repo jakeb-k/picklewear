@@ -56,7 +56,7 @@ class StripeController extends Controller
                 "city" => "required|string",
                 "state" => "required|string|in:NSW,QLD,SA,TAS,VIC,WA,ACT,NT",
                 "postcode" => "required|numeric|digits:4",
-                "mobile" => ["required", 'regex:/^[2-478](?:[ -]?[0-9]){8}$/'],
+                "mobile" => ["required", 'regex:/^04\d{2}[ -]?\d{3}[ -]?\d{3}$/'],
             ],
             [
                 "first_name.required" => "First name is required",
@@ -228,9 +228,6 @@ class StripeController extends Controller
 
         try {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
-            if (!$session) {
-                throw new NotFoundHttpException("Stripe session not found");
-            }
             $order = Order::where("session_id", $session->id)->first();
             $customer = Customer::where("stripe_id", $session->id)->first();
             $customer->email = $session->customer_details->email;
@@ -239,7 +236,7 @@ class StripeController extends Controller
                 $order->status = "Paid";
                 $order->save();
             }
-
+            
             SendOrderPurchasedEmail::dispatch($order, $customer);
             
             return to_route("orders.show", ['order' => $order->id, 'session_id' => $sessionId]);

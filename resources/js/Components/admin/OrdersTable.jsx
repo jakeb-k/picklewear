@@ -1,9 +1,11 @@
 import DataTable from "react-data-table-component";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function OrdersTable(props) {
-    const orders = props.orders;
+    const [orders, setOrders] = useState(props.orders);
+    const [success, setSuccess] = useState(null);
     const [data, setData] = useState(
         orders.map((order) => {
             const code = order.id.toString().padStart(4, "0"); // Format order code
@@ -31,32 +33,50 @@ export default function OrdersTable(props) {
         }),
     );
 
-    useEffect(() => {
-        setData(orders.map((order) => {
-            const code = order.code; // Format order code
-            const status = order.status;
-            const userName =
-                order.customer?.first_name + " " + order.customer?.last_name; // Full name
-            const mobile = order.customer?.mobile; // User email
-            const total = order.total; // Order total
-            const location = order.locations[0]
-                ? Object.values(order.locations[0]).join(" ")
-                : "N/A";
-            const viewDetails = `/orders/${order.id}`; // Link to view order details
-            const createdAt = order.created_at;
+    function completeOrder(orderId) {
+        axios
+            .get(route("orders.complete", orderId))
+            .then((response) => {
+                setSuccess(response.data.message);
+                setOrders(response.data.orders);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
 
-            return {
-                code,
-                status,
-                userName,
-                mobile,
-                total,
-                location,
-                viewDetails,
-                createdAt,
-            };
-        }))
-    },[orders])
+    useEffect(() => {
+        setData(
+            orders.map((order) => {
+                const id = order.id;
+                const code = order.code; // Format order code
+                const status = order.status;
+                const userName =
+                    order.customer?.first_name +
+                    " " +
+                    order.customer?.last_name; // Full name
+                const mobile = order.customer?.mobile; // User email
+                const total = order.total; // Order total
+                const location = order.locations[0]
+                    ? Object.values(order.locations[0]).join(" ")
+                    : "N/A";
+                const viewDetails = `/orders/${order.id}`; // Link to view order details
+                const createdAt = order.created_at;
+
+                return {
+                    id,
+                    code,
+                    status,
+                    userName,
+                    mobile,
+                    total,
+                    location,
+                    viewDetails,
+                    createdAt,
+                };
+            }),
+        );
+    }, [orders]);
 
     const customStyles = {
         table: {
@@ -170,14 +190,15 @@ export default function OrdersTable(props) {
                         className="transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-eye hover:bg-gray-800 hover:text-white rounded-full p-1 cursor"
                     ></i>
                     <i
-                        className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == "Delivered" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
+                        onClick={() => completeOrder(row.id)}
+                        className={`transition-all duration-150 ease-in-out cursor-pointer fa-regular fa-circle-check rounded-full p-1 ${row.status == "Completed" ? "hover:text-gray-800 hover:bg-white text-white bg-green-400 " : "hover:bg-green-400 hover:text-white "}`}
                     ></i>
                 </div>
             ),
             width: "8.3%",
         },
     ];
-    
+
     return (
         <div className="rounded-lg shadow-lg">
             <DataTable

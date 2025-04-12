@@ -48,8 +48,8 @@ const ShoppingCart = forwardRef(({ handleCartClose }, ref) => {
 
     return (
         <div ref={ref} className="fixed flex w-full min-h-screen z-[999]">
-            <div onClick={() => setItemsAndClose()} className="w-2/3 min-h-screen  bg-black/50 "></div>
-            <div className="w-1/3 min-h-screen relative py-10 bg-gray-100 min-w-[450px]">
+            <div onClick={() => setItemsAndClose()} className="lg:w-2/3 min-h-screen  bg-black/50 "></div>
+            <div className="lg:w-1/3 min-h-screen relative py-10 bg-gray-100 lg:min-w-[450px] w-screen">
                 <div className="flex justify-between items-center text-3xl ml-10">
                     <p>{user ? user.first_name + "'s Cart " : "Your Cart"}{cartItems.length > 0 ? ' ('+cartItems.length+')' : '' }</p>
                     <button

@@ -21,24 +21,24 @@ export default function UpdateProfileInformation({
             last_name: user.last_name,
             mobile: user.mobile,
             email: user.email,
-            street: location[0]?.street,
-            city: location[0]?.city,
-            state: location[0]?.state,
-            postcode: location[0]?.postcode,
+            street: location[0]?.street ?? "",
+            city: location[0]?.city ?? "",
+            state: location[0]?.state ?? "",
+            postcode: location[0]?.postcode ?? "",
         });
 
-    const [initialLocation, setInitialLocation] = useState(null);
+    const [initialLocation, setInitialLocation] = useState("");
 
     useEffect(() => {
         if (location) {
             setInitialLocation(
-                location[0]?.street +
+                location[0]?.street ?? "" +
                     " " +
-                    location[0]?.city +
+                    location[0]?.city ?? "" +
                     " " +
-                    location[0]?.state +
+                    location[0]?.state ?? "" +
                     " " +
-                    location[0]?.postcode +
+                    location[0]?.postcode ?? "" +
                     ", " +
                     "Australia",
             );

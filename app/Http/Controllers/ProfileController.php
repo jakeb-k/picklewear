@@ -24,10 +24,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $orders = Auth::user()->orders->merge(Order::whereHas('customer', function($query){
+            $query->where('email', Auth::user()->email);
+        })->get());
         return Inertia::render("Profile/Edit", [
             "mustVerifyEmail" => $request->user() instanceof MustVerifyEmail,
             "status" => session("status"),
-            "orders" => Auth::user()->orders,
+            "orders" => $orders,
             "location" => Auth::user()->locations,
         ]);
     }

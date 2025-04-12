@@ -37,6 +37,7 @@ class SendOrderPurchasedEmail implements ShouldQueue
         $this->order->load(["customer", "user", "locations", "products.images"]);
 
         $viewData = [
+            'link' => route('orders.show',$this->order).'?session_id=' . $this->order->session_id, 
             "order" => $this->order,
             "email" => $this->customer->email,
             "date" => Carbon::parse($this->order->created_at)->format("d/m/Y"),

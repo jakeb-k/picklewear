@@ -59,6 +59,9 @@ const BestSellers = () => {
             }
         });
     };
+    const isMobile = window.innerWidth < 640; // Tailwind 'sm' breakpoint
+
+    const slideAmount = isMobile ? 102 : 24.95;
 
     if (!loading) {
         return (
@@ -80,7 +83,7 @@ const BestSellers = () => {
                         className="w-full flex"
                         style={{
                             display: "flex justify-center",
-                            transform: `translateX(-${currentIndex * 24.95}%)`, // Slide by 25% for one image
+                            transform: `translateX(-${currentIndex * slideAmount}%)`, // Slide by 25% for one image
                             transition: "transform 0.5s ease-in-out",
                         }}
                     >
@@ -92,8 +95,7 @@ const BestSellers = () => {
                                     onClick={() =>
                                         navigateToProduct(product.id)
                                     }
-                                    className="relative mr-[2%] min-h-[350px] rounded-md bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl group  cursor-pointer overflow-hidden transition-all duration-150 ease-in-out pb-12"
-                                    style={{ minWidth: "23%" }} // Ensure the minimum width stays at 23%
+                                    className="relative mr-[2%] min-h-[350px] rounded-md bg-gray-100/90 hover:bg-white shadow-md hover:shadow-xl group  cursor-pointer overflow-hidden transition-all duration-150 ease-in-out pb-12 lg:min-w-[23%] min-w-full"
                                 >
                                     <img
                                         src={productImg.file_path}
