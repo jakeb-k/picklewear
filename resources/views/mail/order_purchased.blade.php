@@ -59,6 +59,22 @@
             flex-direction:row; 
             align-items: center;
         }
+        .link-btn {
+            padding:8px 5px; 
+            background-color: #FFD100;
+            color: #000;
+            margin:20px; 
+            border:1px solid black; 
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .link-btn:hover{
+            background-color:black;
+            color:#FFD100;
+            transition:all;
+            animation-duration: 150ms;
+            transition-timing-function: ease-in-out; 
+        }
     </style>
 </head>
 <body>
@@ -73,7 +89,10 @@
             <p><strong>Total:</strong> ${{ $order->total }}</p>
             <p> Use code <b>Pickleliscious</b> to get <b>10%</b> off your next order!</p>
         </section>
-        <h3>Items: </h3>
+        <div class='flex'>
+            <h3>Items: </h3>
+            <a href="{{$link}}" class="link-btn">View Order</a>
+        </div>
         @foreach($order->products as $product)
             <section class='product-box'>
                 @if(!empty($product->images) && isset($product->images[0]))
