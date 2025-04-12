@@ -2,7 +2,7 @@ import { Head } from "@inertiajs/react";
 import ContactForm from "@/Components/ContactForm";
 export default function FAQs() {
     return (
-        <article id="faqs" className="m-24 bg-white p-12 space-y-8 rounded-lg mt-32">
+        <article id="faqs" className="lg:m-24 m-4 bg-white lg:p-12 p-6 space-y-8 rounded-lg mt-32">
             <Head title="FAQs" />
             <h1>Frequently Asked Questions</h1>
             <p className='text-lg'>
