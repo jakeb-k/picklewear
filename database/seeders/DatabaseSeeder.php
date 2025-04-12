@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
@@ -101,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 "wristbands" => Tag::findOrCreateFromString("wristbands",'gear'),
                 "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
                 "accessories" => Tag::findOrCreateFromString("accessories", 'gear'),
-                "paddle coveres" => Tag::findOrCreateFromString("paddle coveres", 'gear'),
+                "paddle covers" => Tag::findOrCreateFromString("paddle covers", 'gear'),
                 "bags" => Tag::findOrCreateFromString("bags", 'gear'),
                 "sleeves" => Tag::findOrCreateFromString("sleeves", 'gear'),
                 "ankle braces" => Tag::findOrCreateFromString("ankle braces", 'gear'),
@@ -118,5 +119,8 @@ class DatabaseSeeder extends Seeder
             $randomTypeTag = $typeTags[$randomTagKey][$randomTypeTagKey];
             $product->attachTags([$randomCategoryTag, $randomTypeTag]);
         }
+        $token = env('ZOHO_REFRESH_TOKEN');
+
+        DB::insert('INSERT INTO zoho_oauth_tokens (refresh_token) VALUES (?)', [$token]);
     }
 }

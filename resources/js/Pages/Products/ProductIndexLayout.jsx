@@ -16,9 +16,12 @@ export default function ProductIndexLayout(props) {
     const [priceFilter, setPriceFilter] = useState(null);
     const [productChunks, setChunks] = useState({});
     const [colorOptions, setColorOptions] = useState(null);
+    const [page, setPage] = useState(1);
 
     const category = props.category;
     const type = props.type;
+
+    const [shownProductChunks, setShownProductChunks] = useState([]);
 
     // Function to chunk products into groups of 3
     const chunkProducts = (products) => {
@@ -96,6 +99,17 @@ export default function ProductIndexLayout(props) {
     }, [category, favourites, products]);
 
     useEffect(() => {
+        const rowsPerPage = 2;
+        if (productChunks.length > 0) {
+            const newChunks = productChunks.slice(
+                (page - 1) * rowsPerPage,
+                page * rowsPerPage,
+            );
+            setShownProductChunks(newChunks);
+        }
+    }, [page, productChunks]);
+
+    useEffect(() => {
         setLoading(true);
         if (sort) {
             sortProducts();
@@ -128,31 +142,32 @@ export default function ProductIndexLayout(props) {
     }, [priceFilter]);
 
     function sortProducts() {
+        console.log("Sorting products by: ", sort.value);
         let sortedProducts = [];
 
         switch (sort.value) {
             case "priceAsc":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => a.price - b.price,
                 );
                 break;
             case "priceDesc":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.price - a.price,
                 );
                 break;
             case "popularity":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.order_count - a.order_count,
                 );
                 break;
             case "discount":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => b.discount - a.discount,
                 );
                 break;
             case "arrivals":
-                sortedProducts = [...products].sort((a, b) => {
+                sortedProducts = products.sort((a, b) => {
                     const now = new Date().getTime();
                     const diffA = Math.abs(
                         new Date(a.created_at).getTime() - now,
@@ -165,7 +180,7 @@ export default function ProductIndexLayout(props) {
                 });
                 break;
             case "delivery":
-                sortedProducts = [...products].sort(
+                sortedProducts = products.sort(
                     (a, b) => a.delivery_date - b.delivery_date,
                 );
                 break;
@@ -174,6 +189,7 @@ export default function ProductIndexLayout(props) {
                 return;
         }
 
+        console.log(sortedProducts); 
         // Update the state with sorted products and re-chunk them
         setProducts(sortedProducts);
         setChunks(chunkProducts(sortedProducts));
@@ -407,7 +423,7 @@ export default function ProductIndexLayout(props) {
                                 <div className="bg-gray-400 h-[0.5px] my-4" />
                             </section>
                             <section className="w-[75.5%] space-y-6">
-                                {productChunks.map((chunk, index) => (
+                                {shownProductChunks.map((chunk, index) => (
                                     <div
                                         key={index}
                                         className="flex justify-start gap-[3%] w-full"
@@ -415,7 +431,7 @@ export default function ProductIndexLayout(props) {
                                         {chunk.map((product) => (
                                             <div
                                                 key={product.id}
-                                                className="flex-1 max-w-[31.5%]"
+                                                className="flex-1 max-w-[31.5%] flex-col"
                                             >
                                                 <ProductCard
                                                     product={product}
@@ -424,6 +440,21 @@ export default function ProductIndexLayout(props) {
                                         ))}
                                     </div>
                                 ))}
+                                <div className="flex space-x-2 justify-center">
+                                    {Array.from({
+                                        length: Math.ceil(
+                                            productChunks.length / 2,
+                                        ),
+                                    }).map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setPage(index + 1)}
+                                            className={`px-3 py-1 rounded ${page === index + 1 ? "bg-black text-white" : "bg-gray-200 border border-black hover:bg-main hover:text-black transition-all duration-150 ease-in-out"}`}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    ))}
+                                </div>
                             </section>
                         </>
                     ) : (

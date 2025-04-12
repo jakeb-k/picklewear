@@ -15,11 +15,12 @@ export default function ProductCard(props) {
     return (
         <a
             href={route("products.show", product.id)}
-            className="relative min-h-[350px] rounded-md py-12 pb-4 bg-white group z-20 cursor-pointer overflow-hidden transition-all duration-300 w-full flex flex-col justify-evenly mb-8"
+            className="relative min-h-[350px] h-full rounded-md py-12 pb-4 bg-white group z-20 cursor-pointer overflow-hidden transition-all duration-300 w-full flex flex-col justify-evenly mb-8"
         >
             <div className="absolute inset-0 bg-gray-300/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
             <i
                 onClick={(e) => {
+                    e.preventDefault(); 
                     e.stopPropagation();
                     setFavourite(product);
                 }}

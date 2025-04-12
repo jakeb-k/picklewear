@@ -79,15 +79,14 @@
 </head>
 <body>
     <article class="email-container">
-        <h1>Thank You for Your Purchase!</h1>
+        <h1>Your order has now been completed!</h1>
         <section class='message-box'>
             <h3>Order Details: {{$order->code}} | {{$date}}</h3>
             <p><strong>Recipient:</strong> {{ $order->customer->first_name }} {{ $order->customer->last_name }}</p>
             <p><strong>Email:</strong> {{ $order->customer->email }}</p>
             <p><strong>Delivery Address:</strong> {{ $address }}</p>
-            <p><strong>Estimated Delivery:</strong> {{ $delivery_range }}</p>
             <p><strong>Total:</strong> ${{ $order->total }}</p>
-            <p> Use code <b>Pickleliscious</b> to get <b>10%</b> off your next order!</p>
+            <p>If your order's gone more out of bounds than your last pickleball serve, hit us up at <a href="mailto:admin@pickleball.com">here</a> - we'll rally back with help, no paddle required.</p>
         </section>
         <div class='flex'>
             <h3>Items: </h3>

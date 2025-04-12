@@ -22,7 +22,7 @@ export default function ProductColorFilter({ updateFilters, ...props }) {
                 classNames="fade"
                 unmountOnExit
             >
-                <div className="flex flex-wrap justify-between w-full mb-4">
+                <div className="flex flex-wrap justify-start w-full mb-4">
                     {colorOptions.length > 0 &&
                         colorOptions.map((color, index) => {
                             let hex = tinycolor(color);
