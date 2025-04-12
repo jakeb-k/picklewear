@@ -96,11 +96,9 @@ export default function MobileLayout({ children }) {
             >
                 <SearchBar />
             </CSSTransition>
-            <div
-                className="fixed w-full z-50"
-            >
-                <div className="w-full bg-main text-secondary flex h-7">
-                    <div className="mx-auto w-[400px] overflow-x-hidden">
+            <div className="fixed w-full z-50">
+                <div className="w-full bg-main text-secondary flex h-10">
+                    <div className="mx-auto w-[400px] overflow-x-hidden mt-2">
                         <div className=" text-nowrap promo-message  animate-scroll space-x-[300px] relative flex flex-row justify-start items-center ">
                             {promos.map((promo, index) => (
                                 <p key={index} className="font-bold text-lg">
@@ -109,15 +107,15 @@ export default function MobileLayout({ children }) {
                             ))}
                         </div>
                     </div>
-                    <div className="flex absolute w-fit right-0 space-x-6 mr-12">
+                    <div className="flex items-center  w-fit right-0 space-x-6 mr-4">
                         <Link href={route("products.index", "favourites")}>
-                            <i className="fa-regular fa-heart text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out"></i>
+                            <i className="fa-regular fa-heart text-secondary text-2xl hover:text-white transition-all duration-150 ease-in-out"></i>
                         </Link>
                         <Link href={"/faqs"}>
-                            <i className="fa-regular fa-circle-question text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out "></i>
+                            <i className="fa-regular fa-circle-question text-secondary text-2xl hover:text-white transition-all duration-150 ease-in-out "></i>
                         </Link>
                         <Link href={"/faqs#contact"}>
-                            <i className="fa-regular fa-envelope text-secondary text-xl hover:text-white transition-all duration-150 ease-in-out"></i>
+                            <i className="fa-regular fa-envelope text-secondary text-2xl hover:text-white transition-all duration-150 ease-in-out"></i>
                         </Link>
                     </div>
                 </div>
@@ -128,7 +126,9 @@ export default function MobileLayout({ children }) {
                     >
                         <span
                             className={`h-0.5 bg-main transition-transform duration-300 ease-in-out ${
-                                menuOpen ? "rotate-[50deg] translate-y-[9px]" : ""
+                                menuOpen
+                                    ? "rotate-[50deg] translate-y-[9px]"
+                                    : ""
                             }`}
                         />
                         <span
@@ -144,7 +144,7 @@ export default function MobileLayout({ children }) {
                     </button>
                     <div
                         onClick={() => routeToHome()}
-                        className="flex cursor-pointer flex-row w-fit justify-end space-x-2 items-center absolute left-1/2 top-2 transform -translate-x-1/2"
+                        className="flex cursor-pointer flex-row w-fit justify-end space-x-2 items-center ml-4"
                     >
                         <img src={Logo} className="w-12 h-auto" />
                         <div>
@@ -152,52 +152,30 @@ export default function MobileLayout({ children }) {
                                 Picklewear
                             </p>
                         </div>
+                    </div>
+                    <div className="ml-auto flex items-center space-x-8 pr-4">
+                        <button onClick={() => setCartOpen(true)}>
+                            <i className="fa-solid fa-cart-shopping text-white text-2xl hover:text-main"></i>
+                        </button>
 
-                        {/* <div
-                            onMouseEnter={() => setMenuOpen(true)}
-                            className="flex flex-row w-fit space-x-16 items-center text-2xl"
-                        >
-                            <div
-                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
-                                    menuType == "mens" ? "underline" : ""
-                                }`}
-                                onMouseEnter={() => setMenuType("mens")}
-                            >
-                                <a href={route("products.index", "mens")}>
-                                    Mens
-                                </a>
-                            </div>
-                            <div
-                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
-                                    menuType == "womens" ? "underline" : ""
-                                }`}
-                                onMouseEnter={() => setMenuType("womens")}
-                            >
-                                <a href={route("products.index", "womens")}>
-                                    Womens{" "}
-                                </a>
-                            </div>
-                            <div
-                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
-                                    menuType == "kids" ? "underline" : ""
-                                }`}
-                                onMouseEnter={() => setMenuType("kids")}
-                            >
-                                <a href={route("products.index", "kids")}>
-                                    Kids
-                                </a>
-                            </div>
-                            <div
-                                className={`cursor-pointer transition-all duration-150 ease-in-out ${
-                                    menuType == "gear" ? "underline" : ""
-                                }`}
-                                onMouseEnter={() => setMenuType("gear")}
-                            >
-                                <a href={route("products.index", "gear")}>
-                                    Gear
-                                </a>
-                            </div>
-                        </div> */}
+                        {auth?.user ? (
+                            <>
+                                <Link href={route("profile.edit")}>
+                                    <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
+                                </Link>
+                                <Link
+                                    href={route("logout")}
+                                    method="post"
+                                    as="button"
+                                >
+                                    <i className="fa-solid fa-right-from-bracket text-2xl text-white hover:text-main"></i>
+                                </Link>
+                            </>
+                        ) : (
+                            <Link href={route("login")}>
+                                <i className="fa-regular fa-user text-white text-2xl hover:text-main"></i>
+                            </Link>
+                        )}
                     </div>
                     {/* <div className="flex flex-row space-x-8 justify-end pr-10 w-1/2 items-center">
                         <div className="relative flex flex-row items-center">
@@ -230,15 +208,6 @@ export default function MobileLayout({ children }) {
                             </button>
                         )}
 
-                        {auth?.user && (
-                            <Link
-                                href={route("logout")}
-                                method="post"
-                                as="button"
-                            >
-                                <i className="fa-solid fa-right-from-bracket text-2xl text-white hover:text-main"></i>
-                            </Link>
-                        )}
                     </div> */}
                 </div>
                 <CSSTransition
@@ -249,6 +218,7 @@ export default function MobileLayout({ children }) {
                 >
                     <MobileNavigationMenu
                         type={menuType}
+                        setIsQuerying={() => setIsQuerying(true)}
                         closeMenu={() => setMenuOpen(false)}
                     />
                 </CSSTransition>

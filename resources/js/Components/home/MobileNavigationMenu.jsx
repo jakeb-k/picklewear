@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import SearchResults from "./SearchResults";
+import { Link, useForm } from "@inertiajs/react";
+import { CSSTransition } from "react-transition-group";
 
-export default function MobileNavigationMenu({ closeMenu, ...props }) {
+export default function MobileNavigationMenu({ closeMenu, setIsQuerying, ...props }) {
     const menuOptions = {
         mens: [
             "T-Shirts",
@@ -65,105 +68,116 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
     const [options, setOptions] = useState(menuOptions[type]);
 
     const Options = ({ type }) => (
-        <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden flex flex-wrap text-secondary text-sm p-4 pt-2"
-        >
-            <div className="flex flex-wrap text-secondary text-sm p-4 pt-2">
-                {menuOptions[type] &&
-                    menuOptions[type]
-                        .reduce((rows, key, index) => {
-                            const chunkIndex = Math.floor(index / 2);
-                            if (!rows[chunkIndex]) {
-                                rows[chunkIndex] = []; // start a new chunk
-                            }
-                            rows[chunkIndex].push(key);
-                            return rows;
-                        }, [])
-                        .map((row, rowIndex) => (
-                            <div
-                                key={rowIndex}
-                                className="flex w-full justify-between"
-                            >
-                                {row.map((option) => (
-                                    <a
-                                        key={option}
-                                        href={
-                                            route("products.index", type) +
-                                            "?type=" +
-                                            encodeURIComponent(
-                                                option.toLowerCase(),
-                                            )
-                                        }
-                                        className="line-link-mobile text-left border-4 w-1/2 mt-4 underline"
-                                    >
-                                        {option}
-                                    </a>
-                                ))}
-                            </div>
-                        ))}
-            </div>
-        </motion.div>
+        <div className="flex flex-wrap text-secondary text-sm p-4 pt-2">
+            {menuOptions[type] &&
+                menuOptions[type]
+                    .reduce((rows, key, index) => {
+                        const chunkIndex = Math.floor(index / 2);
+                        if (!rows[chunkIndex]) {
+                            rows[chunkIndex] = []; // start a new chunk
+                        }
+                        rows[chunkIndex].push(key);
+                        return rows;
+                    }, [])
+                    .map((row, rowIndex) => (
+                        <div
+                            key={rowIndex}
+                            className="flex w-full justify-between"
+                        >
+                            {row.map((option) => (
+                                <a
+                                    key={option}
+                                    href={
+                                        route("products.index", type) +
+                                        "?type=" +
+                                        encodeURIComponent(option.toLowerCase())
+                                    }
+                                    className="line-link-mobile text-left border-4 w-1/2 mt-4 underline"
+                                >
+                                    {option}
+                                </a>
+                            ))}
+                        </div>
+                    ))}
+        </div>
     );
+
 
     return (
         <div className="fixed inset-0 top-[87.5px] bg-black/40 z-10 overflow-y-auto">
             <div className="bg-[#e5e7eb] drop-shadow-2xl min-h-full rounded-t-none border-t-0 py-4 w-[75%] z-20">
+
+                <div className="flex items-center justify-between px-4 space-x-8">
+                    <button onClick={setIsQuerying} className="w-32 font-bold px-2 py-1 rounded-lg text-xl mb-4 border-2 border-main bg-secondary text-main">
+                        Search
+                    </button>{" "}
+                    <Link href={route("products.index", "favourites")} className="w-32 font-bold px-2 py-1 rounded-lg text-xl mb-4 border-2 border-main bg-secondary text-main">
+                        Favourites
+                    </Link>
+                </div>
+
                 <div className="px-4">
                     <h3 className="font-bold text-xl mb-2">Shop By Price</h3>
                     <ul className="text-secondary text-xl flex flex-wrap justify-between">
                         <a
-                            className='w-1/2'
+                            className="w-1/2"
                             href={
                                 route("products.index", type) +
                                 "?type=" +
                                 "sale"
                             }
                         >
-                            <li className="underline line-link-mobile">On Sale</li>
+                            <li className="underline line-link-mobile">
+                                On Sale
+                            </li>
                         </a>
                         <a
-                            className='w-1/2'
+                            className="w-1/2"
                             href={
                                 route("products.index", type) +
                                 "?type=" +
                                 "sale20"
                             }
                         >
-                            <li className="underline line-link-mobile">$20 or Under</li>
+                            <li className="underline line-link-mobile">
+                                $20 or Under
+                            </li>
                         </a>
                         <a
-                            className='w-1/2'
+                            className="w-1/2"
                             href={
                                 route("products.index", type) +
                                 "?type=" +
                                 "sale30"
                             }
                         >
-                            <li className="underline line-link-mobile">$30 or Under</li>
+                            <li className="underline line-link-mobile">
+                                $30 or Under
+                            </li>
                         </a>
                         <a
-                            className='w-1/2'
+                            className="w-1/2"
                             href={
                                 route("products.index", type) +
                                 "?type=" +
                                 "sale40"
                             }
                         >
-                            <li className="underline line-link-mobile">$40 or Under</li>
+                            <li className="underline line-link-mobile">
+                                $40 or Under
+                            </li>
                         </a>
                         <a
-                            className='w-1/2'
+                            className="w-1/2"
                             href={
                                 route("products.index", type) +
                                 "?type=" +
                                 "sale50"
                             }
                         >
-                            <li className="underline line-link-mobile">$50 or Under</li>
+                            <li className="underline line-link-mobile">
+                                $50 or Under
+                            </li>
                         </a>
                     </ul>
                 </div>
@@ -181,7 +195,7 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                                 setExpanded([...expanded, "mens"]);
                             }
                         }}
-                        className="w-full border-b border-main text-main flex flex-row justify-between px-8 py-2 bg-secondary"
+                        className={`w-full border-b border-main text-main flex flex-row justify-between px-8 py-2 bg-secondary`}
                     >
                         <p className="w-20">Mens</p>
                         <i
@@ -189,8 +203,22 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                         ></i>
                     </div>
 
-                    <AnimatePresence initial={expanded.includes("mens")}>
-                        {expanded.includes("mens") && <Options type={"mens"} />}
+                    <AnimatePresence mode="wait" initial={false}>
+                        {expanded.includes("mens") && (
+                            <motion.div
+                                key="mens-options"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                            >
+                                <Options type={"mens"} />
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                     <div
                         onClick={() => {
@@ -212,9 +240,21 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                         ></i>
                     </div>
 
-                    <AnimatePresence initial={expanded.includes("womens")}>
+                    <AnimatePresence mode="wait" initial={false}>
                         {expanded.includes("womens") && (
-                            <Options type={"womens"} />
+                            <motion.div
+                                key="womens-options"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                            >
+                                <Options type={"womens"} />
+                            </motion.div>
                         )}
                     </AnimatePresence>
                     <div
@@ -235,8 +275,22 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                         ></i>
                     </div>
 
-                    <AnimatePresence initial={expanded.includes("kids")}>
-                        {expanded.includes("kids") && <Options type={"kids"} />}
+                    <AnimatePresence mode="wait" initial={false}>
+                        {expanded.includes("kids") && (
+                            <motion.div
+                                key="kids-options"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                            >
+                                <Options type={"kids"} />
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                     <div
                         onClick={() => {
@@ -256,8 +310,22 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                         ></i>
                     </div>
 
-                    <AnimatePresence initial={expanded.includes("gear")}>
-                        {expanded.includes("gear") && <Options type={"gear"} />}
+                    <AnimatePresence mode="wait" initial={false}>
+                        {expanded.includes("gear") && (
+                            <motion.div
+                                key="gear-options"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{
+                                    duration: 0.3,
+                                    ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                            >
+                                <Options type={"gear"} />
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                     <div className="flex flex-wrap text-secondary text-xl">
                         {options &&
@@ -297,9 +365,6 @@ export default function MobileNavigationMenu({ closeMenu, ...props }) {
                                 ))}
                     </div>
                 </div>
-                {/* <a  href={route("products.index", "popular")} className="p-12 ml-auto rounded-xl h-48 my-auto font-oswald tracking-wider text-2xl bg-secondary hover:bg-main border-main transition-all duration-150 ease-in-out text-main hover:text-secondary">
-                    Shop Summer Collection
-                </a> */}
             </div>
         </div>
     );
