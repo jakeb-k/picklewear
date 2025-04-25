@@ -427,6 +427,8 @@ class ProductController extends Controller
 
             $rawColours = explode(",", $colorString);
 
+            $cssNamedColours = config("colors.css_named");
+
             $cleanColours = collect($rawColours)
                 ->map(function ($c) {
                     $c = trim($c);
@@ -442,6 +444,7 @@ class ProductController extends Controller
                     // bin if it's just numbers or messy alphanumeric codes
                     return preg_match('/^[a-zA-Z]+$/', $c); // letters only, no digits
                 })
+                ->filter(fn($c) => in_array($c, $cssNamedColours))
                 ->unique()
                 ->values()
                 ->toArray();
@@ -455,60 +458,76 @@ class ProductController extends Controller
 
             $dataTags = explode(" ", $productData["Product Title"]);
 
-            $cleanWords = array_map(
-                fn($word) => strtolower(trim($word, ",.?!")),
-                $dataTags
-            );
+            $cleanWords = collect($dataTags)
+                ->map(function ($word) {
+                    $word = strtolower(trim($word, ",.?!"));
+                    $word = str_replace("-", "", $word); // remove hyphens
+                    return $word;
+                })
+                ->toArray();
 
-            // Find matches
-            $matchedCategories = array_intersect(
-                array_map("strtolower", $categoryTags),
-                $cleanWords
-            );
+            // Now match allowing optional trailing 's'
+            $matchedCategories = array_filter($categoryTags, function (
+                $tag
+            ) use ($cleanWords) {
+                $tag = strtolower(str_replace("-", "", $tag));
+                foreach ($cleanWords as $word) {
+                    if ($word === $tag || $word === $tag . "s") {
+                        return true;
+                    }
+                }
+                return false;
+            });
 
-            $matchedTypes = array_intersect(
-                array_map("strtolower", $typeTags),
-                $cleanWords
-            );
-
+            $matchedTypes = array_filter($typeTags, function ($tag) use ($cleanWords) {
+                $tag = strtolower(str_replace("-", "", $tag));
+                foreach ($cleanWords as $word) {
+                    if ($word === $tag || $word === $tag . "s") {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            
             $sku = $productData["id"]; // using JSON `id` as SKU
 
             $url = $productData["Main Image"];
-            $type = "default"; // set this manually or from tags later
-            $deliveryDate =
-                \Carbon\Carbon::parse($productData["Delivery Time"])
-                    ->timestamp ?? null;
 
-            $priceRaw = floatval(
+            $rawDelivery = $productData["Delivery Time"] ?? null;
+
+            $deliveryDate = \Carbon\Carbon::parse($rawDelivery);
+            $deliveryDays = now()->diffInDays($deliveryDate, false);
+
+            $originalPrice = str_replace(
+                ['AU$', '$'],
+                "",
+                $productData["Original Price"]
+            );
+            $originalPrice = is_numeric($originalPrice)
+                ? floatval($originalPrice)
+                : null;
+
+            $salePrice = floatval(
                 str_replace(['AU$', '$'], "", $productData["Sale Price"])
             );
             $shipping = floatval(
                 str_replace(['AU$', '$'], "", $productData["Shipping Info"])
             );
 
-            // Ensure max discount is 50%
-            $discountPercentage = (int) filter_var(
-                $productData["Discount"],
-                FILTER_SANITIZE_NUMBER_INT
-            );
-            $discountPercentage = min($discountPercentage, 50);
+            // Calculate discount percentage
+            $discountPercentage = $originalPrice
+                ? 1 - $salePrice / $originalPrice // ex: (100 - 80) / 100 = 0.2 = 20%
+                : 0;
 
-            // Final price = sale price + shipping + 20% markup
-            $finalPrice = round(($priceRaw + $shipping) * 1.2, 2);
+            // Ensure max discount cap 50%
+            $discountPercentage = min($discountPercentage, 0.5);
 
-            // Discount = original price - final price
-            $discount = round(
-                $productData["Original Price"] !== "Not Available"
-                    ? floatval(
-                            str_replace(
-                                ['AU$', '$'],
-                                "",
-                                $productData["Original Price"]
-                            )
-                        ) - $finalPrice
-                    : $priceRaw * ($discountPercentage / 100),
-                2
-            );
+            // Final price = Original + shipping + 20% markup
+            if ($originalPrice) {
+                $finalPrice = round(($originalPrice + $shipping) * 1.2, 2);
+            } else {
+                $finalPrice = round(($salePrice + $shipping) * 1.2, 2);
+            }
 
             $available = $productData["Stock"] > 0 ? 1 : 0;
 
@@ -517,10 +536,9 @@ class ProductController extends Controller
                 [
                     "name" => $productData["Product Title"],
                     "url" => $url,
-                    "type" => $type,
-                    "delivery_date" => $deliveryDate,
+                    "delivery_date" => $deliveryDays,
                     "price" => $finalPrice,
-                    "discount" => $discount,
+                    "discount" => $discountPercentage,
                     "sku" => $sku,
                     "description" => $productData["Product Title"],
                     "available" => $available,
@@ -543,16 +561,19 @@ class ProductController extends Controller
                 ]);
             }
 
-            ProductOption::create([
-                "type" => "size",
-                "values" => $sizes,
-                "product_id" => $product->id,
-            ]);
+            if (count($sizes) > 0) {
+                ProductOption::create([
+                    "type" => "size",
+                    "values" => implode(".", $sizes),
+                    "product_id" => $product->id,
+                ]);
+            }
 
             $matchedTagNames = array_merge($matchedCategories, $matchedTypes);
             $tagIds = Tag::whereIn("name", $matchedTagNames)
                 ->pluck("id")
                 ->toArray();
+
             $product->tags()->sync($tagIds); // replaces old ones with new
 
             $product->images()->delete();
