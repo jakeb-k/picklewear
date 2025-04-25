@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Jobs\ProcessProductNaming;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\ProductOption;
+use App\Services\ProductNamerService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Spatie\Tags\Tag;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -182,9 +186,9 @@ class ProductController extends Controller
             ]);
 
             $tagIds = array_merge($request->category, $request->type);
-            $tags = Tag::findMany($tagIds); 
-            $product->attachTags($tags); 
-            
+            $tags = Tag::findMany($tagIds);
+            $product->attachTags($tags);
+
             $images = $request->file("images");
 
             foreach ($images as $index => $imageData) {
@@ -235,8 +239,8 @@ class ProductController extends Controller
         ]);
 
         $tagIds = array_merge($request->category, $request->type);
-        $tags = Tag::findMany($tagIds); 
-        $product->syncTags($tags); 
+        $tags = Tag::findMany($tagIds);
+        $product->syncTags($tags);
 
         if ($request->colorOptionId) {
             $colorOption = ProductOption::find($request->colorOptionId);
@@ -314,13 +318,13 @@ class ProductController extends Controller
     public function search(string $query)
     {
         $products = Product::where("name", "like", "%" . $query . "%")
-        ->orWhere("type", "like", "%" . $query . "%")
-        ->orWhereHas("tags", function ($q) use ($query) {
-            $q->where("name->en", "like", $query . "%");
-        })
-        ->with("images", 'tags')
-        ->get();
-    
+            ->orWhere("type", "like", "%" . $query . "%")
+            ->orWhereHas("tags", function ($q) use ($query) {
+                $q->where("name->en", "like", $query . "%");
+            })
+            ->with("images", "tags")
+            ->get();
+
         return response()->json([
             "products" => $products,
             "query" => $query,
@@ -355,7 +359,7 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return to_route('admin.dashboard')->with([
+        return to_route("admin.dashboard")->with([
             "success" => "Product deleted successfully",
         ]);
         return response()->json([
@@ -372,13 +376,13 @@ class ProductController extends Controller
      */
     public function getTags()
     {
-        $categoryTags = Tag::where("type", 'category')->get();
+        $categoryTags = Tag::where("type", "category")->get();
 
-        $typeTags = Tag::whereNot('type', 'category')->get();
+        $typeTags = Tag::whereNot("type", "category")->get();
 
         return response()->json([
-            'categories' => $categoryTags,
-            'types' => $typeTags, 
+            "categories" => $categoryTags,
+            "types" => $typeTags,
         ]);
     }
 
@@ -390,10 +394,202 @@ class ProductController extends Controller
      */
     public function import(Request $request)
     {
-        $json = $request->file('products')->get(); 
-        $data = json_decode($json, true);
-    
-        // do something with $data — like sync to DB
-        dd($data);
+        $json = $request->file("products")->get();
+        $products = json_decode($json, true);
+
+        foreach ($products as $productData) {
+            $imageUrls = [
+                $productData["Main Image"],
+                $productData["Image 1"],
+                $productData["Image 2"],
+                $productData["Image 3"],
+                $productData["Image 4"],
+                $productData["Image 5"],
+            ];
+
+            $sku = $productData["SKU Properties"];
+
+            $parts = explode("|", $sku);
+
+            $sizePart = collect($parts)->first(
+                fn($p) => str_contains($p, "Size:")
+            );
+
+            $sizes = array_map(
+                "trim",
+                explode(",", str_replace("Size:", "", $sizePart))
+            );
+
+            $sizes = array_map("strtoupper", $sizes);
+
+            preg_match('/Color:\s*(.*?)\s*(\||$)/', $sku, $match);
+            $colorString = $match[1] ?? "";
+
+            $rawColours = explode(",", $colorString);
+
+            $cleanColours = collect($rawColours)
+                ->map(function ($c) {
+                    $c = trim($c);
+                    $c = preg_replace(
+                        '/(Men|Women|Unisex|Adult|Kid|Boy|Girl)$/i',
+                        "",
+                        $c
+                    );
+                    $c = str_replace(" ", "", $c);
+                    return strtolower($c);
+                })
+                ->filter(function ($c) {
+                    // bin if it's just numbers or messy alphanumeric codes
+                    return preg_match('/^[a-zA-Z]+$/', $c); // letters only, no digits
+                })
+                ->unique()
+                ->values()
+                ->toArray();
+
+            $categoryTags = Tag::where("type", "category")
+                ->pluck("name")
+                ->toArray();
+            $typeTags = Tag::where("type", "!=", "category")
+                ->pluck("name")
+                ->toArray();
+
+            $dataTags = explode(" ", $productData["Product Title"]);
+
+            $cleanWords = array_map(
+                fn($word) => strtolower(trim($word, ",.?!")),
+                $dataTags
+            );
+
+            // Find matches
+            $matchedCategories = array_intersect(
+                array_map("strtolower", $categoryTags),
+                $cleanWords
+            );
+
+            $matchedTypes = array_intersect(
+                array_map("strtolower", $typeTags),
+                $cleanWords
+            );
+
+            $sku = $productData["id"]; // using JSON `id` as SKU
+
+            $url = $productData["Main Image"];
+            $type = "default"; // set this manually or from tags later
+            $deliveryDate =
+                \Carbon\Carbon::parse($productData["Delivery Time"])
+                    ->timestamp ?? null;
+
+            $priceRaw = floatval(
+                str_replace(['AU$', '$'], "", $productData["Sale Price"])
+            );
+            $shipping = floatval(
+                str_replace(['AU$', '$'], "", $productData["Shipping Info"])
+            );
+
+            // Ensure max discount is 50%
+            $discountPercentage = (int) filter_var(
+                $productData["Discount"],
+                FILTER_SANITIZE_NUMBER_INT
+            );
+            $discountPercentage = min($discountPercentage, 50);
+
+            // Final price = sale price + shipping + 20% markup
+            $finalPrice = round(($priceRaw + $shipping) * 1.2, 2);
+
+            // Discount = original price - final price
+            $discount = round(
+                $productData["Original Price"] !== "Not Available"
+                    ? floatval(
+                            str_replace(
+                                ['AU$', '$'],
+                                "",
+                                $productData["Original Price"]
+                            )
+                        ) - $finalPrice
+                    : $priceRaw * ($discountPercentage / 100),
+                2
+            );
+
+            $available = $productData["Stock"] > 0 ? 1 : 0;
+
+            $product = Product::updateOrCreate(
+                ["sku" => $sku],
+                [
+                    "name" => $productData["Product Title"],
+                    "url" => $url,
+                    "type" => $type,
+                    "delivery_date" => $deliveryDate,
+                    "price" => $finalPrice,
+                    "discount" => $discount,
+                    "sku" => $sku,
+                    "description" => $productData["Product Title"],
+                    "available" => $available,
+                ]
+            );
+
+            // only dispatch if this was a new insert
+            if ($product->wasRecentlyCreated) {
+                ProcessProductNaming::dispatch(
+                    $product->id,
+                    $productData["Product Title"]
+                );
+            }
+
+            if (count($cleanColours) > 0) {
+                $colorOption = ProductOption::create([
+                    "type" => "color",
+                    "values" => implode(".", $cleanColours),
+                    "product_id" => $product->id,
+                ]);
+            }
+
+            ProductOption::create([
+                "type" => "size",
+                "values" => $sizes,
+                "product_id" => $product->id,
+            ]);
+
+            $matchedTagNames = array_merge($matchedCategories, $matchedTypes);
+            $tagIds = Tag::whereIn("name", $matchedTagNames)
+                ->pluck("id")
+                ->toArray();
+            $product->tags()->sync($tagIds); // replaces old ones with new
+
+            $product->images()->delete();
+
+            foreach ($imageUrls as $url) {
+                if (!$url) {
+                    continue;
+                } // skip nulls or blanks
+
+                try {
+                    $imageBinary = file_get_contents($url);
+
+                    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                    $mime = $finfo->buffer($imageBinary);
+                    $size = strlen($imageBinary); // in bytes
+                    $ext = match ($mime) {
+                        "image/jpeg" => "jpg",
+                        "image/png" => "png",
+                        "image/webp" => "webp",
+                        default => "jpg",
+                    };
+
+                    $fileName = Str::uuid() . "." . $ext;
+
+                    $image = Image::create([
+                        "file_name" => $fileName,
+                        "file_path" => $url,
+                        "file_size" => $size,
+                        "mime_type" => $mime,
+                    ]);
+
+                    $product->images()->attach($image->id);
+                } catch (\Exception $e) {
+                    // log or skip if failed
+                    Log::error("Image failed: $url — " . $e->getMessage());
+                }
+            }
+        }
     }
 }
