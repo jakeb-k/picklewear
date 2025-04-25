@@ -381,4 +381,19 @@ class ProductController extends Controller
             'types' => $typeTags, 
         ]);
     }
+
+    /**
+     * Uploads a JSON file with products information
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function import(Request $request)
+    {
+        $json = $request->file('products')->get(); 
+        $data = json_decode($json, true);
+    
+        // do something with $data — like sync to DB
+        dd($data);
+    }
 }

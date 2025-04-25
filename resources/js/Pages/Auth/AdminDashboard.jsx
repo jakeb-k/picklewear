@@ -4,6 +4,7 @@ import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import ProductForm from "@/Components/admin/ProductForm";
 import { CSSTransition } from "react-transition-group";
+import axios from "axios";
 
 export default function AdminDashboard(props) {
     const [tab, setTab] = useState("products");
@@ -26,7 +27,7 @@ export default function AdminDashboard(props) {
             searchItems(tab);
         } else {
             setProducts(props.products);
-            setOrders(props.orders)
+            setOrders(props.orders);
         }
     }, [search]);
 
@@ -64,6 +65,26 @@ export default function AdminDashboard(props) {
         );
     };
 
+    const handleFileUpload = (e) => {
+        console.log("bang");
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("products", file);
+
+        axios
+            .post(route("products.import"), formData)
+            .then((response) => {
+                setShowAlert(true);
+            })
+            .catch((error) => {
+                console.error("Issue in uploading products", error);
+            })
+            .finally(() => {
+                e.target.value = null;
+            });
+    };
     return (
         <div className="min-h-screen pt-32 w-11/12 mx-auto">
             <CSSTransition
@@ -117,6 +138,17 @@ export default function AdminDashboard(props) {
                             CREATE
                         </button>
                     )}
+                    <div className="relative inline-block">
+                        <input
+                            type="file"
+                            accept=".json"
+                            onChange={handleFileUpload}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                        <button className="p-1 px-3 border-2 rounded-lg border-secondary text-lg font-bold transition-all duration-150 ease-in-out hover:bg-gray-400/50">
+                            IMPORT
+                        </button>
+                    </div>
                 </div>
                 <div className="flex justify-end">
                     <div
