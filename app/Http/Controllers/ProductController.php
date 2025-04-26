@@ -459,7 +459,7 @@ class ProductController extends Controller
 
             // Step 1: Clean + combine weird splits like 'T Shirt' → 'tshirt'
             $dataTags = explode(" ", $productData["Product Title"]);
-            dd($dataTags); 
+
             $mergedWords = [];
 
             for ($i = 0; $i < count($dataTags); $i++) {
@@ -489,6 +489,7 @@ class ProductController extends Controller
                 $tag
             ) use ($cleanWords, $normalize) {
                 $tag = $normalize($tag);
+                
                 foreach ($cleanWords as $word) {
                     if (
                         $word === $tag ||
@@ -599,11 +600,8 @@ class ProductController extends Controller
             }
 
             $matchedTagNames = array_merge($matchedCategories, $matchedTypes);
-            $tagIds = Tag::whereIn("name", $matchedTagNames)
-                ->pluck("id")
-                ->toArray();
 
-            $product->tags()->sync($tagIds); // replaces old ones with new
+            $product->syncTags($matchedTagNames);
 
             $product->images()->delete();
 
