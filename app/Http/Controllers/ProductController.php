@@ -452,43 +452,72 @@ class ProductController extends Controller
             $categoryTags = Tag::where("type", "category")
                 ->pluck("name")
                 ->toArray();
+
             $typeTags = Tag::where("type", "!=", "category")
                 ->pluck("name")
                 ->toArray();
 
+            // Step 1: Clean + combine weird splits like 'T Shirt' → 'tshirt'
             $dataTags = explode(" ", $productData["Product Title"]);
+            dd($dataTags); 
+            $mergedWords = [];
 
-            $cleanWords = collect($dataTags)
-                ->map(function ($word) {
-                    $word = strtolower(trim($word, ",.?!"));
-                    $word = str_replace("-", "", $word); // remove hyphens
-                    return $word;
-                })
-                ->toArray();
+            for ($i = 0; $i < count($dataTags); $i++) {
+                $current = $dataTags[$i];
+                $next = $dataTags[$i + 1] ?? null;
 
-            // Now match allowing optional trailing 's'
+                if ($next && strlen($next) === 1) {
+                    $mergedWords[] = strtolower(
+                        str_replace("-", "", $current . $next)
+                    );
+                    $i++; // skip next
+                } else {
+                    $mergedWords[] = strtolower(str_replace("-", "", $current));
+                }
+            }
+
+            // Step 2: Strip punctuation
+            $cleanWords = array_map(fn($w) => trim($w, ",.?!"), $mergedWords);
+
+            // Step 3: Normalize tag lists the same way
+            $normalize = fn($tag) => strtolower(
+                str_replace("-", "", trim($tag))
+            );
+
+            // Step 4: Match with flexible plural logic
             $matchedCategories = array_filter($categoryTags, function (
                 $tag
-            ) use ($cleanWords) {
-                $tag = strtolower(str_replace("-", "", $tag));
+            ) use ($cleanWords, $normalize) {
+                $tag = $normalize($tag);
                 foreach ($cleanWords as $word) {
-                    if ($word === $tag || $word === $tag . "s") {
+                    if (
+                        $word === $tag ||
+                        $word === $tag . "s" ||
+                        $word . "s" === $tag
+                    ) {
                         return true;
                     }
                 }
                 return false;
             });
 
-            $matchedTypes = array_filter($typeTags, function ($tag) use ($cleanWords) {
-                $tag = strtolower(str_replace("-", "", $tag));
+            $matchedTypes = array_filter($typeTags, function ($tag) use (
+                $cleanWords,
+                $normalize
+            ) {
+                $tag = $normalize($tag);
                 foreach ($cleanWords as $word) {
-                    if ($word === $tag || $word === $tag . "s") {
+                    if (
+                        $word === $tag ||
+                        $word === $tag . "s" ||
+                        $word . "s" === $tag
+                    ) {
                         return true;
                     }
                 }
                 return false;
             });
-            
+
             $sku = $productData["id"]; // using JSON `id` as SKU
 
             $url = $productData["Main Image"];
