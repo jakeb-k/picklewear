@@ -16,6 +16,7 @@ export default function AdminDashboard(props) {
     const [showAlert, setShowAlert] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [importMessage, setImportMessage] = useState(null);
     useEffect(() => {
         if (tab) {
             setEditItem(null);
@@ -58,9 +59,15 @@ export default function AdminDashboard(props) {
         return (
             <div className="border-2 border-main rounded-xl px-8 flex fixed py-4 top-24 right-12 h-8 items-center bg-secondary z-50">
                 <i className="fa-regular fa-circle-check text-main mt-1"></i>
-                <p className="tracking-wide ml-4 text-main font-oswald">
-                    Your product was {isCreating ? "created" : "updated"}.
-                </p>
+                {importMessage ? (
+                    <p className="tracking-wide ml-4 text-main font-oswald">
+                        {importMessage}
+                    </p>
+                ) : (
+                    <p className="tracking-wide ml-4 text-main font-oswald">
+                        Your product was {isCreating ? "created" : "updated"}.
+                    </p>
+                )}
             </div>
         );
     };
@@ -77,9 +84,13 @@ export default function AdminDashboard(props) {
             .post(route("products.import"), formData)
             .then((response) => {
                 setShowAlert(true);
+                setImportMessage(
+                    "Your import is processing, come back in 5 minutes",
+                );
             })
             .catch((error) => {
                 console.error("Issue in uploading products", error);
+                setImportMessage("Issue with the import");
             })
             .finally(() => {
                 e.target.value = null;

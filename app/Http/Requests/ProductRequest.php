@@ -22,7 +22,6 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "images.*" => "required|file|mimes:jpeg,png,jpg|max:10240",
             "name" => "required|string|max:100",
             "type" => "required|array|min:1",
             'category' => 'required|array|min:1',

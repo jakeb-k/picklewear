@@ -227,8 +227,19 @@ class CreateNewProduct implements ShouldQueue
         }
 
         $matchedTagNames = array_merge($matchedCategories, $matchedTypes);
-
-        $product->syncTags($matchedTagNames);
+        $allTags = Tag::all()->keyBy(function ($tag) {
+            return strtolower(str_replace("-", "", trim($tag->name)));
+        });
+        
+        $matchedTagModels = collect($matchedTagNames)
+            ->map(fn($name) => strtolower(str_replace("-", "", trim($name))))
+            ->map(fn($normName) => $allTags[$normName] ?? null)
+            ->filter();
+        
+        $product->syncTags($matchedTagModels);
+        
+        Log::info($matchedTagModels); 
+        Log::info($matchedCategories);
 
         $product->images()->delete();
 
@@ -265,7 +276,7 @@ class CreateNewProduct implements ShouldQueue
                 Log::error("Image failed: $url — " . $e->getMessage());
             }
 
-            Log::info("Created a new product -".$product->title);
         }
+        Log::info("Created a new product -".$product->name);
     }
 }

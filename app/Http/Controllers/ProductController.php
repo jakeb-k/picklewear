@@ -399,7 +399,7 @@ class ProductController extends Controller
         $products = json_decode($json, true);
 
         foreach ($products as $productData) {
-          CreateNewProduct::dispatch($productData)->onQueue('product-create'); 
+          CreateNewProduct::dispatch($productData)->onQueue('products'); 
         }
     }
 }
