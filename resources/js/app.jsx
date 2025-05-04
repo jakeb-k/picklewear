@@ -7,7 +7,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import MainLayout from './Layouts/MainLayout';
 import MobileLayout from "./Layouts/MobileLayout";
 
-const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+const appName = "Picklewear";
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
 createInertiaApp({

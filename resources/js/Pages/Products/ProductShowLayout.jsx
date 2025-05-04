@@ -175,10 +175,16 @@ export default function ProductShowLayout(props) {
                             >
                                 {images.map((image, idx) => (
                                     <img
+                                    
+                                    onClick={() => setDisplayImage(image)}
                                         key={idx}
                                         src={image.file_path ?? TestImage}
                                         alt="Product"
-                                        className="h-[200px] w-auto object-cover rounded-md mb-2"
+                                        className={`lg:w-full w-1/3 max-h-[200px] rounded-md cursor-pointer mb-2 ${
+                                            displayImage.id != image.id
+                                                ? "opacity-70 hover:opacity-100"
+                                                : "border border-main"
+                                        }`}
                                     />
                                 ))}
                             </div>
