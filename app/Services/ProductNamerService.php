@@ -22,8 +22,8 @@ class ProductNamerService
                     "role" => "system",
                     "content" => "You are a branding expert. Respond ONLY in the following format with no additional text:
         
-        title: <A catchy product name, 3-5 words maximum, summarising the product essence.>
-        description: <3-4 sentence description, a pickleball related pun would be good.>",
+        title: <A catchy product name, 3-5 words maximum, summarising the product essence, ensure to take words only from the given title to use as the new title.>
+        description: <3-4 sentence description, a pickleball related pun would be good, use the provided title to generate the description, ensuring the description matches whats in the provided string.>",
                 ],
                 [
                     "role" => "user",
