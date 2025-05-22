@@ -205,11 +205,6 @@ class CreateNewProduct implements ShouldQueue
             ]
         );
 
-        ProcessProductNaming::dispatch(
-            $product->id,
-            $this->productData["Product Title"]
-        )->onQueue('naming');
-
         if (count($allColours) > 0) {
             $colorOption = ProductOption::create([
                 "type" => "color",
@@ -225,7 +220,15 @@ class CreateNewProduct implements ShouldQueue
                 "product_id" => $product->id,
             ]);
         }
+        if (!empty(array_intersect($matchedTypes, config('types.gear')))) {
+            $matchedCategories = ['gear'];
+        }
+        if (!empty(array_intersect($matchedTypes, config('types.accessories')))) {
+            $matchedCategories = ['accessories'];
+        }
 
+        Log::info($matchedTypes);
+        Log::info($matchedCategories); 
         $matchedTagNames = array_merge($matchedCategories, $matchedTypes);
         $allTags = Tag::all()->keyBy(function ($tag) {
             return strtolower(str_replace("-", "", trim($tag->name)));
@@ -275,8 +278,12 @@ class CreateNewProduct implements ShouldQueue
                 // log or skip if failed
                 Log::error("Image failed: $url — " . $e->getMessage());
             }
-
         }
+        
+        ProcessProductNaming::dispatch(
+            $product->id,
+            $this->productData["Product Title"]
+        )->onQueue('naming');
         Log::info("Created a new product -".$product->name);
     }
 }

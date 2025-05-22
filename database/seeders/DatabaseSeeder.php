@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
             "gear" => [
                 "balls" => Tag::findOrCreateFromString("balls", 'gear'),
                 "bags" => Tag::findOrCreateFromString("bags", 'gear'),
-                "water bottles" => Tag::findOrCreateFromString("water bottles", 'gear'),
+                "bottles" => Tag::findOrCreateFromString("bottles", 'gear'),
                 "courts" => Tag::findOrCreateFromString("courts", 'gear'),
                 "covers" => Tag::findOrCreateFromString("covers", 'gear'),
             ],
