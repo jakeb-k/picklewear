@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 export default function NavigationMenu({ closeMenu, ...props }) {
     const menuOptions = {
-        mens: ["T-Shirts", "Singlets", "Visors & Hats", "Shorts", "Hoodies"],
-        womens: ["T-Shirts", "Singlets", "Leggings", "Visors & Hats", "Skorts"],
+        mens: ["T-Shirts", "Singlets", "Shorts", "Hoodies"],
+        womens: ["T-Shirts", "Singlets", "Leggings", "Skorts"],
         accessories: [
             "Sunglasses",
             "Socks",
@@ -16,7 +16,7 @@ export default function NavigationMenu({ closeMenu, ...props }) {
     };
     const [type, setType] = useState(props.type);
     const typeIndex = Object.keys(menuOptions).indexOf(type) + 1;
-    const leftValue = `${typeIndex * 5}%`;
+    const leftValue = `${typeIndex * 7.5}%`;
     useEffect(() => {
         setType(props.type);
         setOptions(menuOptions[props.type]);
@@ -33,10 +33,10 @@ export default function NavigationMenu({ closeMenu, ...props }) {
             }}
             className="absolute bg-black/40 h-screen w-screen z-10"
         >
-<div
-    style={{ left: leftValue }}
-    className="absolute bg-[#e5e7eb] drop-shadow-2xl rounded rounded-t-none border-t-0 px-8 py-4 w-fit  flex z-20"
->
+            <div
+                style={{ left: leftValue }}
+                className="absolute bg-[#e5e7eb] drop-shadow-2xl rounded rounded-t-none border-t-0 px-8 py-4 w-fit  flex z-20"
+            >
                 <div className="mr-24">
                     <h3 className="font-bold text-xl mb-2">Shop By Price</h3>
                     <ul className="text-secondary text-xl space-y-4">

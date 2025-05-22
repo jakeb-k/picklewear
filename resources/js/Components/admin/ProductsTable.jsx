@@ -40,8 +40,9 @@ export default function ProductsTable({ setEditItem, ...props }) {
     );
 
     useEffect(() => {
+        console.log('bang'); 
         setData(
-            products.map((product) => {
+            props.products.map((product) => {
                 const id = product.id;
                 const image =
                     product.images.length > 0 ? product.images[0] : null;
@@ -72,10 +73,9 @@ export default function ProductsTable({ setEditItem, ...props }) {
                 };
             }),
         );
-    }, [products]);
+    }, [props.products]);
 
    const setAvailability = (id) => {
-    console.log('bang');
         axios
             .post(route("product.available", id))
             .then((response) => {

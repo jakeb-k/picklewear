@@ -34,7 +34,7 @@ export default function AdminDashboard(props) {
 
     const searchItems = (type) => {
         const searchRegex = new RegExp(search, "i");
-
+       
         if (type == "products") {
             setProducts(
                 props.products.filter(
@@ -187,7 +187,6 @@ export default function AdminDashboard(props) {
                 <div className="flex justify-end">
                     <div
                         onMouseEnter={() => setIsSearching(true)}
-                        onMouseLeave={() => setIsSearching(false)}
                         className={`p-1.5 h-fit mt-auto border border-gray-800 rounded-full hover:bg-gray-200 flex items-center ${isSearching || search != "" ? "w-48" : "w-8"} transition-all duration-150 ease-in-out`}
                     >
                         <i className="fa-solid fa-magnifying-glass"></i>
@@ -195,6 +194,7 @@ export default function AdminDashboard(props) {
                             type="text"
                             name="search"
                             value={search}
+                            onBlur={() => setIsSearching(false)}
                             onFocus={() => setIsSearching(true)}
                             onChange={(e) => setSearch(e.target.value)}
                             className={`h-3 border-none bg-gray-200 focus:ring-0 ${isSearching || search != "" ? "block w-[10em]" : "hidden"}`}
