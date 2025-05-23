@@ -22,15 +22,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $customer = User::create([
-            "first_name" => "Test",
-            "last_name" => "User",
-            "email" => "test@example.com",
-            "password" => Hash::make("123456"),
-            "mobile" => "455555555",
-        ]);
-
-        $customer->locations()->save(Location::create());
+        // $customer = User::create([
+        //     "first_name" => "Test",
+        //     "last_name" => "User",
+        //     "email" => "test@example.com",
+        //     "password" => Hash::make("123456"),
+        //     "mobile" => "455555555",
+        // ]);
 
         $admin = User::create([
             "first_name" => "Jakey",
