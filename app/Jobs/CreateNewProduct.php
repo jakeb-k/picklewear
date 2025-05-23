@@ -151,7 +151,7 @@ class CreateNewProduct implements ShouldQueue
 
         $sku = $this->productData["id"]; // using JSON `id` as SKU
 
-        $url = $this->productData["Main Image"];
+        $productUrl = $this->productData["Product URL"];
 
         $rawDelivery = $this->productData["Delivery Time"] ?? null;
 
@@ -195,7 +195,7 @@ class CreateNewProduct implements ShouldQueue
             ["sku" => $sku],
             [
                 "name" => $this->productData["Product Title"],
-                "url" => $url,
+                "url" => $productUrl,
                 "delivery_date" => $deliveryDays,
                 "price" => $finalPrice,
                 "discount" => $discountPercentage,
