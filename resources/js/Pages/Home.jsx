@@ -115,7 +115,7 @@ export default function Home() {
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
                             <MainProductCard type={"bottoms"} />
                             <p className="text-left ml-4 mt-2 text-lg">
-                                Shorts
+                                Shortz
                             </p>
                             <a
                                 className="underline text-base ml-4 hover:text-gray-600/90"
