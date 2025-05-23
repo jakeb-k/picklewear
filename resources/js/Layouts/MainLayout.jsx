@@ -164,12 +164,12 @@ export default function MainLayout({ children }) {
                             </div>
                             <div
                                 className={`cursor-pointer transition-all duration-150 ease-in-out ${
-                                    menuType == "kids" ? "underline" : ""
+                                    menuType == "accessories" ? "underline" : ""
                                 }`}
-                                onMouseEnter={() => setMenuType("kids")}
+                                onMouseEnter={() => setMenuType("accessories")}
                             >
-                                <a href={route("products.index", "kids")}>
-                                    Kids
+                                <a href={route("products.index", "accessories")}>
+                                    Accessories
                                 </a>
                             </div>
                             <div

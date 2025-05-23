@@ -4,6 +4,10 @@ import BestSellers from "@/Components/home/BestSellers";
 import HomeBackground from "@/../assets/images/splash_bg.webp";
 import Slideshow from "@/Components/home/Slideshow";
 import { motion } from "motion/react";
+import GearImage from "@/../assets/images/gear_splash.webp";
+import HatImage from "@/../assets/images/hat_splash.webp";
+import ShirtImage from "@/../assets/images/shirt_splash.webp";
+import ShortImage from "@/../assets/images/shorts_splash.webp";
 
 export default function Home() {
     return (
@@ -72,7 +76,7 @@ export default function Home() {
                 >
                     <div className="flex lg:justify-evenly lg:flex-nowrap flex-wrap lg:space-x-4 space-x-2 mt-8">
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"gear"} />
+                            <MainProductCard type={"gear"} src={GearImage} />
                             <p className="ml-4 mt-2 text-lg">Gear</p>
                             <a
                                 className="underline text-base ml-4 hover:text-gray-600/90"
@@ -85,7 +89,7 @@ export default function Home() {
                             </a>
                         </div>
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"hats"} />
+                            <MainProductCard type={"hats"}  src={HatImage} />
                             <p className="text-left ml-4 mt-2 text-lg">Hats</p>
                             <a
                                 className="underline text-base ml-4 hover:text-gray-600/90"
@@ -98,7 +102,7 @@ export default function Home() {
                             </a>
                         </div>
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"tops"} />
+                            <MainProductCard type={"tops"} src={ShirtImage} />
                             <p className="text-left ml-4 mt-2 text-lg">
                                 Shirts
                             </p>
@@ -113,7 +117,7 @@ export default function Home() {
                             </a>
                         </div>
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"bottoms"} />
+                            <MainProductCard type={"bottoms"} src={ShortImage} />
                             <p className="text-left ml-4 mt-2 text-lg">
                                 Shortz
                             </p>

@@ -39,6 +39,7 @@ Route::middleware(['role:admin', 'auth'])->group(function () {
     Route::post('/product/store', [ProductController::class, 'store'])->name('product.store'); 
     Route::get('/orders/{order}/complete', [OrderController::class, 'completeOrder'])->name('orders.complete'); 
     Route::get('/products/tags', [ProductController::class, 'getTags'])->name('products.tags');
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
 });
 
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show'); 

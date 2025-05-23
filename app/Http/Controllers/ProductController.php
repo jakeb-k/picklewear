@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Jobs\CreateNewProduct;
+use App\Jobs\ProcessProductNaming;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\ProductOption;
+use App\Services\ProductNamerService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Spatie\Tags\Tag;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -182,9 +187,9 @@ class ProductController extends Controller
             ]);
 
             $tagIds = array_merge($request->category, $request->type);
-            $tags = Tag::findMany($tagIds); 
-            $product->attachTags($tags); 
-            
+            $tags = Tag::findMany($tagIds);
+            $product->attachTags($tags);
+
             $images = $request->file("images");
 
             foreach ($images as $index => $imageData) {
@@ -235,8 +240,8 @@ class ProductController extends Controller
         ]);
 
         $tagIds = array_merge($request->category, $request->type);
-        $tags = Tag::findMany($tagIds); 
-        $product->syncTags($tags); 
+        $tags = Tag::findMany($tagIds);
+        $product->syncTags($tags);
 
         if ($request->colorOptionId) {
             $colorOption = ProductOption::find($request->colorOptionId);
@@ -314,13 +319,13 @@ class ProductController extends Controller
     public function search(string $query)
     {
         $products = Product::where("name", "like", "%" . $query . "%")
-        ->orWhere("type", "like", "%" . $query . "%")
-        ->orWhereHas("tags", function ($q) use ($query) {
-            $q->where("name->en", "like", $query . "%");
-        })
-        ->with("images", 'tags')
-        ->get();
-    
+            ->orWhere("type", "like", "%" . $query . "%")
+            ->orWhereHas("tags", function ($q) use ($query) {
+                $q->where("name->en", "like", $query . "%");
+            })
+            ->with("images", "tags")
+            ->get();
+
         return response()->json([
             "products" => $products,
             "query" => $query,
@@ -355,7 +360,7 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return to_route('admin.dashboard')->with([
+        return to_route("admin.dashboard")->with([
             "success" => "Product deleted successfully",
         ]);
         return response()->json([
@@ -372,13 +377,29 @@ class ProductController extends Controller
      */
     public function getTags()
     {
-        $categoryTags = Tag::where("type", 'category')->get();
+        $categoryTags = Tag::where("type", "category")->get();
 
-        $typeTags = Tag::whereNot('type', 'category')->get();
+        $typeTags = Tag::whereNot("type", "category")->get();
 
         return response()->json([
-            'categories' => $categoryTags,
-            'types' => $typeTags, 
+            "categories" => $categoryTags,
+            "types" => $typeTags,
         ]);
+    }
+
+    /**
+     * Uploads a JSON file with products information
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function import(Request $request)
+    {
+        $json = $request->file("products")->get();
+        $products = json_decode($json, true);
+
+        foreach ($products as $productData) {
+          CreateNewProduct::dispatch($productData)->onQueue('products'); 
+        }
     }
 }
