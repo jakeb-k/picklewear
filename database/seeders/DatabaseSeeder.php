@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $customer = User::factory()->create([
+        $customer = User::create([
             "first_name" => "Test",
             "last_name" => "User",
             "email" => "test@example.com",
@@ -30,9 +30,9 @@ class DatabaseSeeder extends Seeder
             "mobile" => "455555555",
         ]);
 
-        $customer->locations()->save(Location::factory()->create());
+        $customer->locations()->save(Location::create());
 
-        $admin = User::factory()->create([
+        $admin = User::create([
             "first_name" => "Jakey",
             "last_name" => "Admin",
             "email" => "j@j.com",
