@@ -15,6 +15,20 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-psecret"]
       interval: 10s
       retries: 5
+  mysql_test:
+    image: mysql:8.0
+    container_name: test-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: picklewear_testing
+    ports:
+      - "3307:3306"
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot"]
+      interval: 10s
+      retries: 5
 
 volumes:
   mysql-data:

@@ -101,7 +101,7 @@ export default function OrderShowLayout(props) {
                                             }
                                         />
                                         <div className="w-[57.5%] space-y-6">
-                                            <p>{item.name}</p>
+                                            <a className='hover:underline hover:text-main' href={item.url}>{item.name}</a>
                                             <div className="flex space-x-6 items-center">
                                                 <p className="font-roboto_mono">
                                                     $

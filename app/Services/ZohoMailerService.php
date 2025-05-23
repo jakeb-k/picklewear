@@ -13,12 +13,20 @@ class ZohoMailerService
 
     public function __construct()
     {
-        $this->token = DB::table('zoho_oauth_tokens')->latest()->value('access_token');
         $this->accountId = config('services.zoho.account_id');
     }
 
+    
+    protected function fetchToken(): string
+    {
+        return DB::table('zoho_oauth_tokens')->latest()->value('access_token') ?? '';
+    }
+
+
     public function sendMail(string $to, string $subject, string $html): bool|string
     {
+        $this->token = $this->fetchToken();
+
         $url = "https://mail.zoho.com.au/api/accounts/{$this->accountId}/messages";
 
         $payload = [
