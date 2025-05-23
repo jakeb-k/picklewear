@@ -183,3 +183,24 @@ input[type='range']::-moz-range-thumb {
   right: 0;
   background: linear-gradient(to left, rgba(229 ,231 ,235, 1), rgba(229 ,231 ,235, 0));
 }
+
+.vertical-shadow::before,
+.vertical-shadow::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 10%; /* Adjust for desired fade width */
+  width: 100%;
+  pointer-events: none; /* Prevent interaction issues */
+  z-index: 10; /* Ensure it overlays products */
+}
+
+.vertical-shadow::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(229 ,231 ,235, 1), rgba(229 ,231 ,235, 0));
+}
+
+.vertical-shadow::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(229 ,231 ,235, 1), rgba(229 ,231 ,235, 0));
+}

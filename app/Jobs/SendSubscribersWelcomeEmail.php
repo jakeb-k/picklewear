@@ -30,7 +30,6 @@ class SendSubscribersWelcomeEmail implements ShouldQueue
     {
         $html = view("mail.newsub", ['email' => $this->email])->render();
         $subject = "Welcome to Picklewear Mail List";
-
         $this->mailer->sendMail($this->email, $subject, $html);
     }
 }

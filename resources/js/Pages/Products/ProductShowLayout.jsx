@@ -25,6 +25,8 @@ export default function ProductShowLayout(props) {
     const [crumbs, setCrumbs] = useState(
         JSON.parse(sessionStorage.getItem("crumbs")) ?? null,
     );
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const containerRef = useRef(null);
     const { addProduct } = useCartStore();
 
     const addToCart = (product) => {
@@ -63,6 +65,16 @@ export default function ProductShowLayout(props) {
             textarea.style.height = `${textarea.scrollHeight}px`;
         }
     }, []);
+
+    const incrementIndex = (direction) => {
+        setCurrentIndex((prevIndex) => {
+            if (direction === 1) {
+                return prevIndex >= images.length - 1 ? 0 : prevIndex + 1;
+            } else {
+                return prevIndex <= 0 ? images.length - 1 : prevIndex - 1;
+            }
+        });
+    };
 
     const Alert = () => {
         return (
@@ -125,25 +137,66 @@ export default function ProductShowLayout(props) {
             )}
 
             <div
-                className={`flex lg:flex-row flex-col ${!crumbs ? "mt-12" : ""}`}
+                className={`flex lg:flex-row flex-col ${!crumbs ? "mt-12" : ""} relative`}
             >
                 <div className="flex lg:flex-row flex-col justify-between items-center lg:w-[47.5%] ">
-                    <div className="lg:w-[20%] flex lg:flex-col flex-row lg:space-y-8">
-                        {images.map((image) => {
-                            return (
-                                <img
+                    {images.length <= 3 ? (
+                        <div className="lg:w-[20%] flex lg:flex-col flex-row lg:space-y-8">
+                            {images.map((image) => {
+                                return (
+                                    <img
+                                        onClick={() => setDisplayImage(image)}
+                                        key={image.id}
+                                        src={image.file_path ?? TestImage}
+                                        className={`lg:w-full w-1/3 max-h-[250px] rounded-md cursor-pointer ${
+                                            displayImage.id != image.id
+                                                ? "opacity-70 hover:opacity-100"
+                                                : "border border-main"
+                                        }`}
+                                    />
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="relative h-[600px] vertical-shadow w-[300px] overflow-hidden flex flex-col items-center">
+                            <button
+                                onClick={() => incrementIndex(-1)}
+                                className="absolute -top-0 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
+                            >
+                                ▲
+                            </button>
+
+                            <div
+                                ref={containerRef}
+                                className="flex flex-col transition-transform duration-500 ease-in-out"
+                                style={{
+                                    transform: `translateY(-${currentIndex * 208}px)`,
+                                }}
+                            >
+                                {images.map((image, idx) => (
+                                    <img
+                                    
                                     onClick={() => setDisplayImage(image)}
-                                    key={image.id}
-                                    src={image.file_path ?? TestImage}
-                                    className={`lg:w-full w-1/3 max-h-[250px] rounded-md cursor-pointer ${
-                                        displayImage.id != image.id
-                                            ? "opacity-70 hover:opacity-100"
-                                            : "border border-main"
-                                    }`}
-                                />
-                            );
-                        })}
-                    </div>
+                                        key={idx}
+                                        src={image.file_path ?? TestImage}
+                                        alt="Product"
+                                        className={`lg:w-full w-1/3 max-h-[200px] rounded-md cursor-pointer mb-2 ${
+                                            displayImage.id != image.id
+                                                ? "opacity-70 hover:opacity-100"
+                                                : "border border-main"
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => incrementIndex(1)}
+                                className="absolute -bottom-0 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
+                            >
+                                ▼
+                            </button>
+                        </div>
+                    )}
                     <div className="lg:w-[75%]">
                         <img
                             src={displayImage?.file_path ?? TestImage}

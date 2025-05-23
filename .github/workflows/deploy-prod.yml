@@ -1,0 +1,33 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: github.actor == 'jakeb-k'  # only you trigger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/forge/picklewear.com.au
+            git pull origin main
+            COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
+            npm ci
+            npm run build
+            php artisan migrate:fresh --seed --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            supervisorctl reread
+            supervisorctl update
+            supervisorctl restart production-products-worker
+            supervisorctl restart production-naming-worker
+            supervisorctl restart production-default-worker

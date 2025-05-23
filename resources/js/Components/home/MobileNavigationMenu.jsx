@@ -6,56 +6,17 @@ import { CSSTransition } from "react-transition-group";
 
 export default function MobileNavigationMenu({ closeMenu, setIsQuerying, ...props }) {
     const menuOptions = {
-        mens: [
-            "T-Shirts",
-            "Polos",
-            "Singlets",
-            "Visors & Hats",
-            "Shorts",
-            "Track Pants",
-            "Hoodies",
-            "Button Downs",
-            "Zips",
-        ],
-        womens: [
-            "Dresses",
-            "Tank Tops",
-            "Leggings",
-            "Sleeveless",
-            "Visors & Hats",
-            "Sun Shirts",
-            "Skorts",
-            "Headbands",
-            "Sweat Shirts",
-        ],
-        kids: [
-            "Polos",
-            "T-Shirts",
-            "Long-Sleeves",
-            "Shorts",
-            "Skorts",
-            "Leggings",
-            "Track Pants",
-            "Hoodies",
-            "Jackets",
-            "Socks",
-            "Sun Hats",
-            "Visors",
-            "Headbands",
-            "Wristbands",
-        ],
-        gear: [
+        mens: ["T-Shirts", "Singlets", "Shorts", "Hoodies"],
+        womens: ["T-Shirts", "Singlets", "Leggings", "Skorts"],
+        accessories: [
             "Sunglasses",
             "Socks",
             "Headbands",
             "Wristbands",
-            "Accessories",
-            "Shorts",
-            "Covers",
-            "Bags",
-            "Sleeves",
-            "Ankle Braces",
+            "Hats",
+            "Visors",
         ],
+        gear: ["Balls", "Bags", "Water Bottles", "Courts", "Covers"],
     };
     const [type, setType] = useState(props.type);
     const [expanded, setExpanded] = useState([]);

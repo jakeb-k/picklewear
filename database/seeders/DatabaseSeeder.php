@@ -22,17 +22,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $customer = User::factory()->create([
-            "first_name" => "Test",
-            "last_name" => "User",
-            "email" => "test@example.com",
-            "password" => Hash::make("123456"),
-            "mobile" => "455555555",
-        ]);
+        // $customer = User::create([
+        //     "first_name" => "Test",
+        //     "last_name" => "User",
+        //     "email" => "test@example.com",
+        //     "password" => Hash::make("123456"),
+        //     "mobile" => "455555555",
+        // ]);
 
-        $customer->locations()->save(Location::factory()->create());
-
-        $admin = User::factory()->create([
+        $admin = User::create([
             "first_name" => "Jakey",
             "last_name" => "Admin",
             "email" => "j@j.com",
@@ -43,82 +41,61 @@ class DatabaseSeeder extends Seeder
 
         $admin->assignRole(Role::create(["name" => "admin"]));
 
-        $this->call(ProductSeeder::class);
-        $this->call(ProductOptionSeeder::class);
-        $this->call(OrderSeeder::class);
-        $this->call(ImageSeeder::class);
+        // $this->call(ProductSeeder::class);
+        // $this->call(ProductOptionSeeder::class);
+        // $this->call(OrderSeeder::class);
+        // $this->call(ImageSeeder::class);
 
-        $products = Product::all();
+        // $products = Product::all();
 
         $tags = [
             "mens" => Tag::findOrCreateFromString("mens", 'category'),
             "womens" => Tag::findOrCreateFromString("womens", 'category'),
-            "kids" => Tag::findOrCreateFromString("kids", 'category'),
+            "accessories" => Tag::findOrCreateFromString("accessories", 'category'),
             "gear" => Tag::findOrCreateFromString("gear", 'category'),
         ];
 
         $typeTags = [
             "mens" => [
                 "t-shirts" => Tag::findOrCreateFromString("t-shirts", 'tops'),
-                "polos" => Tag::findOrCreateFromString("polos", 'tops'),
                 "singlets" => Tag::findOrCreateFromString("singlets", 'tops'),
                 "visors & hats" => Tag::findOrCreateFromString("visors & hats", 'hats'),
                 "shorts" => Tag::findOrCreateFromString("shorts", 'bottoms'),
-                "track pants" => Tag::findOrCreateFromString("track pants", 'bottoms'),
-                "hoodies" => Tag::findOrCreateFromString("hoodies",'tops'),
-                "button downs" => Tag::findOrCreateFromString("button downs",'tops'),
-                "zips" => Tag::findOrCreateFromString("zips",'tops'),
+                "hoodies" => Tag::findOrCreateFromString("hoodies", 'tops'),
             ],
             "womens" => [
-                "dresses" => Tag::findOrCreateFromString("dresses",'bottoms'),
-                "tank tops" => Tag::findOrCreateFromString("tank tops",'tops'),
-                "leggings" => Tag::findOrCreateFromString("leggings",'bottoms'),
-                "sleeveless" => Tag::findOrCreateFromString("sleeveless",'tops'),
-                "visors & hats" => Tag::findOrCreateFromString("visors & hats",'hats'),
-                "sun shirts" => Tag::findOrCreateFromString("sun shirts",'tops'),
-                "skorts" => Tag::findOrCreateFromString("skorts",'bottoms'),
-                "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
-                "sweat shirts" => Tag::findOrCreateFromString("sweat shirts",'tops'),
+                "t-shirts" => Tag::findOrCreateFromString("t-shirts", 'tops'),
+                "singlets" => Tag::findOrCreateFromString("singlets", 'tops'),
+                "leggings" => Tag::findOrCreateFromString("leggings", 'bottoms'),
+                "visors & hats" => Tag::findOrCreateFromString("visors & hats", 'hats'),
+                "skorts" => Tag::findOrCreateFromString("skorts", 'bottoms'),
             ],
-            "kids" => [
-                "polos" => Tag::findOrCreateFromString("polos",'tops'),
-                "t-shirts" => Tag::findOrCreateFromString("t-shirts",'tops'),
-                "long-sleeves" => Tag::findOrCreateFromString("long-sleeves",'tops'),
-                "shorts" => Tag::findOrCreateFromString("shorts",'bottoms'),
-                "skorts" => Tag::findOrCreateFromString("skorts",'bottoms'),
-                "track pants" => Tag::findOrCreateFromString("track pants",'bottoms'),
-                "hoodies" => Tag::findOrCreateFromString("hoodies",'tops'),
-                "jackets" => Tag::findOrCreateFromString("jackets",'tops'),
-                "socks" => Tag::findOrCreateFromString("socks",'gear'),
-                "sun hats" => Tag::findOrCreateFromString("sun hats",'hats'),
-                "visors" => Tag::findOrCreateFromString("visors",'hats'),
-                "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
-                "wristbands" => Tag::findOrCreateFromString("wristbands",'gear'),
+            "accessories" => [
+                "sunglasses" => Tag::findOrCreateFromString("sunglasses", 'accessories'),
+                "socks" => Tag::findOrCreateFromString("socks", 'accessories'),
+                "headbands" => Tag::findOrCreateFromString("headbands", 'accessories'),
+                "wristbands" => Tag::findOrCreateFromString("wristbands", 'accessories'),
+                "hats" => Tag::findOrCreateFromString("hats", 'hats'),
+                "visors" => Tag::findOrCreateFromString("visors", 'hats'),
             ],
             "gear" => [
-                "sunglasses" => Tag::findOrCreateFromString("sunglasses",'gear'),
-                "socks" => Tag::findOrCreateFromString("socks",'gear'),
-                "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
-                "wristbands" => Tag::findOrCreateFromString("wristbands",'gear'),
-                "headbands" => Tag::findOrCreateFromString("headbands",'gear'),
-                "accessories" => Tag::findOrCreateFromString("accessories", 'gear'),
-                "paddle covers" => Tag::findOrCreateFromString("paddle covers", 'gear'),
+                "balls" => Tag::findOrCreateFromString("balls", 'gear'),
                 "bags" => Tag::findOrCreateFromString("bags", 'gear'),
-                "sleeves" => Tag::findOrCreateFromString("sleeves", 'gear'),
-                "ankle braces" => Tag::findOrCreateFromString("ankle braces", 'gear'),
-            
+                "bottles" => Tag::findOrCreateFromString("bottles", 'gear'),
+                "courts" => Tag::findOrCreateFromString("courts", 'gear'),
+                "covers" => Tag::findOrCreateFromString("covers", 'gear'),
             ],
         ];
 
         
-        foreach ($products as $product) {
-            $randomTagKey = array_rand($tags);
-            $randomCategoryTag = $tags[$randomTagKey];
+        // foreach ($products as $product) {
+        //     $randomTagKey = array_rand($tags);
+        //     $randomCategoryTag = $tags[$randomTagKey];
 
-            $randomTypeTagKey = array_rand($typeTags[$randomTagKey]);
-            $randomTypeTag = $typeTags[$randomTagKey][$randomTypeTagKey];
-            $product->attachTags([$randomCategoryTag, $randomTypeTag]);
-        }
+        //     $randomTypeTagKey = array_rand($typeTags[$randomTagKey]);
+        //     $randomTypeTag = $typeTags[$randomTagKey][$randomTypeTagKey];
+        //     $product->attachTags([$randomCategoryTag, $randomTypeTag]);
+        // }
         $token = env('ZOHO_REFRESH_TOKEN');
 
         DB::insert('INSERT INTO zoho_oauth_tokens (refresh_token) VALUES (?)', [$token]);

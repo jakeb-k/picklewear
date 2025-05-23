@@ -2,18 +2,23 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SendContactEmail;
+use App\Jobs\SendSubscribersWelcomeEmail;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use App\Models\User;
 use App\Models\SubscriberEmail;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewSubscriberEmail;
 use App\Notifications\ServiceContactNotification;
+use App\Services\ZohoMailerService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Queue;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
+use Closure; 
 
 class MailFeatureTest extends TestCase
 {
@@ -35,7 +40,7 @@ class MailFeatureTest extends TestCase
     {
         // Mock the mail sending
         Notification::fake();
-
+        Queue::fake(); 
         $data =  [
             "first_name" => "John",
             "last_name" => "Doe",
@@ -48,14 +53,7 @@ class MailFeatureTest extends TestCase
         // Assert: Verify the email was sent
         $response->assertStatus(200)->assertJson(["success" => true]);
 
-        Notification::assertSentTo(
-            [$this->user], // Pass the actual user model, not a new instance
-            ServiceContactNotification::class,
-            function ($notification, $channels, $notifiable) {
-                $notification->toMail($notifiable); 
-                return true;
-            }
-        );
+        Queue::assertPushed(SendContactEmail::class);
     }
 
     #[Test]
@@ -77,15 +75,15 @@ class MailFeatureTest extends TestCase
     #[Test]
     public function it_subscribes_an_email_to_the_mailing_list()
     {
-        // Arrange: Mock the notification
         Notification::fake();
+        Queue::fake();
 
-        // Act: Subscribe an email
+        // Act
         $response = $this->postJson(route("subscribe.email"), [
             "email" => "subscriber@example.com",
         ]);
 
-        // Assert: Verify subscription was successful
+        // Assert
         $response
             ->assertStatus(200)
             ->assertJson(["success" => "This didn't fail"]);
@@ -94,15 +92,13 @@ class MailFeatureTest extends TestCase
             "email" => "subscriber@example.com",
         ]);
 
-        Notification::assertSentTo(
-            new AnonymousNotifiable, // Use AnonymousNotifiable for Notification::route()
-            NewSubscriberEmail::class,
-            function ($notification, $channels, $notifiable) {
-                $notification->toMail($notifiable); 
-                return $notifiable->routes['mail'] === 'subscriber@example.com'; // Ensure the email matches
-            }
-        );
+        Queue::assertPushed(SendSubscribersWelcomeEmail::class, function ($job) {
+            return Closure::bind(function () {
+                return $this->email === 'subscriber@example.com';
+            }, $job, $job::class)();
+        });
     }
+
 
     #[Test]
     public function it_validates_subscription_request()
