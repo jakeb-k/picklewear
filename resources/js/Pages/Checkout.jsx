@@ -173,7 +173,7 @@ export default function Checkout(props) {
             setPromoLoading(false);
         }, 1000);
     }
-
+ console.log(cartItems)
     return (
         <div className="flex lg:flex-row flex-col justify-between min-h-screen py-24 lg:px-32 px-8 mt-12">
             <Head title="Checkout" />
@@ -244,9 +244,7 @@ export default function Checkout(props) {
                                         <div className="py-4 flex lg:flex-row flex-col lg:justify-between lg:items-center">
                                             <img
                                                 className="shadow-lg rounded-xl lg:w-[22.5%] h-full border-2 border-main"
-                                                src={
-                                                    TestImage
-                                                }
+                                                src={item.image.file_path}
                                             />
                                             <div className="lg:w-[57.5%] lg:mt-0 mt-4 space-y-6">
                                                 <p>{item.name}</p>
