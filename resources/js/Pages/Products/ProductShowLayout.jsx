@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import RelatedItems from "@/Components/product/RelatedProducts";
 import { CSSTransition } from "react-transition-group";
 import TestImage from "@/../assets/images/testing_imgs/test_1.webp";
+import { Helmet } from "react-helmet-async";
 
 export default function ProductShowLayout(props) {
     const product = props.product;
@@ -92,6 +93,9 @@ export default function ProductShowLayout(props) {
 
     return (
         <div className="min-h-screen py-24 lg:mx-24 mx-8">
+            <Helmet>
+                <meta name="description" content={product.description} />
+            </Helmet>
             <Head title={product.name} />
             <CSSTransition
                 in={showAlert}

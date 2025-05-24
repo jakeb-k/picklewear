@@ -6,6 +6,7 @@ import { createInertiaApp } from "@inertiajs/react";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import MainLayout from './Layouts/MainLayout';
 import MobileLayout from "./Layouts/MobileLayout";
+import { HelmetProvider } from "react-helmet-async";
 
 const appName = "Picklewear";
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
@@ -24,7 +25,11 @@ createInertiaApp({
     },
     setup({ el, App, props }) {
         if (import.meta.env.DEV) {
-            createRoot(el).render(<App {...props} />);
+            createRoot(el).render(
+                <HelmetProvider>
+                    <App {...props} />
+                </HelmetProvider>
+            );
             return;
         }
 

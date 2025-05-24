@@ -8,10 +8,14 @@ import GearImage from "@/../assets/images/gear_splash.webp";
 import HatImage from "@/../assets/images/hat_splash.webp";
 import ShirtImage from "@/../assets/images/shirt_splash.webp";
 import ShortImage from "@/../assets/images/shorts_splash.webp";
+import { Helmet } from "react-helmet-async";
 
 export default function Home() {
     return (
         <>
+        <Helmet>
+            <meta name="description" content="Shop premium pickleball clothing and gear at Picklewear – Australia’s home for stylish, high-performance pickleball apparel, paddles, and accessories. Built for players who take their game and style seriously."></meta>
+        </Helmet>
             <div
                 className="w-full lg:min-h-screen py-20 pb-40 lg:pb-0 lg:py-0 flex flex-col mt-20 h-fit lg:justify-center lg:pt-0  overflow-x-hidden"
                 style={{ backgroundImage: `url(${HomeBackground})` }}
@@ -75,7 +79,7 @@ export default function Home() {
                     viewport={{ once: true }}
                 >
                     <div className="flex lg:justify-evenly lg:flex-nowrap flex-wrap lg:space-x-4 space-x-2 mt-8">
-                        <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
+                        <div className="lg:w-auto w-[47.5%] lg:mb-0 mb-4">
                             <MainProductCard type={"gear"} src={GearImage} />
                             <p className="ml-4 mt-2 text-lg">Gear</p>
                             <a
@@ -88,8 +92,8 @@ export default function Home() {
                                 Shop Now
                             </a>
                         </div>
-                        <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"hats"}  src={HatImage} />
+                        <div className="lg:w-auto w-[47.5%] lg:mb-0 mb-4">
+                            <MainProductCard type={"hats"} src={HatImage} />
                             <p className="text-left ml-4 mt-2 text-lg">Hats</p>
                             <a
                                 className="underline text-base ml-4 hover:text-gray-600/90"
@@ -101,7 +105,7 @@ export default function Home() {
                                 Shop Now
                             </a>
                         </div>
-                        <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
+                        <div className="lg:w-auto w-[47.5%] lg:mb-0 mb-4">
                             <MainProductCard type={"tops"} src={ShirtImage} />
                             <p className="text-left ml-4 mt-2 text-lg">
                                 Shirts
@@ -116,8 +120,11 @@ export default function Home() {
                                 Shop Now
                             </a>
                         </div>
-                        <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
-                            <MainProductCard type={"bottoms"} src={ShortImage} />
+                        <div className="lg:w-auto w-[47.5%] lg:mb-0 mb-4">
+                            <MainProductCard
+                                type={"bottoms"}
+                                src={ShortImage}
+                            />
                             <p className="text-left ml-4 mt-2 text-lg">
                                 Shorts
                             </p>
