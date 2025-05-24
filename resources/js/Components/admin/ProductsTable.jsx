@@ -40,7 +40,6 @@ export default function ProductsTable({ setEditItem, ...props }) {
     );
 
     useEffect(() => {
-        console.log('bang'); 
         setData(
             props.products.map((product) => {
                 const id = product.id;
