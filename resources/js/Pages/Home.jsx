@@ -119,7 +119,7 @@ export default function Home() {
                         <div className='lg:w-auto w-[47.5%] lg:mb-0 mb-4'>
                             <MainProductCard type={"bottoms"} src={ShortImage} />
                             <p className="text-left ml-4 mt-2 text-lg">
-                                Shortz
+                                Shorts
                             </p>
                             <a
                                 className="underline text-base ml-4 hover:text-gray-600/90"
