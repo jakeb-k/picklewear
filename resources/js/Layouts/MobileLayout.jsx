@@ -30,7 +30,6 @@ export default function MobileLayout({ children }) {
     const [cartOpen, setCartOpen] = useState(false);
 
     const [menuOpen, setMenuOpen] = useState(false);
-    const [menuType, setMenuType] = useState("");
 
     const handleInputChange = (e) => {
         setData("query", e.target.value);
@@ -185,7 +184,7 @@ export default function MobileLayout({ children }) {
                     unmountOnExit
                 >
                     <MobileNavigationMenu
-                        type={menuType}
+                        type={'all'}
                         setIsQuerying={() => setIsQuerying(true)}
                         closeMenu={() => setMenuOpen(false)}
                     />

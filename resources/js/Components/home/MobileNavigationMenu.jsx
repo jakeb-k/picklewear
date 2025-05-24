@@ -63,7 +63,6 @@ export default function MobileNavigationMenu({ closeMenu, setIsQuerying, ...prop
         </div>
     );
 
-
     return (
         <div className="fixed inset-0 top-[87.5px] bg-black/40 z-10 overflow-y-auto">
             <div className="bg-[#e5e7eb] drop-shadow-2xl min-h-full rounded-t-none border-t-0 py-4 w-[75%] z-20">
@@ -220,26 +219,26 @@ export default function MobileNavigationMenu({ closeMenu, setIsQuerying, ...prop
                     </AnimatePresence>
                     <div
                         onClick={() => {
-                            if (expanded.includes("kids")) {
+                            if (expanded.includes("accessories")) {
                                 setExpanded(
-                                    expanded.filter((item) => item !== "kids"),
+                                    expanded.filter((item) => item !== "accessories"),
                                 );
                             } else {
-                                setExpanded([...expanded, "kids"]);
+                                setExpanded([...expanded, "accessories"]);
                             }
                         }}
                         className="w-full border-b border-main text-main flex flex-row justify-between px-8 py-2 bg-secondary"
                     >
-                        <p className="w-20">Kids</p>
+                        <p className="w-20">Accessories</p>
                         <i
-                            className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded.includes("kids") ? "rotate-180" : "rotate-0"}`}
+                            className={`fa-solid fa-chevron-down hover:bg-gray-700 hover:text-main duration-150 transition-all ease-in-out cursor-pointer p-1 rounded-full ${expanded.includes("accessories") ? "rotate-180" : "rotate-0"}`}
                         ></i>
                     </div>
 
                     <AnimatePresence mode="wait" initial={false}>
-                        {expanded.includes("kids") && (
+                        {expanded.includes("accessories") && (
                             <motion.div
-                                key="kids-options"
+                                key="accessories-options"
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
@@ -249,7 +248,7 @@ export default function MobileNavigationMenu({ closeMenu, setIsQuerying, ...prop
                                 }}
                                 className="overflow-hidden"
                             >
-                                <Options type={"kids"} />
+                                <Options type={"accessories"} />
                             </motion.div>
                         )}
                     </AnimatePresence>

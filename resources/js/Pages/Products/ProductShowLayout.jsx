@@ -28,7 +28,10 @@ export default function ProductShowLayout(props) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const containerRef = useRef(null);
     const { addProduct } = useCartStore();
-
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const isClothing = product.tags
+        .filter((tag) => tag.type === "category")
+        .find((tag) => tag.name.en === "mens" || tag.name.en === "womens");
     const addToCart = (product) => {
         setShowAlert(false);
         let productData = {
@@ -158,40 +161,44 @@ export default function ProductShowLayout(props) {
                             })}
                         </div>
                     ) : (
-                        <div className="relative h-[600px] vertical-shadow w-[300px] overflow-hidden flex flex-col items-center">
+                        <div className="relative">
                             <button
                                 onClick={() => incrementIndex(-1)}
-                                className="absolute -top-0 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
+                                className="absolute transform top-1/2 -rotate-90 lg:rotate-0 -translate-y-1/2 lg:translate-x-0 lg:-top-0 lg:left-1/2 -left-4 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
                             >
                                 ▲
                             </button>
-
-                            <div
-                                ref={containerRef}
-                                className="flex flex-col transition-transform duration-500 ease-in-out"
-                                style={{
-                                    transform: `translateY(-${currentIndex * 208}px)`,
-                                }}
-                            >
-                                {images.map((image, idx) => (
-                                    <img
-                                    
-                                    onClick={() => setDisplayImage(image)}
-                                        key={idx}
-                                        src={image.file_path ?? TestImage}
-                                        alt="Product"
-                                        className={`lg:w-full w-1/3 max-h-[200px] rounded-md cursor-pointer mb-2 ${
-                                            displayImage.id != image.id
-                                                ? "opacity-70 hover:opacity-100"
-                                                : "border border-main"
-                                        }`}
-                                    />
-                                ))}
+                            <div className="relative lg:h-[600px] lg:py-0 lg:vertical-shadow lg:w-[300px] overflow-scroll flex flex-col items-center">
+                                <div
+                                    ref={containerRef}
+                                    className="flex flex-row lg:flex-col transition-transform duration-500 ease-in-out"
+                                    style={{
+                                        transform: isMobile
+                                            ? `translateX(-${currentIndex * 128}px)`
+                                            : `translateY(-${currentIndex * 208}px)`,
+                                    }}
+                                >
+                                    {images.map((image, idx) => (
+                                        <img
+                                            onClick={() =>
+                                                setDisplayImage(image)
+                                            }
+                                            key={idx}
+                                            src={image.file_path ?? TestImage}
+                                            alt="Product"
+                                            className={`lg:w-full w-1/3 max-h-[200px] rounded-md cursor-pointer lg:mr-0 mr-2 mb-2 ${
+                                                displayImage.id != image.id
+                                                    ? "opacity-70 hover:opacity-100"
+                                                    : "border border-main"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
                             </div>
 
                             <button
                                 onClick={() => incrementIndex(1)}
-                                className="absolute -bottom-0 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
+                                className="absolute lg:top-auto lg:rotate-0 top-1/2 transform -translate-y-1/2 -rotate-90 lg:right-1/2 lg:translate-x-1/2 -right-4 lg:-bottom-4 bg-white border border-main rounded-full px-2 py-1 text-black z-20"
                             >
                                 ▼
                             </button>
@@ -255,27 +262,33 @@ export default function ProductShowLayout(props) {
                                         );
                                     })}
                             </div>
-                            <div className="flex flex-wrap w-full mt-4">
-                                <div className="flex">
-                                    {sizes.map((size, index) => {
-                                        return (
-                                            <div
-                                                onClick={() =>
-                                                    setSelectedSize(size)
-                                                }
-                                                key={index}
-                                                className={`font-bold min-w-8 text-center text-2xl mr-10 cursor-pointer transition-all duration-150 ease-in-out ${
-                                                    size == selectedSize
-                                                        ? "border-b-2 border-black pb-1 text-black"
-                                                        : "border-b-2 border-transparent pb-1 text-gray-500 hover:text-black"
-                                                }`}
-                                            >
-                                                {size}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                            {isClothing && (
+                                <>
+                                    <div className="flex flex-wrap w-full mt-4">
+                                        <div className="flex">
+                                            {sizes.map((size, index) => {
+                                                return (
+                                                    <div
+                                                        onClick={() =>
+                                                            setSelectedSize(
+                                                                size,
+                                                            )
+                                                        }
+                                                        key={index}
+                                                        className={`font-bold min-w-8 text-center text-2xl mr-10 cursor-pointer transition-all duration-150 ease-in-out ${
+                                                            size == selectedSize
+                                                                ? "border-b-2 border-black pb-1 text-black"
+                                                                : "border-b-2 border-transparent pb-1 text-gray-500 hover:text-black"
+                                                        }`}
+                                                    >
+                                                        {size}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                             <div className="w-full my-4 border border-gray-400 mx-auto"></div>
                         </>
                     )}
